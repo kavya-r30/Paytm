@@ -9,7 +9,7 @@
     "gen": "node scripts/gen-contracts.mjs",
     "gen:check": "node scripts/gen-contracts.mjs --check",
     "tokens": "node scripts/build-tokens.mjs",
-    "lint": "prettier --check .",
+    "lint": "prettier --check . && node scripts/lint-design.mjs",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
