@@ -13,6 +13,10 @@ const examples = readdirSync(EXAMPLES_DIR)
   );
 const example = (name: string) => structuredClone(examples.find(([n]) => n === name)![1]);
 const contractNames = [
+  'action_snoozed',
+  'actions_snooze',
+  'alert_raised',
+  'alerts_scan',
   'appointments_assign',
   'appointments_book',
   'appointments_transition',
@@ -50,6 +54,7 @@ const contractNames = [
   'catalog_item_view',
   'catalog_price_changed',
   'catalog_search_view',
+  'chart_card',
   'claim_view',
   'command',
   'command_executed',
@@ -88,12 +93,14 @@ const contractNames = [
   'feedback_record',
   'feedback_recorded',
   'feedback_view',
+  'forecast_view',
   'gate_view',
   'grn_view',
   'health_view',
   'hisaab_view',
   'home_view',
   'i18n_changed',
+  'insights_view',
   'khata_account_view',
   'khata_view',
   'kot_view',

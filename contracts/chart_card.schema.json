@@ -1,0 +1,75 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/chart_card.schema.json",
+  "title": "ChartCard",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "type": {
+      "enum": [
+        "chart"
+      ]
+    },
+    "chart_no": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 12
+    },
+    "kind": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "title_key": {
+      "$ref": "./common.schema.json#/definitions/MessageKey"
+    },
+    "x": {
+      "type": "object"
+    },
+    "series": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "data": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "data_ref": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "as_of": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "takeaway": {
+      "type": "object"
+    },
+    "invalidate_on": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    }
+  },
+  "required": [
+    "type",
+    "chart_no",
+    "kind",
+    "title_key",
+    "x",
+    "series",
+    "data",
+    "data_ref",
+    "as_of",
+    "takeaway",
+    "invalidate_on"
+  ]
+}

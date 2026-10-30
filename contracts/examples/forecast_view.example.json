@@ -1,0 +1,35 @@
+{
+  "metric": "sales",
+  "status": "ready",
+  "actuals": [
+    {
+      "date": "2026-10-28",
+      "sales_paise": 420000
+    }
+  ],
+  "days": [
+    {
+      "date": "2026-10-29",
+      "p10_paise": 300000,
+      "p50_paise": 400000,
+      "p90_paise": 520000,
+      "festive": true
+    }
+  ],
+  "accuracy": {
+    "wape_bp": 1800,
+    "coverage_bp": 7900,
+    "window_days": 14,
+    "within_band": 11
+  },
+  "drivers": [
+    {
+      "key": "driver.weekday",
+      "contribution_paise": 400000
+    }
+  ],
+  "items": [],
+  "invalidate_on": [
+    "x.changed"
+  ]
+}

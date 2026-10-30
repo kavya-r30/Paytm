@@ -71,3 +71,4 @@ L2 and announce it.
   **contract-change request 6:** `approval` decision has no `decline` (J1/SCR-GATE lists decline); the UI shows
   only approve/edit/snooze until it exists. **Request 7 (when L4 lands):** a turns endpoint (e.g. `POST /v1/turns
   {text, surface}` → envelope); the ask dock routes locally via an intent table until then.
+- Lane A (30 Oct): L3 done (CP-3). `/v1/views/forecast` now returns `forecast_view` (was `layer_pending_view`); new `/v1/views/insights`, `/v1/charts/{1..12}`, `/v1/analytics/{tool}`. See issue #2.

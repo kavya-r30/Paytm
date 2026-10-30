@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/actions_snooze.schema.json",
+  "title": "ActionsSnooze",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "key": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "until": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "key",
+    "until"
+  ]
+}
