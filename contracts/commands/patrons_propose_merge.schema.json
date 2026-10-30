@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/patrons_propose_merge.schema.json",
+  "title": "PatronsProposeMerge",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "source_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "target_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    }
+  },
+  "required": [
+    "source_id",
+    "target_id"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/stock_adjust.schema.json",
+  "title": "StockAdjust",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "item_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "batch_id": {
+      "anyOf": [
+        {
+          "$ref": "../common.schema.json#/definitions/PrefixedId"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "delta_qty_milli": {
+      "type": "integer",
+      "not": {
+        "const": 0
+      }
+    },
+    "reason": {
+      "$ref": "../common.schema.json#/definitions/DottedCode"
+    }
+  },
+  "required": [
+    "item_id",
+    "delta_qty_milli",
+    "reason"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "event_id": "evt_01JBQ0Z7Y8K3M4N5P6Q7R8S9T5",
+  "type": "bill.closed",
+  "merchant_id": "mer_01JBQ0Z7Y8K3M4N5P6Q7R8S9T6",
+  "occurred_at": "2026-10-29T03:43:00Z",
+  "actor": { "kind": "owner", "id": "staff_01JBQ0Z7Y8K3M4N5P6Q7R8S9T7" },
+  "causation_id": "cmd_01JBQ0Z7Y8K3M4N5P6Q7R8S9T4",
+  "payload": {
+    "bill_id": "bill_01JBQ0Z7Y8K3M4N5P6Q7R8S9T1",
+    "total_paise": 6200,
+    "payment_mode": "upi"
+  }
+}

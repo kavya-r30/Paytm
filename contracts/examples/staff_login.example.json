@@ -1,0 +1,6 @@
+{
+  "device_credential": "signed-device-example",
+  "staff_id": "staff_example",
+  "pin": "4826",
+  "channel": "device"
+}

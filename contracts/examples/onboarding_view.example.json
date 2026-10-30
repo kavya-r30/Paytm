@@ -1,0 +1,14 @@
+{
+  "steps": [
+    "language",
+    "pack",
+    "details",
+    "catalog",
+    "people"
+  ],
+  "completed": [],
+  "next_step": "language",
+  "invalidate_on": [
+    "onboarding.updated"
+  ]
+}

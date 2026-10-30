@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Arth voice components</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Noto+Sans+Devanagari:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1440px; height: 900px; box-sizing: border-box; padding: 48px 64px; background: #F3F5F9; font-family: 'Inter', 'Noto Sans Devanagari', system-ui, sans-serif; color: #0B1B33; display: flex; flex-direction: column; gap: 24px">
+  <div style="display: flex; align-items: baseline; justify-content: space-between">
+    <h1 style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.015em">Voice components</h1>
+    <p style="margin: 0; font-size: 15px; color: #5E6B7F">Push-to-talk on Display. One button and a light bar on Voice.</p>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px">
+
+    <div style="display: flex; flex-direction: column; gap: 24px">
+      <section style="background: #FFFFFF; border: 1px solid #E6EBF2; border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 18px">
+        <h2 style="margin: 0; font-size: 18px; font-weight: 600">Talk button</h2>
+        <div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; align-items: start">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 10px">
+            <button aria-label="Hold to talk" style="width: 88px; height: 88px; border-radius: 999px; border: none; background: #002E6E; color: #FFFFFF; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px rgba(0,46,110,0.28)"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+            <span style="font-size: 14px; font-weight: 600">Idle</span><span style="font-size: 12px; color: #5E6B7F; text-align: center">Hold to talk</span>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 10px">
+            <div style="width: 88px; height: 88px; border-radius: 999px; box-shadow: 0 0 0 6px #E0F7FE, 0 0 0 9px #00B9F1; display: flex; align-items: center; justify-content: center; background: #00B9F1">
+              <div style="display: flex; align-items: center; gap: 3px">
+                <span style="width: 4px; height: 14px; border-radius: 2px; background: #002E6E"></span><span style="width: 4px; height: 26px; border-radius: 2px; background: #002E6E"></span><span style="width: 4px; height: 36px; border-radius: 2px; background: #002E6E"></span><span style="width: 4px; height: 22px; border-radius: 2px; background: #002E6E"></span><span style="width: 4px; height: 30px; border-radius: 2px; background: #002E6E"></span><span style="width: 4px; height: 12px; border-radius: 2px; background: #002E6E"></span>
+              </div>
+            </div>
+            <span style="font-size: 14px; font-weight: 600; color: #00729E">Listening</span><span style="font-size: 12px; color: #5E6B7F; text-align: center">Bars follow mic level</span>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 10px">
+            <div style="width: 88px; height: 88px; border-radius: 999px; background: #002E6E; display: flex; align-items: center; justify-content: center">
+              <svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="17" fill="none" stroke="#FFFFFF" stroke-opacity="0.2" stroke-width="4"></circle><path d="M22 5 a17 17 0 0 1 17 17" fill="none" stroke="#00B9F1" stroke-width="4" stroke-linecap="round"></path></svg>
+            </div>
+            <span style="font-size: 14px; font-weight: 600">Thinking</span><span style="font-size: 12px; color: #5E6B7F; text-align: center">Earcon at 1.2 s if slow</span>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 10px">
+            <button aria-label="Stop speaking" style="width: 88px; height: 88px; border-radius: 999px; border: none; background: #EAF2FF; color: #002E6E; display: flex; align-items: center; justify-content: center"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10v4h4l5 4V6L8 10z"/><path d="M16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"/></svg></button>
+            <span style="font-size: 14px; font-weight: 600">Speaking</span><span style="font-size: 12px; color: #5E6B7F; text-align: center">Tap to stop</span>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 10px">
+            <button aria-label="Voice unavailable" disabled style="width: 88px; height: 88px; border-radius: 999px; border: 1.5px dashed #94A3B8; background: #F3F5F9; color: #5E6B7F; display: flex; align-items: center; justify-content: center"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M3 3l18 18"/></svg></button>
+            <span style="font-size: 14px; font-weight: 600">Offline</span><span style="font-size: 12px; color: #5E6B7F; text-align: center">Scan and tap still work</span>
+          </div>
+        </div>
+      </section>
+
+      <section style="background: #FFFFFF; border: 1px solid #E6EBF2; border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 16px">
+        <h2 style="margin: 0; font-size: 18px; font-weight: 600">Caption: what Arth heard and said</h2>
+        <div style="display: flex; flex-direction: column; gap: 8px; padding: 16px 18px; border-radius: 16px; background: #F7F9FC">
+          <div style="display: flex; align-items: center; gap: 8px"><span style="font-size: 13px; color: #5E6B7F">You said</span><span style="font-size: 12px; font-weight: 500; color: #00729E; background: #E0F7FE; padding: 2px 8px; border-radius: 999px">Hinglish</span></div>
+          <p style="margin: 0; font-size: 16px; color: #475569">"aadha kilo cheeni, aur ek Parle-G"</p>
+          <p style="margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -0.01em">Cheeni aur Parle-G jode. Kul ₹62.</p>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 10px; padding: 16px 18px; border-radius: 16px; background: #FFF4DB">
+          <p style="margin: 0; font-size: 20px; font-weight: 600">Phir se boliye? Shayad aapne kaha:</p>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap">
+            <button style="height: 40px; padding: 0 16px; border-radius: 999px; border: 1px solid #E8C77A; background: #FFFFFF; font: inherit; font-size: 15px; color: #0B1B33">Tata namak</button>
+            <button style="height: 40px; padding: 0 16px; border-radius: 999px; border: 1px solid #E8C77A; background: #FFFFFF; font: inherit; font-size: 15px; color: #0B1B33">Aashirvaad namak</button>
+          </div>
+        </div>
+      </section>
+
+      <section style="background: #FFFFFF; border: 1px solid #E6EBF2; border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 14px">
+        <h2 style="margin: 0; font-size: 18px; font-weight: 600">Live transcript pill</h2>
+        <div style="display: flex; align-items: center; gap: 14px; height: 56px; padding: 0 20px; border-radius: 999px; background: #0B1B33; color: #FFFFFF; box-shadow: 0 12px 28px rgba(11,27,51,0.22)">
+          <div style="display: flex; align-items: center; gap: 3px">
+            <span style="width: 3px; height: 10px; border-radius: 2px; background: #00B9F1"></span><span style="width: 3px; height: 20px; border-radius: 2px; background: #00B9F1"></span><span style="width: 3px; height: 14px; border-radius: 2px; background: #00B9F1"></span><span style="width: 3px; height: 24px; border-radius: 2px; background: #00B9F1"></span><span style="width: 3px; height: 8px; border-radius: 2px; background: #00B9F1"></span>
+          </div>
+          <span style="font-size: 17px">aadha kilo cheeni, aur ek Parle<span style="color: #8FA0B8">…</span></span>
+          <span style="margin-left: auto; font-size: 14px; color: #A9BBD3; font-variant-numeric: tabular-nums">0:03</span>
+        </div>
+      </section>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 24px">
+      <section style="background: #FFFFFF; border: 1px solid #E6EBF2; border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 16px">
+        <h2 style="margin: 0; font-size: 18px; font-weight: 600">Read-back before saving (R2)</h2>
+        <div style="border-radius: 20px; background: #FFFFFF; border: 1.5px solid #F5A524; padding: 20px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 0 0 4px #FFF4DB">
+          <div style="display: flex; align-items: center; gap: 10px">
+            <span style="width: 10px; height: 10px; border-radius: 999px; background: #F5A524"></span>
+            <span style="font-size: 14px; font-weight: 600; color: #8A5300">Waiting for your haan</span>
+          </div>
+          <p style="margin: 0; font-size: 24px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.3">Rakesh Sharma ke khate mein <span style="font-variant-numeric: tabular-nums">₹450</span>?</p>
+          <p style="margin: 0; font-size: 15px; color: #475569">Naya baaki ₹1,600 · Limit ₹2,000</p>
+          <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+            <button style="height: 56px; border-radius: 14px; border: none; background: #F5A524; color: #0B1B33; font: inherit; font-size: 17px; font-weight: 600">Haan, daal do</button>
+            <button style="height: 56px; border-radius: 14px; border: 1px solid #D5DCE6; background: #FFFFFF; color: #0B1B33; font: inherit; font-size: 17px; font-weight: 500">Nahi</button>
+          </div>
+          <p style="margin: 0; font-size: 13px; color: #5E6B7F">Say "haan" while holding Talk, or tap. Only the owner can approve.</p>
+        </div>
+      </section>
+
+      <section style="background: #FFFFFF; border: 1px solid #E6EBF2; border-radius: 20px; padding: 24px; display: flex; gap: 28px">
+        <div style="display: flex; flex-direction: column; gap: 14px; flex-grow: 1">
+          <h2 style="margin: 0; font-size: 18px; font-weight: 600">Voice edition light bar</h2>
+          <div style="display: flex; align-items: center; gap: 14px"><div style="width: 180px; height: 12px; border-radius: 999px; background: #E2E8F0; display: flex; gap: 4px; padding: 0 30px; box-sizing: border-box; align-items: center"><span style="flex-grow: 1; height: 12px; background: #00B9F1; border-radius: 3px"></span><span style="flex-grow: 1; height: 12px; background: #00B9F1; border-radius: 3px"></span><span style="flex-grow: 1; height: 12px; background: #00B9F1; border-radius: 3px"></span><span style="flex-grow: 1; height: 12px; background: #00B9F1; border-radius: 3px"></span></div><span style="font-size: 14px"><b style="font-weight: 600; color: #00729E">Listening</b> · segments follow voice</span></div>
+          <div style="display: flex; align-items: center; gap: 14px"><div style="width: 180px; height: 12px; border-radius: 999px; background: #E2E8F0; position: relative; overflow: hidden"><span style="position: absolute; left: 70px; top: 0; width: 44px; height: 12px; border-radius: 999px; background: #00B9F1"></span></div><span style="font-size: 14px"><b style="font-weight: 600; color: #00729E">Thinking</b> · one travelling segment</span></div>
+          <div style="display: flex; align-items: center; gap: 14px"><div style="width: 180px; height: 12px; border-radius: 999px; background: #E2E8F0; overflow: hidden"><div style="width: 90px; height: 12px; background: #F5A524; border-radius: 999px"></div></div><span style="font-size: 14px"><b style="font-weight: 600; color: #8A5300">Needs you</b> · amber half, steady</span></div>
+          <div style="display: flex; align-items: center; gap: 14px"><div style="width: 180px; height: 12px; border-radius: 999px; background: #22C55E"></div><span style="font-size: 14px"><b style="font-weight: 600; color: #0A7A45">Done</b> · fills from centre</span></div>
+          <div style="display: flex; align-items: center; gap: 14px"><div style="width: 180px; height: 12px; border-radius: 999px; background: #EF4444"></div><span style="font-size: 14px"><b style="font-weight: 600; color: #C4262E">Alert</b> · steady, low double tone</span></div>
+          <div style="display: flex; align-items: center; gap: 14px"><div style="width: 180px; height: 12px; border-radius: 999px; background: #E2E8F0; display: flex; justify-content: flex-end; align-items: center; padding-right: 3px; box-sizing: border-box"><span style="width: 8px; height: 8px; border-radius: 999px; background: #F5A524"></span></div><span style="font-size: 14px"><b style="font-weight: 600">Work pending</b> · amber dot</span></div>
+        </div>
+        <div style="width: 200px; display: flex; flex-direction: column; align-items: center; gap: 12px">
+          <div style="width: 180px; height: 230px; border-radius: 44px; background: #FBFCFE; border: 1px solid #DDE3EB; box-shadow: inset 0 -10px 24px rgba(11,27,51,0.06), 0 18px 36px rgba(11,27,51,0.14); display: flex; flex-direction: column; align-items: center; padding-top: 22px; box-sizing: border-box; gap: 18px">
+            <div style="width: 112px; height: 10px; border-radius: 999px; background: #F5A524; box-shadow: 0 0 14px rgba(245,165,36,0.6)"></div>
+            <div style="display: grid; grid-template-columns: repeat(7, 6px); gap: 7px">
+              <span style="width: 6px; height: 6px; border-radius: 999px; background: #C9D2DE"></span><span style="width: 6px; height: 6px; border-radius: 999px; background: #C9D2DE"></span><span style="width: 6px; height: 6px; border-radius: 999px; background: #C9D2DE"></span><span style="width: 6px; height: 6px; border-radius: 999px; background: #C9D2DE"></span><span style="width: 6px; height: 6px; border-radius: 999px; background: #C9D2DE"></span><span style="width: 6px; height: 6px; border-radius: 999px; background: #C9D2DE"></span><span style="width: 6px; height: 6px; border-radius: 999px; background: #C9D2DE"></span>
+              <span style="width: 6px; height: 6px; border-radius: 999px; background: #C9D2DE"></span><span style="width: 6px; height: 6px; border-radius: 999px; background: #C9D2DE"></span><span style="width: 6px; height: 6px; border-radius: 999px; background: #C9D2DE"></span><span style="width: 6px; height: 6px; border-radius: 999px; background: #C9D2DE"></span><span style="width: 6px; height: 6px; border-radius: 999px; background: #C9D2DE"></span><span style="width: 6px; height: 6px; border-radius: 999px; background: #C9D2DE"></span><span style="width: 6px; height: 6px; border-radius: 999px; background: #C9D2DE"></span>
+            </div>
+            <div style="width: 84px; height: 84px; border-radius: 999px; background: #002E6E; display: flex; align-items: center; justify-content: center; color: #FFFFFF; box-shadow: 0 8px 18px rgba(0,46,110,0.3)"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></div>
+          </div>
+          <span style="font-size: 13px; color: #475569; text-align: center">Tap: what's pending · Double tap: approve · Hold: talk · Long press: cancel</span>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

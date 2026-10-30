@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/consent_stop.schema.json",
+  "title": "ConsentStop",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "patron_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "source_ref": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    }
+  },
+  "required": [
+    "patron_id",
+    "source_ref"
+  ]
+}

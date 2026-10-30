@@ -1,0 +1,108 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/merchant_update_settings.schema.json",
+  "title": "MerchantUpdateSettings",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "screen_lang": {
+      "enum": [
+        "hi",
+        "en",
+        "hi-Latn",
+        "mr",
+        "ta",
+        "bn",
+        "gu",
+        "te"
+      ]
+    },
+    "speech_lang": {
+      "enum": [
+        "hi-IN",
+        "en-IN",
+        "mr-IN",
+        "ta-IN",
+        "bn-IN",
+        "gu-IN",
+        "te-IN"
+      ]
+    },
+    "customer_lang": {
+      "enum": [
+        "hi",
+        "en",
+        "hi-Latn",
+        "mr",
+        "ta",
+        "bn",
+        "gu",
+        "te"
+      ]
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "vpa": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "address": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "gstin": {
+      "type": "string",
+      "maxLength": 15
+    },
+    "tax_profile": {
+      "enum": [
+        "unregistered",
+        "composition",
+        "regular"
+      ]
+    },
+    "hours": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "start": {
+          "type": "string",
+          "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$"
+        },
+        "end": {
+          "type": "string",
+          "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$"
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ]
+    },
+    "quiet_hours": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "start": {
+          "type": "string",
+          "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$"
+        },
+        "end": {
+          "type": "string",
+          "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$"
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ]
+    }
+  },
+  "required": [],
+  "minProperties": 1
+}

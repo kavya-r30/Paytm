@@ -1,0 +1,10 @@
+# Not using git today; this keeps secrets and generated files out if git is ever used.
+backend/.env
+frontend/.env.local
+backend/data/
+backend/scenarios/snapshots/*.db
+backend/.venv/
+node_modules/
+frontend/.next/
+__pycache__/
+*.pyc

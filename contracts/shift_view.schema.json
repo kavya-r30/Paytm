@@ -1,0 +1,86 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/shift_view.schema.json",
+  "title": "ShiftView",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "current": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "staff_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "opened_at": {
+              "type": "string"
+            },
+            "closed_at": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "float_paise": {
+              "type": "integer"
+            },
+            "expected_paise": {
+              "type": "integer"
+            },
+            "counted_paise": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "variance_paise": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "id",
+            "staff_id",
+            "opened_at",
+            "float_paise",
+            "expected_paise"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "invalidate_on": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "current",
+    "invalidate_on"
+  ]
+}

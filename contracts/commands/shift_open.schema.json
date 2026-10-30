@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/shift_open.schema.json",
+  "title": "ShiftOpen",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "float_paise": {
+      "type": "integer",
+      "minimum": 0
+    }
+  },
+  "required": [
+    "float_paise"
+  ]
+}

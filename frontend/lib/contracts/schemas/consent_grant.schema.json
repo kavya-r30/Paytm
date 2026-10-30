@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/consent_grant.schema.json",
+  "title": "ConsentGrant",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "patron_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "purpose": {
+      "enum": [
+        "marketing",
+        "reminders",
+        "receipts"
+      ]
+    },
+    "source_ref": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    }
+  },
+  "required": [
+    "patron_id",
+    "purpose",
+    "source_ref"
+  ]
+}

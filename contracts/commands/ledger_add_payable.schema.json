@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/ledger_add_payable.schema.json",
+  "title": "LedgerAddPayable",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "supplier_ref": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "amount_paise": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "due_on": {
+      "type": "string",
+      "format": "date"
+    },
+    "source_ref": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    }
+  },
+  "required": [
+    "supplier_ref",
+    "amount_paise",
+    "due_on",
+    "source_ref"
+  ]
+}
