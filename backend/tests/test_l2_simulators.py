@@ -218,7 +218,7 @@ def test_five_beat_billing_scenario_runs_headless(tmp_path):
     from arth.sim.scenario import run_file
 
     report = run_file(
-        Path(__file__).parents[1] / "scenarios" / "billing_smoke.yaml",
+        Path(__file__).parents[1] / "scenarios" / "billing_smoke" / "scenario.yaml",
         Settings(_env_file=None, mode="test", data_dir=tmp_path),
     )
     assert len(report["beats"]) == 5 and all(b["ok"] for b in report["beats"])

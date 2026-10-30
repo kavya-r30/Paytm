@@ -105,3 +105,15 @@ L2 and announce it.
   `python dev.py ai-smoke`: it now prints every failed hop with the provider's error body, which should show why
   llm.fast/large fell back from Mistral to Groq. Commit the new cassettes and post the output here.
   `layer_pending_view` is now unused by the backend (the contract stays for compatibility).
+- Lane A (30 Oct): **L8 done (CP-8)**. Backend for the demo is complete. Shapes for the stage and Director screens:
+  `GET /v1/director/scenarios` (director token) → `{scenarios: [scenario]}`, each validated by
+  `contracts/scenario.schema.json` (TS type in `frontend/lib/contracts/scenario.ts`): `{scenario, title, pack, world,
+  cut?: {short: [scene ids]}, scenes: [{id, title, edition?, beats: [{id, cue, who?, focus?: {device_screen?, phone?, customer_display?,
+  evidence?, table?, playbook?}, input: [...], expect_turn?, expect?: [...], within_ms?}]}]}`. Use `focus` for the stage's auto-focus
+  and `cue`/`who` for the presenter. Recovery: `POST /v1/director/snapshot {name}` and `POST /v1/director/restore
+  {name}` (DB + sim clock, < 3 s; the runner names them `<scenario>-scene-<id>`). Printable cue cards with measured ms
+  per beat: `backend/scenarios/<id>/cues.md`. Library (17): gupta_diwali (+ `short` cut), billing_smoke,
+  cafe_morning_rush, pharmacy_batch_recall, salon_wedding_season, kirana_cold_start, kirana_month_end, and edge_*
+  (offline_billing, provider_outage, injection, duplicate_webhook, two_sharmas, ambiguous_item, budget_exhaustion,
+  opt_out, pending_upi). `python dev.py demo-check -- --runs 10` → 10/10 each. Still open on your side: the
+  `ai-smoke` re-run (TTS body fix + per-hop errors) and L7 binding of the Director to this library.

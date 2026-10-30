@@ -1,0 +1,45 @@
+scenario: kirana_cold_start
+title: A brand-new kirana on day one
+pack: kirana
+world: {cold_start: true, seed: 2}
+scenes:
+  - id: "1"
+    title: Onboarding to the first bill
+    beats:
+      - id: "1.1"
+        who: P1
+        cue: Language and shop type
+        input:
+          - command: {type: onboarding.complete_step, payload: {step: language}}
+          - command: {type: onboarding.complete_step, payload: {step: pack}}
+        expect:
+          - {view: onboarding, path: next_step, equals: details}
+        focus: {device_screen: onboarding}
+      - id: "1.2"
+        who: P1
+        cue: Shop details (UPI VPA, address)
+        input:
+          - command: {type: merchant.update_settings, payload: {vpa: "newshop@paytm", address: "Hazratganj, Lucknow"}}
+          - command: {type: onboarding.complete_step, payload: {step: details}}
+        expect:
+          - {view: onboarding, path: next_step, equals: catalog}
+      - id: "1.3"
+        who: P1
+        cue: Catalog from the starter list (owner confirms the import)
+        input:
+          - command: {type: catalog.add_item, payload: {sku: CHEENI, names: {en: Sugar, hi-Latn: Cheeni}, unit: kg, mrp_paise: 5000, price_paise: 4500, cost_paise: 4000, category: staples}}
+          - command: {type: onboarding.complete_step, payload: {step: catalog}}
+          - command: {type: onboarding.complete_step, payload: {step: people}}
+        expect:
+          - {view: onboarding, path: next_step, absent: true}
+      - id: "1.4"
+        who: P2
+        cue: First bill, by voice; "what Arth can do yet" says learning
+        input:
+          - say_for_me: "do kilo cheeni"
+        save: {bill: nav.params.bill_id}
+        expect:
+          - {view: "bill/${bill}", path: bill.total_paise, equals: 9000}
+          - {view: insights, path: sufficiency.0.status, equals: learning}
+          - {invariants: true}
+        focus: {device_screen: bill}

@@ -1,0 +1,26 @@
+scenario: edge_budget_exhaustion
+title: Edge - an offer budget runs out under a burst of payments
+pack: kirana
+world: {days: 2, seed: 25, size: micro, patrons: 10}
+scenes:
+  - id: "1"
+    title: Liability never exceeds the budget
+    beats:
+      - id: "1.1"
+        cue: A ₹20 instant cashback with a ₹40 budget (R3)
+        input:
+          - command: {type: offers.create_program, payload: {type: instant_cashback, rules: {reward_paise: 2000, min_spend_paise: 1000, combine_minutes: 1}, terms: {amount_paise: 2000, min_spend_paise: 1000, expiry_days: 0}, budget_paise: 4000, funding: merchant, holdout_bp: 2000, include_regulars: true, valid_from: "2026-10-28T00:00:00Z", valid_until: "2026-11-30T00:00:00Z"}}
+        expect:
+          - {view: offers, path: programs, len: 1}
+      - id: "1.2"
+        cue: Six customers pay at once
+        input:
+          - persona_action: {persona: priya, action: pay_static, amount_paise: 5000}
+          - persona_action: {persona: rakesh, action: pay_static, amount_paise: 5000}
+          - persona_action: {persona: anita, action: pay_static, amount_paise: 5000}
+          - persona_action: {persona: rohit, action: pay_static, amount_paise: 5000}
+          - persona_action: {persona: sunita, action: pay_static, amount_paise: 5000}
+          - persona_action: {persona: imran, action: pay_static, amount_paise: 5000}
+        expect:
+          - {view: offers, path: liability.issued_paise, lte: 4000}
+          - {invariants: true}

@@ -1,0 +1,30 @@
+scenario: edge_pending_upi
+title: Edge - a pending UPI payment resolves
+pack: kirana
+world: {days: 2, seed: 22, size: micro, patrons: 6}
+scenes:
+  - id: "1"
+    title: Pending then success
+    beats:
+      - id: "1.1"
+        cue: Bill and a pending payment
+        input:
+          - command: {type: counter.open_bill, payload: {}}
+        save: {bill: data.bill_id}
+      - id: "1.2"
+        cue: The customer's bank says pending
+        input:
+          - command: {type: counter.add_lines, payload: {bill_id: "${bill}", lines: [{item_id: "${sugar_loose}", qty_milli: 2000, added_via: tap}]}}
+          - persona_action: {persona: priya, action: pay_pending, bill: "${bill}"}
+        save: {utr: utr}
+        expect:
+          - {view: "bill/${bill}/pay", path: exception, equals: payment.pending}
+          - {view: "bill/${bill}", path: bill.status, equals: open}
+        focus: {device_screen: pay}
+      - id: "1.3"
+        cue: The bank confirms; the bill closes
+        input:
+          - persona_action: {persona: priya, action: complete, utr: "${utr}", outcome: success}
+        expect:
+          - {view: "bill/${bill}", path: bill.status, equals: closed}
+          - {invariants: true}
