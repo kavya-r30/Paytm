@@ -3,7 +3,7 @@
 ## Current checkpoint (30 Oct 2026, CP-8) — L8 DONE (backend complete)
 
 L8 is in `backend/arth/sim/scenario.py` and `backend/scenarios/` (plan:
-`docs/superpowers/plans/2026-10-30-arth-L8-scenarios-demo.md`). 17 scenarios run headless; `python dev.py demo-check
+`docs/superpowers/plans/2026-10-30-arth-L8-scenarios-demo.md`). 16 scenarios run headless; `python dev.py demo-check
 -- --runs 10` is green and writes `cues.md` per scenario. Director: `POST /v1/director/snapshot|restore {name}`, `GET
 /v1/director/scenarios`. Remaining: Lane B binds the stage/Director to the library (L7) and re-runs `ai-smoke` live.
 
