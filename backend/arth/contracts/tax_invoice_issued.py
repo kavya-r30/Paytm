@@ -29,7 +29,7 @@ class Payload(BaseModel):
     kind: Kind
 
 
-class Kind76(StrEnum):
+class Kind80(StrEnum):
     owner = 'owner'
     staff = 'staff'
     customer = 'customer'
@@ -43,7 +43,7 @@ class Actor(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
     )
-    kind: Kind76
+    kind: Kind80
     id: constr(min_length=1) | None = None
 
 

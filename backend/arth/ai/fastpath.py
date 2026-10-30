@@ -42,6 +42,13 @@ def parse(text: str) -> Intent | None:
     lowered = text.lower().strip(" .!?।")
     if not lowered:
         return None
+    match = re.fullmatch(
+        r"(haan|haa|ha|yes|ok|theek hai|teeno haan|sab haan|sabko haan)[, ]*"
+        r"(?:(.+?) (?:ko |)(?:chhod ?ke|chhodkar|ko chhod do)|except (.+))?",
+        lowered,
+    )
+    if match:
+        return Intent("approve_all", {"exclude": (match.group(2) or match.group(3) or "").strip()})
     if re.fullmatch(r"(hatao|hata do|remove|cancel (last|ye)|nikalo)", lowered):
         return Intent("remove_last")
     if re.fullmatch(r"(woh wapas lo|undo|wapas karo|galti ho gayi)", lowered):

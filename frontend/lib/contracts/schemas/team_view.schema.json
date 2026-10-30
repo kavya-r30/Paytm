@@ -1,0 +1,220 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/team_view.schema.json",
+  "title": "TeamView",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "helpers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "name_key": {
+            "$ref": "./common.schema.json#/definitions/MessageKey"
+          },
+          "agents": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          },
+          "status": {
+            "enum": [
+              "idle",
+              "working",
+              "waiting",
+              "paused"
+            ]
+          },
+          "tier": {
+            "$ref": "./common.schema.json#/definitions/Tier"
+          },
+          "pending_gates": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "open_work": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "line": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name_key",
+          "agents",
+          "status",
+          "tier",
+          "pending_gates",
+          "open_work",
+          "line"
+        ]
+      }
+    },
+    "runs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "playbook": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "agent": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "subject": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "status": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "step": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "playbook",
+          "agent",
+          "subject",
+          "status",
+          "step",
+          "created_at",
+          "updated_at"
+        ]
+      }
+    },
+    "work": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "kind": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "agent": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "title_key": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "params": {
+            "type": "object"
+          },
+          "urgency": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "status": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "agent",
+          "title_key",
+          "params",
+          "urgency",
+          "status",
+          "created_at"
+        ]
+      }
+    },
+    "kill_switch": {
+      "type": "boolean"
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "done_since_night": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "waiting_for_you": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "done_since_night",
+        "waiting_for_you"
+      ]
+    },
+    "invalidate_on": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    }
+  },
+  "required": [
+    "helpers",
+    "runs",
+    "work",
+    "kill_switch",
+    "summary",
+    "invalidate_on"
+  ]
+}

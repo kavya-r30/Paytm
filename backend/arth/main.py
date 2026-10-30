@@ -18,9 +18,25 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import select
 
+from arth.agents.commands import register_agent_commands
+from arth.agents.playbooks import install as install_playbooks
+from arth.agents.runtime import Runtime
+from arth.agents.views import load_helpers
 from arth.ai.conductor import Conductor
 from arth.ai.router import ProviderRouter
-from arth.api import commerce, commerce_core, director, governance, health, intel, sim, stream, turns, views
+from arth.api import (
+    agents,
+    commerce,
+    commerce_core,
+    director,
+    governance,
+    health,
+    intel,
+    sim,
+    stream,
+    turns,
+    views,
+)
 from arth.api.problems import install_problem_handlers
 from arth.core.calendar import CalendarIndex, load_calendar
 from arth.core.clock import SimClock, iso_utc
@@ -91,6 +107,23 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         register_intel(app.state.commands, app.state.calendar)
         app.state.router = ProviderRouter(settings, app.state.providers, spans)
         app.state.conductor = Conductor(app.state.commands, app.state.router, app.state.calendar)
+        app.state.runtime = Runtime(app.state.commands, app.state.events)
+        install_playbooks(app.state.runtime, app.state.events)
+        register_agent_commands(app.state.commands, app.state.runtime)
+        app.state.helpers = load_helpers()
+
+        async def night_shift(job: Any) -> None:
+            stamp = clock.now_ist().date().isoformat()
+            for merchant_id in sorted(app.state.commands.merchant_ids):
+                await app.state.runtime.start(merchant_id, "night_shift", stamp)
+
+        scheduler.on("agents.night_shift", night_shift)
+        async with db.read() as conn:
+            pending = await conn.execute(
+                select(jobs.c.id).where(jobs.c.name == "agents.night_shift", jobs.c.status == "pending")
+            )
+            if not pending.first():
+                await scheduler.schedule_daily("agents.night_shift", "22:00")
 
         async def hourly_alerts(job: Any) -> None:
             stamp = iso_utc(clock.now())[:13]
@@ -138,6 +171,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                     try:
                         await app.state.commands.run_due(merchant_id)
                         await app.state.events.dispatch(merchant_id)
+                        await app.state.runtime.tick(merchant_id)
                     except Exception:
                         logging.getLogger(__name__).exception("governance delivery failed; retrying")
                 try:
@@ -173,6 +207,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(sim.router)
     app.include_router(intel.router)
     app.include_router(turns.router)
+    app.include_router(agents.router)
     return app
 
 

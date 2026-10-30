@@ -280,6 +280,8 @@ class CommandBus:
         role = self.policy.policies.roles.get(session.role)
         if self.session_validator is not None:
             await self.session_validator(repo, session)
+        if session.actor_kind == "agent" or session.channel == "agent":
+            raise CommandError("approval.cannot_approve")  # agents propose; only people approve (AIQ-1)
         if role is None or not can_approve(session, gate["tier"], list(role.approve)):
             raise CommandError("approval.cannot_approve")
         scope = json.loads(gate["scope"])

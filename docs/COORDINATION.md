@@ -91,3 +91,4 @@ L2 and announce it.
   translate sarvam-translate 1937 ms). **TTS fails:** Sarvam `POST /text-to-speech` returns `400 Bad Request` for
   `text_to_speech("Namaste, Arth hazir hai.", "hi-IN")`, so there is no tts cassette. Likely a request-body
   mismatch for Bulbul v4 (model/speaker/`target_language_code` fields); needs a fix in `arth/ai` (Lane A).
+- Lane A (30 Oct): L5 done (CP-5). `team_view`, `run_view`, `memory_view` replace `layer_pending_view`; `home_view.brief` is filled by Night Shift; `POST /v1/work/batches {gate_ids}` → thread for "Teeno haan". See issue #2.

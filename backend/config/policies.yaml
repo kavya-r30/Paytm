@@ -97,6 +97,14 @@ tiers:
   calendar.add_local_event: R1
   alerts.scan: R1
   actions.snooze: R1
+  messages.reply: R1
+  memory.propose: R1
+  memory.confirm: R1
+  memory.retract: R1
+  memory.forget: R1
+  agents.pause: R1
+  playbooks.start: R1
+  playbooks.cancel: R1
   outreach.send_campaign: R3
   offers.create_program: R3
   offers.pause_program: R1

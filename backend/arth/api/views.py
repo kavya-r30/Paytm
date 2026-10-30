@@ -11,6 +11,7 @@ from typing import Annotated, Any
 
 from fastapi import APIRouter, Query, Request
 
+from arth.agents.views import latest_brief
 from arth.api.commerce import Actor
 from arth.api.problems import ProblemError
 from arth.core.clock import iso_utc, parse_iso
@@ -88,6 +89,9 @@ VIEW_TOPICS: dict[str, set[str]] = {
     "calendar": {"calendar.local_event_added", "clock.day"},
     "forecast": {"bill.paid", "clock.day"},
     "insights": {"alert.raised", "action.snoozed", "bill.paid", "stock.demand_logged"},
+    "team": {"playbook.updated", "approval.requested", "approval.decided", "agents.paused"},
+    "runs": {"playbook.updated"},
+    "memory": {"memory.changed"},
     "trust": {"command.executed", "approval.decided", "privacy.erased", "privacy.sharing_changed"},
 }
 PENDING = {
@@ -96,9 +100,6 @@ PENDING = {
     "grow/bundles": ("L6", "sufficiency.bundles_pending"),
     "grow/ledger": ("L6", "sufficiency.ledger_pending"),
     "campaigns": ("L6", "sufficiency.campaign_pending"),
-    "team": ("L5", "sufficiency.team_pending"),
-    "runs": ("L5", "sufficiency.run_pending"),
-    "memory": ("L5", "sufficiency.memory_pending"),
 }
 
 
@@ -189,7 +190,7 @@ async def home(request: Request, session: Actor) -> dict[str, Any]:
                 "change_today_paise": summary["khata_given_paise"],
             },
             "gates": await open_gates(repo, iso_utc(clock.now())),
-            "brief": None,
+            "brief": await latest_brief(repo),
             "data_sufficiency": {
                 "status": "cold_start" if days < 14 else "learning" if days < 56 else "ready",
                 "days_of_history": days,
@@ -496,21 +497,6 @@ async def offer(request: Request, program_id: str, session: Actor) -> dict[str, 
 @router.get("/v1/views/storefront")
 async def storefront(request: Request, session: Actor) -> dict[str, Any]:
     return await read(request, session, storefront_view)
-
-
-@router.get("/v1/views/team")
-async def team(request: Request, session: Actor) -> dict[str, Any]:
-    return pending("team", ["playbook.updated", "approval.requested", "approval.decided"])
-
-
-@router.get("/v1/views/runs/{run_id}")
-async def run(request: Request, run_id: str, session: Actor) -> dict[str, Any]:
-    return pending("runs", ["playbook.updated"])
-
-
-@router.get("/v1/views/memory")
-async def memory(request: Request, session: Actor) -> dict[str, Any]:
-    return pending("memory", ["memory.updated"])
 
 
 @router.get("/v1/views/hisaab")

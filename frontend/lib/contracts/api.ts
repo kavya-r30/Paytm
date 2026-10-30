@@ -1169,6 +1169,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/work/batches": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["postWorkBatch"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/patrons": {
         parameters: {
             query?: never;
@@ -2264,6 +2280,90 @@ export interface components {
             show_offers: boolean;
             items: number;
             url: string | null;
+            invalidate_on: string[];
+        };
+        /** TeamView */
+        "team_view.schema": {
+            helpers: {
+                id: string;
+                name_key: components["schemas"]["MessageKey"];
+                agents: string[];
+                /** @enum {unknown} */
+                status: "idle" | "working" | "waiting" | "paused";
+                tier: components["schemas"]["Tier"];
+                pending_gates: number;
+                open_work: number;
+                line: string | null;
+            }[];
+            runs: {
+                id: components["schemas"]["PrefixedId"];
+                playbook: string;
+                agent: string;
+                subject: string;
+                status: string;
+                step: string;
+                /** Format: date-time */
+                created_at: string;
+                /** Format: date-time */
+                updated_at: string;
+            }[];
+            work: {
+                id: components["schemas"]["PrefixedId"];
+                kind: string;
+                agent: string;
+                title_key: string;
+                params: Record<string, never>;
+                urgency: number;
+                status: string;
+                /** Format: date-time */
+                created_at: string;
+            }[];
+            kill_switch: boolean;
+            summary: {
+                done_since_night: number;
+                waiting_for_you: number;
+            };
+            invalidate_on: string[];
+        };
+        /** RunView */
+        "run_view.schema": {
+            run: {
+                id: components["schemas"]["PrefixedId"];
+                playbook: string;
+                agent: string;
+                subject: string;
+                status: string;
+                step: string;
+                /** Format: date-time */
+                created_at: string;
+                /** Format: date-time */
+                updated_at: string;
+                context: Record<string, never>;
+                wait: Record<string, never> | null;
+            };
+            steps: {
+                step: string;
+                status: string;
+                detail: Record<string, never>;
+                /** Format: date-time */
+                occurred_at: string;
+            }[];
+            invalidate_on: string[];
+        };
+        /** MemoryView */
+        "memory_view.schema": {
+            facts: {
+                id: components["schemas"]["PrefixedId"];
+                subject: string;
+                predicate: string;
+                value: string;
+                evidence: string[];
+                source: string;
+                /** @enum {unknown} */
+                status: "active" | "unverified" | "retracted" | "forgotten";
+                /** Format: date-time */
+                created_at: string;
+            }[];
             invalidate_on: string[];
         };
         /** HisaabView */
@@ -3919,7 +4019,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["layer_pending_view.schema"];
+                    "application/json": components["schemas"]["team_view.schema"];
                 };
             };
             401: components["responses"]["Problem"];
@@ -3943,7 +4043,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["layer_pending_view.schema"];
+                    "application/json": components["schemas"]["run_view.schema"];
                 };
             };
             401: components["responses"]["Problem"];
@@ -3965,7 +4065,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["layer_pending_view.schema"];
+                    "application/json": components["schemas"]["memory_view.schema"];
                 };
             };
             401: components["responses"]["Problem"];
@@ -4937,6 +5037,32 @@ export interface operations {
                 };
             };
             401: components["responses"]["Problem"];
+        };
+    };
+    postWorkBatch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description Thread id for one batched ask; answer it via POST /v1/approvals/{thread_id} */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": Record<string, never>;
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
         };
     };
     patronsadd: {
