@@ -299,7 +299,7 @@ export function HomeScreen(_: ScreenProps) {
     <Screen
       title={g ? t(`home.greeting_${g.part_of_day}`, { name: g.owner_name }) : t('nav.home')}
       sub={g ? `${g.shop_name} · ${day(g.now)} · ${time(g.now)}` : undefined}
-      right={<StatusPill text={t('home.status_example')} />}
+      right={<StatusPill text={state.mode === 'fixture' ? t('home.status_example') : undefined} />}
     >
       <ViewGate state={state}>
         {(home) => (
