@@ -959,5 +959,9 @@
   "driver.weekday": "Weekday",
   "driver.weather": "Weather",
   "driver.payday": "Payday",
-  "driver.trend": "Trend"
+  "driver.trend": "Trend",
+  "pay.upi_qr": "UPI QR",
+  "pay.upi_static": "Static QR",
+  "pay.upi_link": "Pay link",
+  "pay.upi_collect": "UPI request"
 }

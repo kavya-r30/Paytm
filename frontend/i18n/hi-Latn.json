@@ -655,5 +655,9 @@
   "forecast.cta": "{festival} stock plan",
   "driver.festival": "Tyohaar",
   "driver.weekday": "Din",
-  "driver.weather": "Mausam"
+  "driver.weather": "Mausam",
+  "pay.upi_qr": "UPI QR",
+  "pay.upi_static": "Static QR",
+  "pay.upi_link": "Pay link",
+  "pay.upi_collect": "UPI request"
 }

@@ -91,25 +91,30 @@ export function StockScreen(_: ScreenProps) {
               })}
             </Card>
             <div className="flex flex-col gap-4">
-              <Card attention className="flex flex-col gap-3 p-5">
-                <SectionTitle>{t('stock.suggestion_title')}</SectionTitle>
-                <ArthNote label={false}>
-                  {t('stock.suggestion_body', { festival: t('festival.diwali') })}
-                </ArthNote>
-                <Button onClick={() => nav(`gate/${IDS.GATES.po.gate}`)}>{t('stock.see_rates')}</Button>
-                <Button variant="ghost" onClick={() => nav(`po/${IDS.PO_ID}`)}>
-                  {t('stock.make_po')}
-                </Button>
-              </Card>
+              {/* The Curator/Procurement suggestion and claim come from L5 playbooks; live shows them then. */}
+              {state.mode === 'fixture' && (
+                <Card attention className="flex flex-col gap-3 p-5">
+                  <SectionTitle>{t('stock.suggestion_title')}</SectionTitle>
+                  <ArthNote label={false}>
+                    {t('stock.suggestion_body', { festival: t('festival.diwali') })}
+                  </ArthNote>
+                  <Button onClick={() => nav(`gate/${IDS.GATES.po.gate}`)}>{t('stock.see_rates')}</Button>
+                  <Button variant="ghost" onClick={() => nav(`po/${IDS.PO_ID}`)}>
+                    {t('stock.make_po')}
+                  </Button>
+                </Card>
+              )}
               <Card className="flex flex-col gap-2 p-5">
                 <SectionTitle>{t('stock.exceptions')}</SectionTitle>
-                <button
-                  type="button"
-                  onClick={() => nav(`claim/${IDS.CLAIM_ID}`)}
-                  className="flex items-center gap-2 text-left text-body"
-                >
-                  <Truck size={18} className="text-red" /> {t('stock.claim_short')}
-                </button>
+                {state.mode === 'fixture' && (
+                  <button
+                    type="button"
+                    onClick={() => nav(`claim/${IDS.CLAIM_ID}`)}
+                    className="flex items-center gap-2 text-left text-body"
+                  >
+                    <Truck size={18} className="text-red" /> {t('stock.claim_short')}
+                  </button>
+                )}
                 {(expiry.data?.batches ?? [])
                   .filter((b) => (b.days_to_expiry ?? 99) <= 7)
                   .map((b) => (
