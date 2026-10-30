@@ -1,0 +1,10 @@
+{
+  "screen": "forecast",
+  "status": "not_built_yet",
+  "layer": "L3",
+  "reason_key": "sufficiency.forecast_pending",
+  "items": [],
+  "invalidate_on": [
+    "x.changed"
+  ]
+}

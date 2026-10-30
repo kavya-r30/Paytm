@@ -1,0 +1,117 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/verdict_view.schema.json",
+  "title": "VerdictView",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "check_id": {
+      "$ref": "./common.schema.json#/definitions/PrefixedId"
+    },
+    "verdict": {
+      "enum": [
+        "received",
+        "not_received",
+        "pending",
+        "unclear"
+      ]
+    },
+    "headline_key": {
+      "$ref": "./common.schema.json#/definitions/MessageKey"
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "claimed": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "ledger": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "state": {
+            "enum": [
+              "match",
+              "mismatch",
+              "missing"
+            ]
+          }
+        },
+        "required": [
+          "kind",
+          "claimed",
+          "ledger",
+          "state"
+        ]
+      }
+    },
+    "signals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "state": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "kind",
+          "state"
+        ]
+      }
+    },
+    "footnote_key": {
+      "$ref": "./common.schema.json#/definitions/MessageKey"
+    },
+    "invalidate_on": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    }
+  },
+  "required": [
+    "check_id",
+    "verdict",
+    "headline_key",
+    "evidence",
+    "signals",
+    "footnote_key",
+    "invalidate_on"
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/treasury_expense.schema.json",
+  "title": "TreasuryExpense",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "category": {
+      "enum": [
+        "rent",
+        "salary",
+        "electricity",
+        "transport",
+        "supplies",
+        "repairs",
+        "other"
+      ]
+    },
+    "amount_paise": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "paid_from": {
+      "enum": [
+        "cash",
+        "upi",
+        "bank"
+      ]
+    },
+    "note_key": {
+      "$ref": "../common.schema.json#/definitions/MessageKey"
+    }
+  },
+  "required": [
+    "category",
+    "amount_paise",
+    "paid_from"
+  ]
+}

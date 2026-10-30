@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/supply_record_quote.schema.json",
+  "title": "SupplyRecordQuote",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "supplier_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "item_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "unit_price_paise": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "valid_until": {
+      "type": "string",
+      "format": "date"
+    }
+  },
+  "required": [
+    "supplier_id",
+    "item_id",
+    "unit_price_paise"
+  ]
+}

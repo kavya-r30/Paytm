@@ -1,0 +1,14 @@
+{
+  "profile": {},
+  "need": null,
+  "affordability": {},
+  "offers": [],
+  "recommended_offer_id": null,
+  "console_pointer": {
+    "route": "/console/capital",
+    "message_key": "capital.console_only"
+  },
+  "invalidate_on": [
+    "x.changed"
+  ]
+}

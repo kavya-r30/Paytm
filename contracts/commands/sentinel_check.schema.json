@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/sentinel_check.schema.json",
+  "title": "SentinelCheck",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "amount_paise": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "utr": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "paid_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "payee_ref": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "phash": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "ela_score_bp": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 10000
+    }
+  },
+  "required": [
+    "amount_paise"
+  ]
+}

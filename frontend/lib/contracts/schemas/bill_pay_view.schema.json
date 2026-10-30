@@ -1,0 +1,325 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/bill_pay_view.schema.json",
+  "title": "BillPayView",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "bill": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "./common.schema.json#/definitions/PrefixedId"
+        },
+        "status": {
+          "enum": [
+            "open",
+            "parked",
+            "closed",
+            "voided"
+          ]
+        },
+        "patron_id": {
+          "anyOf": [
+            {
+              "$ref": "./common.schema.json#/definitions/PrefixedId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "staff_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "opened_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "closed_at": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "total_paise": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "paid_paise": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "khata_paise": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "due_paise": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "lines": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "$ref": "./common.schema.json#/definitions/PrefixedId"
+              },
+              "item_id": {
+                "$ref": "./common.schema.json#/definitions/PrefixedId"
+              },
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "qty_milli": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "unit_price_paise": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "amount_paise": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "added_via": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "modifier_ids": {
+                "type": "array",
+                "items": {
+                  "$ref": "./common.schema.json#/definitions/PrefixedId"
+                }
+              },
+              "price_override": {
+                "type": "boolean"
+              },
+              "batch_id": {
+                "anyOf": [
+                  {
+                    "$ref": "./common.schema.json#/definitions/PrefixedId"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "item_id",
+              "name",
+              "qty_milli",
+              "unit_price_paise",
+              "amount_paise",
+              "added_via",
+              "modifier_ids",
+              "price_override",
+              "batch_id"
+            ]
+          }
+        },
+        "payments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "mode": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "amount_paise": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "change_paise": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "ref_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "mode",
+              "amount_paise",
+              "change_paise",
+              "ref_id"
+            ]
+          }
+        },
+        "ticket": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "token",
+                "status"
+              ],
+              "properties": {
+                "id": {
+                  "$ref": "./common.schema.json#/definitions/PrefixedId"
+                },
+                "token": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "status": {
+                  "enum": [
+                    "new",
+                    "preparing",
+                    "ready",
+                    "served"
+                  ]
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "upi": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "order_ref",
+                "amount_paise",
+                "status",
+                "expires_at"
+              ],
+              "properties": {
+                "order_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "amount_paise": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "status": {
+                  "enum": [
+                    "waiting",
+                    "pending",
+                    "paid",
+                    "failed",
+                    "expired"
+                  ]
+                },
+                "expires_at": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "status",
+        "patron_id",
+        "staff_id",
+        "opened_at",
+        "closed_at",
+        "total_paise",
+        "paid_paise",
+        "khata_paise",
+        "due_paise",
+        "lines",
+        "payments",
+        "ticket",
+        "upi"
+      ]
+    },
+    "payee_vpa": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "alternatives": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "cash",
+          "khata",
+          "regenerate"
+        ]
+      }
+    },
+    "exception": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "invalidate_on": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    }
+  },
+  "required": [
+    "bill",
+    "payee_vpa",
+    "alternatives",
+    "exception",
+    "invalidate_on"
+  ]
+}

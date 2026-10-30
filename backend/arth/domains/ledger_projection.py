@@ -16,7 +16,8 @@ from arth.domains.ledger_tables import (
     promises,
     reminders,
 )
-from arth.domains.patron_identity import patron_row, related_ids
+from arth.domains.patron_identity import related_ids
+from arth.domains.patron_tables import patrons
 from arth.governance.commands import CommandError
 from arth.governance.repository import Repository
 
@@ -33,8 +34,10 @@ async def account_row(repo: Repository, account_id: str) -> dict[str, Any]:
 
 async def account_ids(repo: Repository, account_id: str) -> list[str]:
     row = await account_row(repo, account_id)
-    patrons = await related_ids(repo, row["patron_id"])
-    return [r["id"] for r in await repo.select(credit_accounts, credit_accounts.c.patron_id.in_(patrons))]
+    if (await repo.select(patrons, patrons.c.id == row["patron_id"]))[0]["erased"]:
+        return [account_id]  # TRU-5: an erased customer's ledger keeps its totals under the opaque ID
+    related = await related_ids(repo, row["patron_id"])
+    return [r["id"] for r in await repo.select(credit_accounts, credit_accounts.c.patron_id.in_(related))]
 
 
 async def entry_status(repo: Repository, entry_id: str) -> str:
@@ -134,7 +137,7 @@ async def account_view(repo: Repository, account_id: str, clock: SimClock) -> di
     row = await account_row(repo, account_id)
     report = await statement(repo, account_id, clock)
     linked = await repo.select(credit_accounts, credit_accounts.c.id.in_(await account_ids(repo, account_id)))
-    patron = await patron_row(repo, row["patron_id"])
+    patron = (await repo.select(patrons, patrons.c.id == row["patron_id"]))[0]
     return {
         **report,
         "patron_id": row["patron_id"],

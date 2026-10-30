@@ -72,6 +72,7 @@ class Dispatcher:
                 last = offsets[0]["last_seq"] if offsets else 0
                 rows = sorted(await repo.select(outbox, outbox.c.seq > last), key=lambda r: r["seq"])
                 for row in rows:
+                    repo.command_id = row["event_id"]  # consumer effects are caused by this event
                     await consumer(repo, json.loads(row["payload"]))
                     last = row["seq"]
                 if not offsets:

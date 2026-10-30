@@ -1,0 +1,114 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/health_view.schema.json",
+  "title": "HealthView",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "device": {
+      "anyOf": [
+        {
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "offline_queue": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "size": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "last_sync_at": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "size",
+        "last_sync_at"
+      ]
+    },
+    "providers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "configured": {
+            "type": "boolean"
+          },
+          "mode": {
+            "enum": [
+              "live",
+              "fallback",
+              "replay",
+              "unknown"
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "configured",
+          "mode"
+        ]
+      }
+    },
+    "ai_spend_today_paise": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "backup": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "last_snapshot_at": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "last_snapshot_at"
+      ]
+    },
+    "invalidate_on": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    }
+  },
+  "required": [
+    "device",
+    "offline_queue",
+    "providers",
+    "ai_spend_today_paise",
+    "backup",
+    "invalidate_on"
+  ]
+}

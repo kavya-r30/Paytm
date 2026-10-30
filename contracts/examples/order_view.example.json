@@ -1,0 +1,36 @@
+{
+  "order": {
+    "id": "order_01JBQ0Z7Y8K3M4N5P6Q7R8S9T0",
+    "status": "draft",
+    "channel": "whatsapp",
+    "patron_id": null,
+    "total_paise": 9000,
+    "created_at": "2026-10-30T04:00:00Z",
+    "lines": [
+      {
+        "id": "oline_01JBQ0Z7Y8K3M4N5P6Q7R8S9T0",
+        "item_id": "item_01JBQ0Z7Y8K3M4N5P6Q7R8S9T0",
+        "text": "2 kilo cheeni",
+        "qty_milli": 2000,
+        "unit_price_paise": 4500,
+        "amount_paise": 9000,
+        "check": false
+      }
+    ]
+  },
+  "history": [],
+  "pick_list": [
+    {
+      "item_id": "item_01JBQ0Z7Y8K3M4N5P6Q7R8S9T0",
+      "name": "Sugar",
+      "qty_milli": 2000
+    }
+  ],
+  "allowed": [
+    "placed",
+    "cancelled"
+  ],
+  "invalidate_on": [
+    "x.changed"
+  ]
+}

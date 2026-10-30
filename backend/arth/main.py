@@ -15,7 +15,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from arth.api import commerce, commerce_core, director, governance, health, stream
+from arth.api import commerce, commerce_core, director, governance, health, stream, views
 from arth.api.problems import install_problem_handlers
 from arth.core.calendar import CalendarIndex, load_calendar
 from arth.core.clock import SimClock
@@ -31,13 +31,9 @@ from arth.core.migrate import upgrade
 from arth.core.packs import PackRegistry
 from arth.core.scheduler import Scheduler, tick_loop
 from arth.core.spans import SpanBus
-from arth.domains.catalog import register_catalog
-from arth.domains.ledger import register_ledger
 from arth.domains.merchants import register_merchants
-from arth.domains.patrons import PatronService
 from arth.domains.security import load_signing_key
-from arth.domains.staff import StaffService
-from arth.domains.stock import register_stock
+from arth.domains.wiring import register_commerce
 from arth.governance.commands import CommandBus
 from arth.governance.events import Dispatcher
 from arth.governance.policy import PolicyEngine
@@ -74,11 +70,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         signing_key = settings.session_signing_key or load_signing_key(
             settings.data_dir / "session-signing.key"
         )
-        app.state.staff = StaffService(app.state.commands, signing_key.get_secret_value())
-        register_catalog(app.state.commands, app.state.packs)
-        register_stock(app.state.commands, app.state.packs)
-        app.state.patrons = PatronService(app.state.commands, signing_key.get_secret_value())
-        register_ledger(app.state.commands)
+        services = register_commerce(app.state.commands, app.state.packs, signing_key.get_secret_value())
+        app.state.staff, app.state.patrons = services.staff, services.patrons
         async with db.read() as conn:
             app.state.commands.merchant_ids = await Repository.merchant_directory(conn)
         app.state.events = Dispatcher(db, clock)
@@ -99,6 +92,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             "statement": {"credit.changed", "credit.reminder_requested", "patron.merged"},
             "promises": {"credit.changed"},
             "payables": {"credit.payable_changed"},
+            **views.VIEW_TOPICS,
         }.items():
             app.state.events.declare_view(name, topics)
         stop = asyncio.Event()
@@ -143,6 +137,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(governance.router)
     app.include_router(commerce.router)
     app.include_router(commerce_core.router)
+    app.include_router(views.router)
     return app
 
 

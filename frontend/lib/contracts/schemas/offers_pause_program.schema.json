@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/offers_pause_program.schema.json",
+  "title": "OffersPauseProgram",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "program_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    }
+  },
+  "required": [
+    "program_id"
+  ]
+}

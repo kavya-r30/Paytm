@@ -1,0 +1,19 @@
+{
+  "gate": {
+    "gate_id": "gate_01JBQ0Z7Y8K3M4N5P6Q7R8S9T0",
+    "thread_id": "thread_01JBQ0Z7Y8K3M4N5P6Q7R8S9T0",
+    "tier": "R3",
+    "type": "supply.place_po",
+    "status": "pending",
+    "expires_at": "2026-10-30T16:00:00Z",
+    "scope": {
+      "type": "supply.place_po",
+      "payload": {}
+    },
+    "conditions": {}
+  },
+  "readback_key": null,
+  "invalidate_on": [
+    "x.changed"
+  ]
+}

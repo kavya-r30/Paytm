@@ -225,11 +225,16 @@ class StaffService:
             )
             if not rows:
                 raise CommandError("shift.not_open")
-            variance = payload["counted_paise"] - rows[0]["expected_paise"]
+            from arth.domains.treasury import shift_cash
+
+            now = iso_utc(bus.clock.now())
+            expected = await shift_cash(repo, rows[0], now)  # STF-3: float + cash in − cash out
+            variance = payload["counted_paise"] - expected
             await repo.update(
                 shifts,
                 {
-                    "closed_at": iso_utc(bus.clock.now()),
+                    "closed_at": now,
+                    "expected_paise": expected,
                     "counted_paise": payload["counted_paise"],
                     "variance_paise": variance,
                 },
@@ -241,6 +246,7 @@ class StaffService:
             return {
                 "shift_id": payload["shift_id"],
                 "staff_id": repo.session.actor_id,
+                "expected_paise": expected,
                 "variance_paise": variance,
             }
 

@@ -1,0 +1,12 @@
+{
+  "po_id": "po_01JBQ0Z7Y8K3M4N5P6Q7R8S9T0",
+  "bill_ref": "INV-881",
+  "lines": [
+    {
+      "item_id": "item_01JBQ0Z7Y8K3M4N5P6Q7R8S9T0",
+      "qty_milli": 50000,
+      "unit_price_paise": 4600
+    }
+  ],
+  "due_on": "2026-11-15"
+}
