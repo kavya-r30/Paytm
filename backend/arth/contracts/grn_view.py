@@ -48,6 +48,7 @@ class Variance(BaseModel):
     expected: int
     actual: int
     delta_paise: int
+    name: str
 
 
 class GrnView(BaseModel):
@@ -63,3 +64,4 @@ class GrnView(BaseModel):
     variances: list[Variance]
     claim_id: constr(pattern=r'^[a-z][a-z0-9]{1,9}_[0-9A-HJKMNP-TV-Z]{26}$') | None
     invalidate_on: list[constr(min_length=1, max_length=200)]
+    supplier_name: str

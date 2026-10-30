@@ -10,6 +10,7 @@ export interface ParkView {
     total_paise: number;
     lines: number;
     opened_at: string;
+    patron_name: string | null;
   }[];
   invalidate_on: string[];
 }

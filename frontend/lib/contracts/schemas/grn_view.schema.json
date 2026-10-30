@@ -87,6 +87,9 @@
           },
           "delta_paise": {
             "type": "integer"
+          },
+          "name": {
+            "type": "string"
           }
         },
         "required": [
@@ -94,7 +97,8 @@
           "kind",
           "expected",
           "actual",
-          "delta_paise"
+          "delta_paise",
+          "name"
         ]
       }
     },
@@ -115,6 +119,9 @@
         "minLength": 1,
         "maxLength": 200
       }
+    },
+    "supplier_name": {
+      "type": "string"
     }
   },
   "required": [
@@ -123,6 +130,7 @@
     "billed",
     "variances",
     "claim_id",
-    "invalidate_on"
+    "invalidate_on",
+    "supplier_name"
   ]
 }

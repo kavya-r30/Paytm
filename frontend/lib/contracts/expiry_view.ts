@@ -13,6 +13,8 @@ export interface ExpiryView {
     days_to_expiry: number | null;
     recalled: boolean;
     qty_milli: number;
+    name: string;
+    batch_no: string;
   }[];
   invalidate_on: string[];
 }

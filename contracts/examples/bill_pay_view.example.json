@@ -26,7 +26,8 @@
     ],
     "payments": [],
     "ticket": null,
-    "upi": null
+    "upi": null,
+    "patron": null
   },
   "payee_vpa": "shop@paytm",
   "alternatives": [

@@ -14,10 +14,12 @@
       "kind": "price",
       "expected": 4500,
       "actual": 4600,
-      "delta_paise": 5000
+      "delta_paise": 5000,
+      "name": "Sugar"
     }
   ],
   "invalidate_on": [
     "x.changed"
-  ]
+  ],
+  "supplier_name": "Agarwal Traders"
 }

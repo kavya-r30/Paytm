@@ -270,3 +270,16 @@ def test_sim_and_director_endpoints(tmp_path):
         assert client.get("/v1/views/appointments", headers=auth).status_code == 200
         clock = client.post("/v1/director/clock", json={"advance_minutes": 30}, headers=director)
         assert clock.status_code == 200
+        presenter = client.post(
+            "/v1/director/session", json={"merchant_id": mid, "surface": "console"}, headers=director
+        )
+        assert presenter.status_code == 200, presenter.text
+        assert (
+            client.get(
+                "/v1/views/home", headers={"Authorization": "Bearer " + presenter.json()["token"]}
+            ).status_code
+            == 200
+        )
+        recent = client.get("/v1/views/customers/search", headers=auth).json()
+        assert recent["recent"] and recent["customers"] == []
+        assert client.post("/v1/director/session", json={"merchant_id": mid}).status_code == 401

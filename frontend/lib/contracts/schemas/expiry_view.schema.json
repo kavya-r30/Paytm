@@ -32,6 +32,12 @@
           },
           "qty_milli": {
             "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "batch_no": {
+            "type": "string"
           }
         },
         "required": [
@@ -39,7 +45,9 @@
           "item_id",
           "days_to_expiry",
           "recalled",
-          "qty_milli"
+          "qty_milli",
+          "name",
+          "batch_no"
         ]
       }
     },

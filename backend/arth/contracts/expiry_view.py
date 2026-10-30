@@ -20,6 +20,8 @@ class Batch(BaseModel):
     days_to_expiry: int | None
     recalled: bool
     qty_milli: int
+    name: str
+    batch_no: str
 
 
 class ExpiryView(BaseModel):

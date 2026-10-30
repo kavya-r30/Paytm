@@ -39,6 +39,7 @@ class Po(BaseModel):
     due_on: date | None
     created_at: AwareDatetime
     lines: list[Line]
+    supplier_name: str
 
 
 class PriceHistoryItem(BaseModel):

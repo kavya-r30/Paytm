@@ -25,6 +25,7 @@ export interface PoView {
       amount_paise: number;
       last_price_paise: number | null;
     }[];
+    supplier_name: string;
   };
   price_history: {
     /**

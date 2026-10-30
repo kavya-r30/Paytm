@@ -23,6 +23,11 @@ class NeedsYouItem(BaseModel):
     type: constr(min_length=1, max_length=200)
     status: constr(min_length=1, max_length=200)
     expires_at: AwareDatetime
+    title_key: constr(pattern=r'^[a-z0-9_]+(\.[a-z0-9_]+)+$', min_length=1) = Field(
+        ...,
+        description='An i18n message key: two or more dot-separated segments, e.g. chip.aaj_kitna_aaya.',
+    )
+    summary_params: dict[str, str | int | None]
 
 
 class DoneItem(BaseModel):
@@ -55,6 +60,11 @@ class SnoozedItem(BaseModel):
     type: constr(min_length=1, max_length=200)
     status: constr(min_length=1, max_length=200)
     expires_at: AwareDatetime
+    title_key: constr(pattern=r'^[a-z0-9_]+(\.[a-z0-9_]+)+$', min_length=1) = Field(
+        ...,
+        description='An i18n message key: two or more dot-separated segments, e.g. chip.aaj_kitna_aaya.',
+    )
+    summary_params: dict[str, str | int | None]
 
 
 class NotificationsView(BaseModel):

@@ -27,6 +27,11 @@ class Gate(BaseModel):
     expires_at: AwareDatetime
     scope: dict[str, Any]
     conditions: dict[str, Any]
+    title_key: constr(pattern=r'^[a-z0-9_]+(\.[a-z0-9_]+)+$', min_length=1) = Field(
+        ...,
+        description='An i18n message key: two or more dot-separated segments, e.g. chip.aaj_kitna_aaya.',
+    )
+    summary_params: dict[str, str | int | None]
 
 
 class GateView(BaseModel):

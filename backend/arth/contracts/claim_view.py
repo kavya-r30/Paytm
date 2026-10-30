@@ -46,6 +46,7 @@ class Variance(BaseModel):
     expected: int
     actual: int
     delta_paise: int
+    name: str
 
 
 class ClaimView(BaseModel):
@@ -55,3 +56,4 @@ class ClaimView(BaseModel):
     claim: Claim
     variances: list[Variance]
     invalidate_on: list[constr(min_length=1, max_length=200)]
+    supplier_name: str

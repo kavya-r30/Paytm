@@ -90,6 +90,16 @@
               "check"
             ]
           }
+        },
+        "patron_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [
@@ -99,7 +109,8 @@
         "patron_id",
         "total_paise",
         "created_at",
-        "lines"
+        "lines",
+        "patron_name"
       ]
     },
     "history": {

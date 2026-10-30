@@ -23,7 +23,12 @@
       "tier": "R3",
       "type": "supply.place_po",
       "status": "pending",
-      "expires_at": "2026-10-30T16:00:00Z"
+      "expires_at": "2026-10-30T16:00:00Z",
+      "title_key": "gate.supply_place_po",
+      "summary_params": {
+        "supplier": "Agarwal Traders",
+        "amount_paise": 225000
+      }
     }
   ],
   "brief": null,

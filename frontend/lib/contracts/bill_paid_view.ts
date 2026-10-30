@@ -53,6 +53,16 @@ export interface BillPaidView {
       status: "waiting" | "pending" | "paid" | "failed" | "expired";
       expires_at: string;
     } | null;
+    patron: {
+      /**
+       * A ULID prefixed by its kind, e.g. bill_01JBQ0Z7Y8K3M4N5P6Q7R8S9T1 (spec Part C1).
+       */
+      id: string;
+      display_name: string;
+      lang: string;
+      khata_balance_paise: number | null;
+      reward_stamps: number;
+    } | null;
   };
   invoice: {
     [k: string]: unknown;

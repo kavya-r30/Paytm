@@ -10,7 +10,11 @@
       "type": "supply.place_po",
       "payload": {}
     },
-    "conditions": {}
+    "conditions": {},
+    "title_key": "gate.supply_place_po",
+    "summary_params": {
+      "supplier": "Agarwal Traders"
+    }
   },
   "readback_key": null,
   "invalidate_on": [

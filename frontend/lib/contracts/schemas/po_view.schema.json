@@ -86,6 +86,9 @@
               "last_price_paise"
             ]
           }
+        },
+        "supplier_name": {
+          "type": "string"
         }
       },
       "required": [
@@ -95,7 +98,8 @@
         "total_paise",
         "due_on",
         "created_at",
-        "lines"
+        "lines",
+        "supplier_name"
       ]
     },
     "price_history": {
