@@ -3,6 +3,7 @@
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, Header, Query, Request
+from pydantic import BaseModel, Field
 
 from arth.api.auth import require_token
 from arth.api.governance import require_session
@@ -120,3 +121,17 @@ async def item_view(request: Request, item_id: str, session: Actor) -> dict[str,
             **await get_item(Repository(conn, session.merchant_id), item_id),
             "invalidate_on": CATALOG_EVENTS,
         }
+
+
+class StepUp(BaseModel):
+    otp: str = Field(min_length=4, max_length=8)
+
+
+@router.post("/v1/auth/step-up")
+async def step_up(request: Request, body: StepUp, session: Actor) -> dict[str, Any]:
+    """CON-OTP (simulated): the owner's Console session confirms an OTP to unlock R4 for 10 minutes."""
+    try:
+        until = request.app.state.staff.step_up(session, body.otp)
+    except CommandError as exc:
+        raise ProblemError(403, str(exc), "error." + str(exc), title="Step-up refused") from exc
+    return {"step_up_until": until}

@@ -39,6 +39,7 @@ async def turn(
     result: dict[str, Any] = await state.conductor.handle(
         session, text, body.surface.value, bill_id=body.bill_id, key=idempotency_key
     )
+    state.events.publish(session.merchant_id, {"type": "envelope", "event_id": result["turn_id"], **result})
     return result
 
 

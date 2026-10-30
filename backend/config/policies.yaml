@@ -105,6 +105,10 @@ tiers:
   agents.pause: R1
   playbooks.start: R1
   playbooks.cancel: R1
+  growth.create_plan: R3
+  growth.stop_campaign: R1
+  hints.accept: R1
+  preorders.create: R2
   outreach.send_campaign: R3
   offers.create_program: R3
   offers.pause_program: R1

@@ -570,6 +570,33 @@ class Simulators:
                         "created_at": now,
                     },
                 )
+        elif topic == "growth.outreach_requested":
+            thread = await self._thread_for(repo, patron_id=payload["patron_id"])
+            if thread and not await repo.select(sim_messages, sim_messages.c.source_ref == event["event_id"]):
+                since = iso_utc(self.clock.now() - timedelta(days=7))
+                recent = [
+                    m
+                    for m in await repo.select(
+                        sim_messages,
+                        sim_messages.c.thread_id == thread["id"],
+                        sim_messages.c.category == "marketing",
+                    )
+                    if m["direction"] == "out" and m["created_at"] > since
+                ]
+                if len(recent) < MARKETING_CAP_PER_WEEK:  # the network enforces its own marketing cap too
+                    await repo.insert(
+                        sim_messages,
+                        {
+                            "id": new_id("msg"),
+                            "thread_id": thread["id"],
+                            "direction": "out",
+                            "category": "marketing",
+                            "kind": "template",
+                            "body": json.dumps({"template": payload["template"]}),
+                            "source_ref": event["event_id"],
+                            "created_at": now,
+                        },
+                    )
         elif topic == "message.out":
             if not await repo.select(sim_messages, sim_messages.c.source_ref == event["event_id"]):
                 await repo.insert(

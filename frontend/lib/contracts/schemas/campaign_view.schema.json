@@ -1,0 +1,81 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/campaign_view.schema.json",
+  "title": "CampaignView",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "campaign": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "./common.schema.json#/definitions/PrefixedId"
+        },
+        "plan_id": {
+          "$ref": "./common.schema.json#/definitions/PrefixedId"
+        },
+        "lever": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "status": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "stop_reason": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "treated": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "holdout": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sent": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "result": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "plan_id",
+        "lever",
+        "status",
+        "stop_reason",
+        "treated",
+        "holdout",
+        "sent",
+        "result"
+      ]
+    },
+    "invalidate_on": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    }
+  },
+  "required": [
+    "campaign",
+    "invalidate_on"
+  ]
+}
