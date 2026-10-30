@@ -1,0 +1,14 @@
+{
+  "bills": [
+    {
+      "id": "bill_01JBQ0Z7Y8K3M4N5P6Q7R8S9T0",
+      "patron_id": null,
+      "total_paise": 9000,
+      "lines": 1,
+      "opened_at": "2026-10-30T04:00:00Z"
+    }
+  ],
+  "invalidate_on": [
+    "x.changed"
+  ]
+}

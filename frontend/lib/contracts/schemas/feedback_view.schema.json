@@ -1,0 +1,90 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/feedback_view.schema.json",
+  "title": "FeedbackView",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "average_bp": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "ratings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "target_kind": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "target_id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "rating": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "complaint_key": {
+            "anyOf": [
+              {
+                "$ref": "./common.schema.json#/definitions/MessageKey"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "target_kind",
+          "target_id",
+          "rating",
+          "complaint_key",
+          "occurred_at"
+        ]
+      }
+    },
+    "complaints": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "invalidate_on": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    }
+  },
+  "required": [
+    "average_bp",
+    "count",
+    "ratings",
+    "complaints",
+    "invalidate_on"
+  ]
+}

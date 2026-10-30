@@ -1,0 +1,29 @@
+pack: cafe
+version: 1
+names: { en: Cafe / tea stall, hi: कैफ़े / चाय की दुकान, hi-Latn: Cafe / chai ki dukaan }
+catalog:
+  schema: menu
+  fields: [price, cost, unit, hsn, gst_rate, category, modifier_groups, recipe]
+  units: [pcs, cup, plate, g, ml]
+  loose_sale: false
+stock: { batches: optional, expiry: optional, bom: true }
+counter: { modes: [tap, voice, search], tickets: true, appointments: false }
+khata: { enabled: true }
+levers:
+  counter_hint: { min_habit_share: 0.6 }
+  winback: { lapsing_rule: default }
+  repeat_order: {}
+  demand_capture: {}
+  bundle_preorder: { margin_floor: 0.2 }
+  welcome: { coupon_paise: 1000, min_bill_paise: 10000, valid_days: 14 }
+  offers: { types: [next_txn_cashback, instant_cashback, first_time_coupon, payment_count, item_coupon, happy_hour] }
+  slow_hour: {}
+  storefront: {}
+  feedback: {}
+calendar: [diwali, holi, christmas, salary_days]
+charts: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+policies: { margin_floor: 0.2 }
+templates: templates/
+generator: generator.yaml
+peer_cohort: cafe_by_city_tier_and_size
+scenarios: [cafe_morning_rush, cafe_slow_afternoons]

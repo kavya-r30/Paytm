@@ -26,6 +26,14 @@ async def on_hand(
     return sum(row["delta_qty_milli"] for row in await repo.select(stock_moves, *where))
 
 
+async def stock_tracked(repo: Repository, item_id: str) -> bool:
+    """An item is stock-tracked once it has any move or batch; untracked items are sold without issue."""
+    return bool(
+        await repo.select(stock_moves, stock_moves.c.item_id == item_id)
+        or await repo.select(batches, batches.c.item_id == item_id)
+    )
+
+
 async def _move(
     repo: Repository,
     clock: SimClock,
@@ -110,6 +118,44 @@ async def issue_stock(
     return result
 
 
+async def receive_stock(
+    repo: Repository,
+    clock: SimClock,
+    pack: Any,
+    item_id: str,
+    qty_milli: int,
+    batch: dict[str, Any] | None,
+) -> dict[str, Any]:
+    """Transaction-local receipt (stock.receive and Supply GRN); the pack decides batch/expiry rules."""
+    if pack.stock.batches == "required" and not batch:
+        raise CommandError("stock.batch_required")
+    if batch and pack.stock.batches == "off":
+        raise CommandError("stock.batches_disabled")
+    if pack.stock.expiry == "required" and (not batch or not batch.get("expires_on")):
+        raise CommandError("stock.expiry_required")
+    batch_id = None
+    if batch:
+        existing = await repo.select(
+            batches, batches.c.item_id == item_id, batches.c.batch_no == batch["batch_no"]
+        )
+        if existing:
+            row = existing[0]
+            if row["recalled"] or any(
+                row[key] != batch.get(key) for key in ("expires_on", "mrp_paise", "cost_paise")
+            ):
+                raise CommandError("stock.batch_conflict")
+            batch_id = row["id"]
+        else:
+            batch_id = new_id("batch")
+            await repo.insert(
+                batches, {"id": batch_id, "item_id": item_id, "received_at": iso_utc(clock.now()), **batch}
+            )
+    assert repo.session is not None and repo.command_id is not None
+    await _move(repo, clock, item_id, batch_id, qty_milli, "stock.receipt", repo.command_id)
+    await emit_event(repo, clock, repo.session, "stock.changed", repo.command_id, {"item_id": item_id})
+    return {"batch_id": batch_id, "qty_milli": qty_milli}
+
+
 async def stock_view(repo: Repository, clock: SimClock) -> dict[str, Any]:
     today = clock.now_ist().date().isoformat()
     result = []
@@ -164,48 +210,9 @@ def register_stock(bus: CommandBus, packs: PackRegistry) -> None:
 
     async def receive(repo: Repository, payload: dict[str, Any]) -> dict[str, Any]:
         _, pack = await checked(repo, payload)
-        batch = payload.get("batch")
-        if pack.stock.batches == "required" and not batch:
-            raise CommandError("stock.batch_required")
-        if batch and pack.stock.batches == "off":
-            raise CommandError("stock.batches_disabled")
-        if pack.stock.expiry == "required" and (not batch or not batch.get("expires_on")):
-            raise CommandError("stock.expiry_required")
-        batch_id = None
-        if batch:
-            existing = await repo.select(
-                batches, batches.c.item_id == payload["item_id"], batches.c.batch_no == batch["batch_no"]
-            )
-            if existing:
-                row = existing[0]
-                if row["recalled"] or any(
-                    row[key] != batch.get(key) for key in ("expires_on", "mrp_paise", "cost_paise")
-                ):
-                    raise CommandError("stock.batch_conflict")
-                batch_id = row["id"]
-            else:
-                batch_id = new_id("batch")
-                await repo.insert(
-                    batches,
-                    {
-                        "id": batch_id,
-                        "item_id": payload["item_id"],
-                        "received_at": iso_utc(bus.clock.now()),
-                        **batch,
-                    },
-                )
-        assert repo.command_id is not None
-        await _move(
-            repo,
-            bus.clock,
-            payload["item_id"],
-            batch_id,
-            payload["qty_milli"],
-            "stock.receipt",
-            repo.command_id,
+        return await receive_stock(
+            repo, bus.clock, pack, payload["item_id"], payload["qty_milli"], payload.get("batch")
         )
-        await domain_event(bus, repo, "stock.changed", {"item_id": payload["item_id"]})
-        return {"batch_id": batch_id, "qty_milli": payload["qty_milli"]}
 
     async def correction(repo: Repository, payload: dict[str, Any], count: bool) -> dict[str, Any]:
         _, pack = await checked(repo, payload)

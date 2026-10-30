@@ -1,0 +1,91 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/kot_view.schema.json",
+  "title": "KotView",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "tickets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "bill_id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "token": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "status": {
+            "enum": [
+              "new",
+              "preparing",
+              "ready",
+              "served"
+            ]
+          },
+          "age_seconds": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 200
+                },
+                "qty_milli": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "modifiers": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200
+                  }
+                }
+              },
+              "required": [
+                "name",
+                "qty_milli",
+                "modifiers"
+              ]
+            }
+          }
+        },
+        "required": [
+          "id",
+          "bill_id",
+          "token",
+          "status",
+          "age_seconds",
+          "items"
+        ]
+      }
+    },
+    "invalidate_on": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    }
+  },
+  "required": [
+    "tickets",
+    "invalidate_on"
+  ]
+}

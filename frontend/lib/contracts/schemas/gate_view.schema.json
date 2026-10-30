@@ -1,0 +1,77 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/gate_view.schema.json",
+  "title": "GateView",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "gate_id": {
+          "$ref": "./common.schema.json#/definitions/PrefixedId"
+        },
+        "thread_id": {
+          "$ref": "./common.schema.json#/definitions/PrefixedId"
+        },
+        "tier": {
+          "$ref": "./common.schema.json#/definitions/Tier"
+        },
+        "type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "status": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "scope": {
+          "type": "object"
+        },
+        "conditions": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "gate_id",
+        "thread_id",
+        "tier",
+        "type",
+        "status",
+        "expires_at",
+        "scope",
+        "conditions"
+      ]
+    },
+    "readback_key": {
+      "anyOf": [
+        {
+          "$ref": "./common.schema.json#/definitions/MessageKey"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "invalidate_on": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    }
+  },
+  "required": [
+    "gate",
+    "readback_key",
+    "invalidate_on"
+  ]
+}

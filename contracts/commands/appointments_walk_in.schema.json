@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/appointments_walk_in.schema.json",
+  "title": "AppointmentsWalkIn",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "service_item_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "patron_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    }
+  },
+  "required": [
+    "service_item_id"
+  ]
+}

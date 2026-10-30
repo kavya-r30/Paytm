@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/treasury_refund.schema.json",
+  "title": "TreasuryRefund",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "payment_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "amount_paise": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "reason_key": {
+      "$ref": "../common.schema.json#/definitions/MessageKey"
+    }
+  },
+  "required": [
+    "payment_id",
+    "amount_paise",
+    "reason_key"
+  ]
+}

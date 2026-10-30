@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/appointments_transition.schema.json",
+  "title": "AppointmentsTransition",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "appointment_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "to": {
+      "enum": [
+        "checked_in",
+        "completed",
+        "no_show",
+        "cancelled"
+      ]
+    }
+  },
+  "required": [
+    "appointment_id",
+    "to"
+  ]
+}

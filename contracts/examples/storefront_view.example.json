@@ -1,0 +1,10 @@
+{
+  "slug": "gupta-kirana",
+  "published": true,
+  "show_offers": true,
+  "items": 3,
+  "url": "/s/gupta-kirana",
+  "invalidate_on": [
+    "x.changed"
+  ]
+}

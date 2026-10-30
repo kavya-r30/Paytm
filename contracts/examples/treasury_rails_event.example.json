@@ -1,0 +1,7 @@
+{
+  "status": "success",
+  "utr": "430112345678",
+  "amount_paise": 9000,
+  "mode": "upi_qr",
+  "order_ref": "ord-1"
+}

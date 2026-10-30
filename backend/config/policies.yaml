@@ -43,10 +43,62 @@ tiers:
   catalog.change_price: R2
   catalog.bulk_price: R4
   counter.add_lines: R1
+  counter.open_bill: R1
+  counter.set_qty: R1
+  counter.remove_line: R1
+  counter.undo: R1
+  counter.attach_patron: R1
+  counter.park: R1
+  counter.resume: R1
+  counter.request_upi: R1
+  counter.checkout: R1
+  counter.checkout_khata: R2
+  counter.void_bill: R1
+  counter.return: R2
+  counter.send_to_kitchen: R1
+  counter.advance_ticket: R1
+  treasury.rails_event: R1
+  treasury.match_bill: R1
+  treasury.match_khata: R2
+  treasury.expense: R2
+  treasury.record_settlement: R1
+  treasury.daily_close: R1
+  treasury.resolve_exception: R2
   ledger.add_entry: R2
   supply.place_po: R3
+  orders.create_draft: R1
+  orders.place: R1
+  orders.accept: R3
+  orders.decline: R3
+  orders.substitute: R3
+  orders.advance: R1
+  orders.settle: R2
+  appointments.book: R1
+  appointments.walk_in: R1
+  appointments.assign: R1
+  appointments.transition: R1
+  staff.set_skills: R1
+  supply.add_supplier: R1
+  supply.record_quote: R1
+  supply.draft_po: R1
+  supply.confirm_po: R1
+  supply.cancel_po: R1
+  supply.receive: R1
+  supply.record_bill: R2
+  supply.send_claim: R3
+  storefront.publish: R1
+  feedback.record: R1
+  privacy.export_patron: R1
+  privacy.set_data_sharing: R2
+  device.report_health: R1
+  capital.record_offer: R1
+  sentinel.check: R1
   outreach.send_campaign: R3
   offers.create_program: R3
+  offers.pause_program: R1
+  offers.exclude_payers: R1
+  offers.expire_due: R1
+  books.close_month: R1
   treasury.refund: R4
   capital.apply: R4
   privacy.erase_patron: R4

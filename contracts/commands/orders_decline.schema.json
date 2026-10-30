@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/orders_decline.schema.json",
+  "title": "OrdersDecline",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "order_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "reason_key": {
+      "$ref": "../common.schema.json#/definitions/MessageKey"
+    }
+  },
+  "required": [
+    "order_id",
+    "reason_key"
+  ]
+}

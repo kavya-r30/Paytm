@@ -1,0 +1,108 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/events/offer_cashback_requested.schema.json",
+  "title": "OfferCashbackRequested",
+  "description": "Event Spine topic offer.cashback_requested (spec Part C5).",
+  "type": "object",
+  "required": [
+    "event_id",
+    "type",
+    "merchant_id",
+    "occurred_at",
+    "actor",
+    "causation_id",
+    "payload"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "event_id": {
+      "type": "string",
+      "pattern": "^evt_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "type": {
+      "const": "offer.cashback_requested"
+    },
+    "merchant_id": {
+      "$ref": "../common.schema.json#/definitions/NonEmptyString"
+    },
+    "occurred_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "actor": {
+      "$ref": "#/definitions/Actor"
+    },
+    "causation_id": {
+      "anyOf": [
+        {
+          "$ref": "../common.schema.json#/definitions/PrefixedId"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Id of the command or event that caused this event; null means a root event with no cause (e.g. a clock tick)."
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "issuance_id": {
+          "$ref": "../common.schema.json#/definitions/PrefixedId"
+        },
+        "payment_id": {
+          "$ref": "../common.schema.json#/definitions/PrefixedId"
+        },
+        "amount_paise": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "funding": {
+          "enum": [
+            "merchant",
+            "platform"
+          ]
+        }
+      },
+      "required": [
+        "issuance_id",
+        "payment_id",
+        "amount_paise",
+        "funding"
+      ]
+    }
+  },
+  "definitions": {
+    "Actor": {
+      "type": "object",
+      "required": [
+        "kind"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "owner",
+            "staff",
+            "customer",
+            "supplier",
+            "agent",
+            "system",
+            "simulator"
+          ]
+        },
+        "id": {
+          "anyOf": [
+            {
+              "$ref": "../common.schema.json#/definitions/NonEmptyString"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

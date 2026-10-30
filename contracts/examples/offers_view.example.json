@@ -1,0 +1,36 @@
+{
+  "programs": [
+    {
+      "id": "program_01JBQ0Z7Y8K3M4N5P6Q7R8S9T0",
+      "type": "next_txn_cashback",
+      "status": "active",
+      "funding": "merchant",
+      "terms": {
+        "amount_paise": 2500,
+        "min_spend_paise": 50000,
+        "expiry_days": 14
+      },
+      "budget_paise": 500000,
+      "spent_paise": 0,
+      "liability": {
+        "issued_paise": 0,
+        "redeemed_paise": 0,
+        "expired_paise": 0,
+        "outstanding_paise": 0
+      },
+      "treated": 0,
+      "holdout": 0,
+      "issued": 0,
+      "valid_until": "2026-11-30T00:00:00Z"
+    }
+  ],
+  "liability": {
+    "issued_paise": 0,
+    "redeemed_paise": 0,
+    "expired_paise": 0,
+    "outstanding_paise": 0
+  },
+  "invalidate_on": [
+    "x.changed"
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/supply_record_bill.schema.json",
+  "title": "SupplyRecordBill",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "po_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "bill_ref": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "lines": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "item_id": {
+            "$ref": "../common.schema.json#/definitions/PrefixedId"
+          },
+          "qty_milli": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "unit_price_paise": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "item_id",
+          "qty_milli",
+          "unit_price_paise"
+        ]
+      },
+      "minItems": 1,
+      "maxItems": 100
+    },
+    "due_on": {
+      "type": "string",
+      "format": "date"
+    }
+  },
+  "required": [
+    "po_id",
+    "bill_ref",
+    "lines",
+    "due_on"
+  ]
+}

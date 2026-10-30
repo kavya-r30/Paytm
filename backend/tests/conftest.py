@@ -15,3 +15,12 @@ async def db(tmp_path: Path) -> AsyncIterator[Database]:
     await database.open()
     yield database
     await database.close()
+
+
+def seed_repo(conn, merchant_id):
+    """Trusted test seeding: domain writes otherwise require an executing bus command."""
+    from arth.governance.repository import Repository
+
+    repo = Repository(conn, merchant_id)
+    repo.command_id = "cmd_fixture"
+    return repo
