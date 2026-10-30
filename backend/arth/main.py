@@ -11,14 +11,17 @@ import asyncio
 import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from datetime import timedelta
+from typing import Any
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import select
 
-from arth.api import commerce, commerce_core, director, governance, health, sim, stream, views
+from arth.api import commerce, commerce_core, director, governance, health, intel, sim, stream, views
 from arth.api.problems import install_problem_handlers
 from arth.core.calendar import CalendarIndex, load_calendar
-from arth.core.clock import SimClock
+from arth.core.clock import SimClock, iso_utc
 from arth.core.config import (
     Settings,
     check_auth_tokens,
@@ -27,17 +30,20 @@ from arth.core.config import (
     load_providers,
 )
 from arth.core.db import Database
+from arth.core.ids import new_id
 from arth.core.migrate import upgrade
 from arth.core.packs import PackRegistry
 from arth.core.scheduler import Scheduler, tick_loop
 from arth.core.spans import SpanBus
+from arth.core.tables import jobs
 from arth.domains.merchants import register_merchants
 from arth.domains.security import load_signing_key
 from arth.domains.wiring import register_commerce
 from arth.governance.commands import CommandBus
 from arth.governance.events import Dispatcher
-from arth.governance.policy import PolicyEngine
+from arth.governance.policy import PolicyEngine, Session
 from arth.governance.repository import Repository
+from arth.intel.commands import register_intel
 from arth.sim import peers
 from arth.sim.hub import Simulators
 from arth.sim.personas import PersonaEngine
@@ -80,6 +86,21 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         app.state.events = Dispatcher(db, clock)
         app.state.sim = Simulators(app.state.commands, app.state.events, signing_key.get_secret_value())
         app.state.personas = PersonaEngine()
+        register_intel(app.state.commands, app.state.calendar)
+
+        async def hourly_alerts(job: Any) -> None:
+            stamp = iso_utc(clock.now())[:13]
+            for merchant_id in sorted(app.state.commands.merchant_ids):
+                actor = Session(merchant_id, new_id("system"), "system", actor_kind="system")
+                await app.state.commands.submit(actor, "alerts.scan", {}, f"alerts-{stamp}")
+
+        scheduler.on("intel.hourly", hourly_alerts)
+        async with db.read() as conn:
+            pending = await conn.execute(
+                select(jobs.c.id).where(jobs.c.name == "intel.hourly", jobs.c.status == "pending")
+            )
+            if not pending.first():
+                await scheduler.schedule("intel.hourly", clock.now() + timedelta(hours=1), every_seconds=3600)
         async with db.write() as conn:
             await peers.generate(conn)
         app.state.events.declare_view("trust", {"command.executed", "approval.decided"})
@@ -146,6 +167,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(commerce_core.router)
     app.include_router(views.router)
     app.include_router(sim.router)
+    app.include_router(intel.router)
     return app
 
 

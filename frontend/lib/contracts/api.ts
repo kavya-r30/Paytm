@@ -177,22 +177,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/views/forecast": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["getForecastView"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/v1/views/notifications": {
         parameters: {
             query?: never;
@@ -1067,6 +1051,86 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["directorSession"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/views/forecast": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getForecastView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/views/insights": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getInsightsView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/analytics/{tool}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getAnalytics"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/charts/{number}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getChart"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/books/export/{kind}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getBooksExport"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -2583,6 +2647,95 @@ export interface components {
             /** Format: date-time */
             expires_at: string;
         };
+        /** ForecastView */
+        "forecast_view.schema": {
+            /** @enum {unknown} */
+            metric: "sales" | "items";
+            /** @enum {unknown} */
+            status: "ready" | "needs_more_data";
+            actuals: {
+                /** Format: date */
+                date: string;
+                sales_paise: number;
+            }[];
+            days: {
+                /** Format: date */
+                date: string;
+                p10_paise: number;
+                p50_paise: number;
+                p90_paise: number;
+                festive: boolean;
+            }[];
+            accuracy: {
+                wape_bp: number | null;
+                coverage_bp: number | null;
+                window_days: number;
+                within_band: number;
+            };
+            drivers: {
+                key: components["schemas"]["MessageKey"];
+                contribution_paise: number;
+            }[];
+            items: {
+                item_id: components["schemas"]["PrefixedId"];
+                name: string;
+                daily_qty_milli: number;
+                horizon_qty_milli: number;
+            }[];
+            invalidate_on: string[];
+        };
+        /** InsightsView */
+        "insights_view.schema": {
+            sufficiency: {
+                feature: string;
+                /** @enum {unknown} */
+                status: "ready" | "learning";
+                days_of_history: number;
+                days_needed: number;
+                bills: number;
+                bills_needed: number;
+                reason_key: components["schemas"]["MessageKey"];
+            }[];
+            alerts: {
+                id: components["schemas"]["PrefixedId"];
+                key: string;
+                kind: string;
+                severity: string;
+                params: Record<string, never>;
+                /** Format: date-time */
+                raised_at: string;
+            }[];
+            actions: {
+                proactive: Record<string, never>[];
+                queued: Record<string, never>[];
+                snoozed: string[];
+            };
+            lifecycle: {
+                [key: string]: number;
+            };
+            demand_clusters: {
+                label: string;
+                count: number;
+                demand_ids: components["schemas"]["PrefixedId"][];
+            }[];
+            invalidate_on: string[];
+        };
+        /** ChartCard */
+        "chart_card.schema": {
+            /** @enum {unknown} */
+            type: "chart";
+            chart_no: number;
+            kind: string;
+            title_key: components["schemas"]["MessageKey"];
+            x: Record<string, never>;
+            series: Record<string, never>[];
+            data: Record<string, never>[];
+            data_ref: string;
+            /** Format: date-time */
+            as_of: string;
+            takeaway: Record<string, never>;
+            invalidate_on: string[];
+        };
         /**
          * @description UI (screen) locale.
          * @enum {string}
@@ -3184,30 +3337,6 @@ export interface operations {
         parameters: {
             query?: {
                 session?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Scoped merchant read model */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["layer_pending_view.schema"];
-                };
-            };
-            401: components["responses"]["Problem"];
-            409: components["responses"]["Problem"];
-        };
-    };
-    getForecastView: {
-        parameters: {
-            query?: {
-                metric?: string;
             };
             header?: never;
             path?: never;
@@ -4561,6 +4690,136 @@ export interface operations {
             };
             401: components["responses"]["Problem"];
             409: components["responses"]["Problem"];
+        };
+    };
+    getForecastView: {
+        parameters: {
+            query?: {
+                metric?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["forecast_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            404: components["responses"]["Problem"];
+            422: components["responses"]["Problem"];
+        };
+    };
+    getInsightsView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["insights_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            404: components["responses"]["Problem"];
+            422: components["responses"]["Problem"];
+        };
+    };
+    getAnalytics: {
+        parameters: {
+            query?: {
+                start?: string;
+                end?: string;
+            };
+            header?: never;
+            path: {
+                tool: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": Record<string, never>;
+                };
+            };
+            401: components["responses"]["Problem"];
+            404: components["responses"]["Problem"];
+            422: components["responses"]["Problem"];
+        };
+    };
+    getChart: {
+        parameters: {
+            query?: {
+                format?: string;
+            };
+            header?: never;
+            path: {
+                number: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["chart_card.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            404: components["responses"]["Problem"];
+            422: components["responses"]["Problem"];
+        };
+    };
+    getBooksExport: {
+        parameters: {
+            query?: {
+                month?: string;
+            };
+            header?: never;
+            path: {
+                kind: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": Record<string, never>;
+                };
+            };
+            401: components["responses"]["Problem"];
+            404: components["responses"]["Problem"];
+            422: components["responses"]["Problem"];
         };
     };
     patronsadd: {

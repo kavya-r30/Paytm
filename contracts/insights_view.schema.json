@@ -1,0 +1,181 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/insights_view.schema.json",
+  "title": "InsightsView",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sufficiency": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "feature": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "status": {
+            "enum": [
+              "ready",
+              "learning"
+            ]
+          },
+          "days_of_history": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "days_needed": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "bills": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "bills_needed": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "reason_key": {
+            "$ref": "./common.schema.json#/definitions/MessageKey"
+          }
+        },
+        "required": [
+          "feature",
+          "status",
+          "days_of_history",
+          "days_needed",
+          "bills",
+          "bills_needed",
+          "reason_key"
+        ]
+      }
+    },
+    "alerts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "key": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "kind": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "severity": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "params": {
+            "type": "object"
+          },
+          "raised_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "key",
+          "kind",
+          "severity",
+          "params",
+          "raised_at"
+        ]
+      }
+    },
+    "actions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "proactive": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "queued": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "snoozed": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        }
+      },
+      "required": [
+        "proactive",
+        "queued",
+        "snoozed"
+      ]
+    },
+    "lifecycle": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer"
+      }
+    },
+    "demand_clusters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "demand_ids": {
+            "type": "array",
+            "items": {
+              "$ref": "./common.schema.json#/definitions/PrefixedId"
+            }
+          }
+        },
+        "required": [
+          "label",
+          "count",
+          "demand_ids"
+        ]
+      }
+    },
+    "invalidate_on": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    }
+  },
+  "required": [
+    "sufficiency",
+    "alerts",
+    "actions",
+    "lifecycle",
+    "demand_clusters",
+    "invalidate_on"
+  ]
+}

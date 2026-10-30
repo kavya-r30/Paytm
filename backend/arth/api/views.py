@@ -86,11 +86,12 @@ VIEW_TOPICS: dict[str, set[str]] = {
     "rx": {"bill.paid", "batch.recalled"},
     "verdict": {"sentinel.verdict", "payment.received"},
     "calendar": {"calendar.local_event_added", "clock.day"},
+    "forecast": {"bill.paid", "clock.day"},
+    "insights": {"alert.raised", "action.snoozed", "bill.paid", "stock.demand_logged"},
     "trust": {"command.executed", "approval.decided", "privacy.erased", "privacy.sharing_changed"},
 }
 PENDING = {
     "ask": ("L4", "sufficiency.ask_pending"),
-    "forecast": ("L3", "sufficiency.forecast_pending"),
     "grow": ("L6", "sufficiency.growth_pending"),
     "grow/plans": ("L6", "sufficiency.plan_pending"),
     "grow/bundles": ("L6", "sufficiency.bundles_pending"),
@@ -214,13 +215,6 @@ async def ask(
     request: Request, session: Actor, session_id: Annotated[str | None, Query(alias="session")] = None
 ) -> dict[str, Any]:
     return pending("ask", ["turn.completed"])
-
-
-@router.get("/v1/views/forecast")
-async def forecast(request: Request, session: Actor, metric: str = "sales") -> dict[str, Any]:
-    if metric not in {"sales", "items"}:
-        raise ProblemError(422, "view.invalid_metric", "error.view.invalid_metric", title="Invalid metric")
-    return pending("forecast", ["forecast.updated"])
 
 
 @router.get("/v1/views/notifications")

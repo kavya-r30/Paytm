@@ -146,20 +146,6 @@ paths:
               schema: {$ref: './layer_pending_view.schema.json'}
         '401': {$ref: '#/components/responses/Problem'}
         '409': {$ref: '#/components/responses/Problem'}
-  /v1/views/forecast:
-    get:
-      operationId: getForecastView
-      security: [{device: []}, {console: []}]
-      parameters:
-        - {in: query, name: metric, required: false, schema: {type: string}}
-      responses:
-        '200':
-          description: Scoped merchant read model
-          content:
-            application/json:
-              schema: {$ref: './layer_pending_view.schema.json'}
-        '401': {$ref: '#/components/responses/Problem'}
-        '409': {$ref: '#/components/responses/Problem'}
   /v1/views/notifications:
     get:
       operationId: getNotificationsView
@@ -948,6 +934,83 @@ paths:
               schema: {$ref: './session_result.schema.json'}
         '401': {$ref: '#/components/responses/Problem'}
         '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/forecast:
+    get:
+      operationId: getForecastView
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: query, name: metric, required: false, schema: {type: string}}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: './forecast_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '404': {$ref: '#/components/responses/Problem'}
+        '422': {$ref: '#/components/responses/Problem'}
+  /v1/views/insights:
+    get:
+      operationId: getInsightsView
+      security: [{device: []}, {console: []}]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: './insights_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '404': {$ref: '#/components/responses/Problem'}
+        '422': {$ref: '#/components/responses/Problem'}
+  /v1/analytics/{tool}:
+    get:
+      operationId: getAnalytics
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: path, name: tool, required: true, schema: {type: string}}
+        - {in: query, name: start, required: false, schema: {type: string}}
+        - {in: query, name: end, required: false, schema: {type: string}}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {type: object}
+        '401': {$ref: '#/components/responses/Problem'}
+        '404': {$ref: '#/components/responses/Problem'}
+        '422': {$ref: '#/components/responses/Problem'}
+  /v1/charts/{number}:
+    get:
+      operationId: getChart
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: path, name: number, required: true, schema: {type: string}}
+        - {in: query, name: format, required: false, schema: {type: string}}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: './chart_card.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '404': {$ref: '#/components/responses/Problem'}
+        '422': {$ref: '#/components/responses/Problem'}
+  /v1/books/export/{kind}:
+    get:
+      operationId: getBooksExport
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: path, name: kind, required: true, schema: {type: string}}
+        - {in: query, name: month, required: false, schema: {type: string}}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {type: object}
+        '401': {$ref: '#/components/responses/Problem'}
+        '404': {$ref: '#/components/responses/Problem'}
+        '422': {$ref: '#/components/responses/Problem'}
   /v1/patrons:
     post:
       operationId: patronsadd

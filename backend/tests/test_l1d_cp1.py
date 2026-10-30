@@ -13,7 +13,7 @@ from arth.main import create_app
 VIEWS = [
     ("home", "home_view"),
     ("ask?session=s1", "layer_pending_view"),
-    ("forecast?metric=sales", "layer_pending_view"),
+    ("forecast?metric=sales", "forecast_view"),
     ("notifications", "notifications_view"),
     ("park", "park_view"),
     ("orders", "orders_view"),
