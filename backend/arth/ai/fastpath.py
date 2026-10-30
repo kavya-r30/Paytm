@@ -44,6 +44,7 @@ def parse(text: str) -> Intent | None:
         return None
     match = re.fullmatch(
         r"(haan|haa|ha|yes|ok|theek hai|teeno haan|sab haan|sabko haan)[, ]*"
+        r"(?:teeno|sab|saare|dono|all)?[, ]*"
         r"(?:(.+?) (?:ko |)(?:chhod ?ke|chhodkar|ko chhod do)|except (.+))?",
         lowered,
     )

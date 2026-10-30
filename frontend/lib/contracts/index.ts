@@ -214,6 +214,7 @@ import type { RewardsRecordVisit } from './rewards_record_visit';
 import type { RewardsRedeem } from './rewards_redeem';
 import type { RunView } from './run_view';
 import type { RxView } from './rx_view';
+import type { Scenario } from './scenario';
 import type { SentinelCheck } from './sentinel_check';
 import type { SentinelVerdict } from './sentinel_verdict';
 import type { SessionResult } from './session_result';
@@ -485,6 +486,7 @@ import rewards_record_visitSchema from './schemas/rewards_record_visit.schema.js
 import rewards_redeemSchema from './schemas/rewards_redeem.schema.json';
 import run_viewSchema from './schemas/run_view.schema.json';
 import rx_viewSchema from './schemas/rx_view.schema.json';
+import scenarioSchema from './schemas/scenario.schema.json';
 import sentinel_checkSchema from './schemas/sentinel_check.schema.json';
 import sentinel_verdictSchema from './schemas/sentinel_verdict.schema.json';
 import session_resultSchema from './schemas/session_result.schema.json';
@@ -757,6 +759,7 @@ export type { RewardsRecordVisit } from './rewards_record_visit';
 export type { RewardsRedeem } from './rewards_redeem';
 export type { RunView } from './run_view';
 export type { RxView } from './rx_view';
+export type { Scenario } from './scenario';
 export type { SentinelCheck } from './sentinel_check';
 export type { SentinelVerdict } from './sentinel_verdict';
 export type { SessionResult } from './session_result';
@@ -1032,6 +1035,7 @@ export const SCHEMAS = [
   { name: 'rewards_redeem', id: 'https://arth.local/contracts/commands/rewards_redeem.schema.json', schema: rewards_redeemSchema },
   { name: 'run_view', id: 'https://arth.local/contracts/run_view.schema.json', schema: run_viewSchema },
   { name: 'rx_view', id: 'https://arth.local/contracts/rx_view.schema.json', schema: rx_viewSchema },
+  { name: 'scenario', id: 'https://arth.local/contracts/scenario.schema.json', schema: scenarioSchema },
   { name: 'sentinel_check', id: 'https://arth.local/contracts/commands/sentinel_check.schema.json', schema: sentinel_checkSchema },
   { name: 'sentinel_verdict', id: 'https://arth.local/contracts/events/sentinel_verdict.schema.json', schema: sentinel_verdictSchema },
   { name: 'session_result', id: 'https://arth.local/contracts/session_result.schema.json', schema: session_resultSchema },
@@ -1309,6 +1313,7 @@ export interface ContractTypes {
   rewards_redeem: RewardsRedeem;
   run_view: RunView;
   rx_view: RxView;
+  scenario: Scenario;
   sentinel_check: SentinelCheck;
   sentinel_verdict: SentinelVerdict;
   session_result: SessionResult;

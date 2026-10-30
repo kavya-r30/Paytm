@@ -227,6 +227,7 @@ const contractNames = [
   'rewards_redeem',
   'run_view',
   'rx_view',
+  'scenario',
   'sentinel_check',
   'sentinel_verdict',
   'session_result',

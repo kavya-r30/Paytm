@@ -1,0 +1,41 @@
+scenario: pharmacy_batch_recall
+title: A distributor recall at the pharmacy
+pack: pharmacy
+world: {days: 4, seed: 9, size: micro, patrons: 8}
+scenes:
+  - id: "1"
+    title: Recall a batch, list buyers, block sales
+    beats:
+      - id: "1.1"
+        who: P1
+        cue: The distributor recalls the Amoxicillin batch
+        input:
+          - read: stock
+        save: {batch: items.2.batches.0.id, amox: items.2.item_id}
+      - id: "1.2"
+        who: P1
+        cue: Mark the batch recalled → buyers listed, the Curator opens a recall work item
+        input:
+          - command: {type: stock.recall_batch, payload: {batch_id: "${batch}", reason: stock.distributor_recall}}
+          - tick: true
+        expect:
+          - {view: rx, path: recalls.0.batch_id, equals: "${batch}"}
+          - {view: team, path: work.0.kind, equals: recall}
+        focus: {device_screen: rx, evidence: playbooks}
+      - id: "1.3"
+        who: P2
+        cue: Billing the recalled batch is impossible; "Rx dekha" is recorded for the rest
+        input:
+          - command: {type: counter.open_bill, payload: {}}
+        save: {bill: data.bill_id}
+      - id: "1.4"
+        who: P2
+        cue: Add the recalled medicine and try to check out
+        input:
+          - command: {type: counter.add_lines, payload: {bill_id: "${bill}", lines: [{item_id: "${amox}", qty_milli: 1000, added_via: scan, rx_seen: true}]}}
+          - read: "bill/${bill}"
+          - command: {type: counter.checkout, payload: {bill_id: "${bill}", payments: [{mode: cash, amount_paise: 9000}]}}
+        expect:
+          - {result: code, equals: stock.insufficient_sellable}
+          - {view: rx, path: rx_sales, present: true}
+          - {invariants: true}

@@ -1,0 +1,20 @@
+scenario: edge_ambiguous_item
+title: Edge - "namak" could be two products
+pack: kirana
+world: {days: 2, seed: 27, size: micro, patrons: 6}
+scenes:
+  - id: "1"
+    title: Arth asks instead of guessing
+    beats:
+      - id: "1.1"
+        cue: "\"Ek namak\" → \"Tata namak ya Aashirvaad namak?\""
+        input:
+          - say_for_me: "ek namak"
+        expect_turn: {intent: clarify, speech_contains: namak}
+      - id: "1.2"
+        cue: "\"Tata namak\" resolves"
+        input:
+          - say_for_me: "ek tata namak"
+        expect_turn: {intent: add_lines}
+        expect:
+          - {invariants: true}

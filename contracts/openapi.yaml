@@ -1097,6 +1097,50 @@ paths:
               schema: {type: object}
         '404': {$ref: '#/components/responses/Problem'}
         '422': {$ref: '#/components/responses/Problem'}
+  /v1/director/snapshot:
+    post:
+      operationId: directorSnapshot
+      security: [{director: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        '200':
+          description: Snapshot saved
+          content:
+            application/json:
+              schema: {type: object}
+        '401': {$ref: '#/components/responses/Problem'}
+  /v1/director/restore:
+    post:
+      operationId: directorRestore
+      security: [{director: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        '200':
+          description: Snapshot restored with its clock
+          content:
+            application/json:
+              schema: {type: object}
+        '401': {$ref: '#/components/responses/Problem'}
+        '404': {$ref: '#/components/responses/Problem'}
+  /v1/director/scenarios:
+    get:
+      operationId: directorScenarios
+      security: [{director: []}]
+      responses:
+        '200':
+          description: The scenario library (contracts/scenario.schema.json)
+          content:
+            application/json:
+              schema: {type: object}
+        '401': {$ref: '#/components/responses/Problem'}
   /v1/patrons:
     post:
       operationId: patronsadd

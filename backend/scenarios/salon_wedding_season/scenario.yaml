@@ -1,0 +1,32 @@
+scenario: salon_wedding_season
+title: Salon in wedding season - appointments without double booking
+pack: salon
+world: {days: 3, seed: 4, size: micro, patrons: 8}
+scenes:
+  - id: "1"
+    title: Book, refuse a double booking, walk-in queue
+    beats:
+      - id: "1.1"
+        who: P1
+        cue: Book Asha for a facial at 11:00
+        input:
+          - command: {type: appointments.book, payload: {service_item_id: "${facial}", staff_id: "${world.staff.asha}", start_at: "2026-10-30T05:30:00Z", source: device}}
+        expect:
+          - {result: status, equals: executed}
+          - {view: "appointments?date=2026-10-30", path: staff.0.appointments, present: true}
+        focus: {device_screen: appointments}
+      - id: "1.2"
+        who: P1
+        cue: A WhatsApp request for the same slot is refused (no double booking)
+        input:
+          - command: {type: appointments.book, payload: {service_item_id: "${haircut}", staff_id: "${world.staff.asha}", start_at: "2026-10-30T05:45:00Z", source: whatsapp}}
+        expect:
+          - {result: code, equals: appointments.overlap}
+      - id: "1.3"
+        who: P1
+        cue: Walk-in joins the queue
+        input:
+          - command: {type: appointments.walk_in, payload: {service_item_id: "${shave}"}}
+        expect:
+          - {view: "appointments?date=2026-10-30", path: walk_ins, len: 1}
+          - {invariants: true}

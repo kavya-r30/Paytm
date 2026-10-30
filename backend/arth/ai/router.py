@@ -86,6 +86,7 @@ class ProviderRouter:
         self.record = settings.mode in {"dev", "demo"}
         self.status: dict[str, str] = {name: "unknown" for name in providers.providers}
         self.spend_paise = 0
+        self.offline = False  # Director fault: every live hop fails, cassettes and templates take over
         self.last_errors: dict[str, list[str]] = {}  # role → per-hop failures of the last call (diagnostics)
 
     # public API -------------------------------------------------------------------------------
@@ -126,6 +127,8 @@ class ProviderRouter:
             try:
                 if hop.provider == "cassette":
                     result = self._replay(role, request)
+                elif self.offline:
+                    raise ProviderUnavailable("offline")
                 else:
                     tag = self.providers.providers[hop.provider].data_tag
                     if data_tag == "merchant" and tag.startswith("synthetic_only"):

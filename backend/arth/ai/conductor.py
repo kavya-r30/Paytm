@@ -171,7 +171,19 @@ class Conductor:
                         chips = [{"label_key": "chip.choose_item", "turn_text": o} for o in options if o]
                         return self.envelope(lang, heard, said, followups=chips[:3]), "clarify"
                     if not found["selected"]:
-                        return self.envelope(lang, heard, render("not_understood", lang)), "unknown_item"
+                        # CAT-3: no confident match → search; one hit is used, several are asked about
+                        hits = await self.read(mid, lambda repo, text=spec["text"]: repo.search_catalog(text))
+                        if len(hits) > 1:
+                            options = [
+                                json.loads(h["names"]).get("hi-Latn") or json.loads(h["names"]).get("en")
+                                for h in hits[:2]
+                            ]
+                            said = " ya ".join(o for o in options if o) + "?"
+                            chips = [{"label_key": "chip.choose_item", "turn_text": o} for o in options if o]
+                            return self.envelope(lang, heard, said, followups=chips), "clarify"
+                        if not hits:
+                            return self.envelope(lang, heard, render("not_understood", lang)), "unknown_item"
+                        found["selected"] = {"id": hits[0]["id"]}
                     line: dict[str, Any] = {"item_id": found["selected"]["id"], "added_via": "voice"}
                     line.update({k: spec[k] for k in ("qty_milli", "amount_paise") if k in spec})
                     lines.append(line)
@@ -245,10 +257,9 @@ class Conductor:
                     nav={"screen": "bill", "params": {"bill_id": bill}},
                 ), intent.kind
             if intent.kind == "khata_payment":
-                found = await self.read(mid, resolve_identity, "spoken_name", intent.params["who"])
-                if found["needs_clarification"] or not found["candidates"]:
+                patron = await self.read(mid, _patron_by_name, intent.params["who"])
+                if patron is None:
                     return self.envelope(lang, heard, render("not_understood", lang)), "clarify_patron"
-                patron = found["candidates"][0]["patron_id"]
                 accounts = await self.read(mid, lambda repo: _accounts(repo, patron))
                 if not accounts:
                     return self.envelope(lang, heard, render("not_understood", lang)), "no_account"
@@ -387,3 +398,17 @@ async def _accounts(repo: Repository, patron_id: str) -> list[str]:
         credit_accounts, credit_accounts.c.patron_id.in_(await related_ids(repo, patron_id))
     )
     return [r["id"] for r in rows]
+
+
+async def _patron_by_name(repo: Repository, who: str) -> str | None:
+    """Spoken name → one patron: identity resolution first, then a unique first-name match; else ask."""
+    found = await resolve_identity(repo, "spoken_name", who)
+    if found["candidates"] and not found["needs_clarification"]:
+        return str(found["candidates"][0]["patron_id"])
+    first = who.strip().lower().split()[0] if who.strip() else ""
+    matches = [
+        r["id"]
+        for r in await repo.select(patrons, patrons.c.erased == 0)
+        if r["display_name"].lower().split()[0] == first
+    ]
+    return str(matches[0]) if len(matches) == 1 else None

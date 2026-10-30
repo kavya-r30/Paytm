@@ -1,0 +1,197 @@
+# The stage demo (companion doc section 4), backend beats. Screen focus drives Lane B's stage auto-focus.
+scenario: gupta_diwali
+title: Gupta General Store, ten days before Diwali
+pack: kirana
+world: {days: 10, seed: 7, size: micro, patrons: 12}
+locale: {screen: hi-Latn, speech: hi-IN}
+edition: display
+cut: {full: ["1", "2", "3", "4", "5", "5b", "6a", "6b", "7", "8"], short: ["1", "2", "3", "5", "6b", "7", "8"]}
+scenes:
+  - id: "1"
+    title: Morning brief and the batch of gates
+    beats:
+      - id: "1.1"
+        who: P1
+        cue: Night Shift ran; Arth has the brief ready
+        input:
+          - command: {type: playbooks.start, payload: {playbook: night_shift, subject: diwali-eve}}
+          - tick: true
+        expect:
+          - {view: home, path: brief.date, present: true}
+          - {view: team, path: summary.done_since_night, gte: 1}
+        focus: {device_screen: home, evidence: playbooks, playbook: night_shift}
+      - id: "1.2"
+        who: P1
+        cue: "\"Haan, teeno.\" Every pending gate approved in one go"
+        input:
+          - say_for_me: "Haan, teeno"
+        expect_turn: {intent: approve_all}
+        expect:
+          - {view: notifications, path: needs_you, len: 0}
+        focus: {device_screen: home, evidence: logs}
+  - id: "2"
+    title: Priya's bill with a counter hint
+    beats:
+      - id: "2.1"
+        who: P2
+        cue: "\"Priya ji ka bill\""
+        input:
+          - command: {type: counter.open_bill, payload: {patron_id: "${world.patrons.priya.id}"}}
+        save: {bill: data.bill_id}
+        expect:
+          - {view: "bill/${bill}", path: bill.patron.display_name, contains: Priya}
+        focus: {device_screen: bill, customer_display: bill, evidence: trace, table: bills}
+      - id: "2.2"
+        who: P2
+        cue: "\"Aadha kilo khuli cheeni aur ek Parle\""
+        input:
+          - say_for_me: "aadha kilo khuli cheeni"
+        expect_turn: {intent: add_lines, nav: bill}
+        expect:
+          - {view: "bill/${bill}", path: bill.total_paise, equals: 2250}
+        within_ms: 2500
+        focus: {device_screen: bill, customer_display: bill, evidence: trace}
+      - id: "2.5"
+        who: P3
+        cue: Priya pays the QR on her phone
+        input:
+          - persona_action: {persona: priya, action: pay_qr, bill: "${bill}"}
+        expect:
+          - {view: "bill/${bill}", path: bill.status, equals: closed}
+          - {view: "bill/${bill}/paid", path: receipt.lang, equals: hi}
+        within_ms: 1500
+        focus: {device_screen: paid, customer_display: paid, phone: priya, evidence: tables, table: bills}
+  - id: "3"
+    title: Festival stock from the supplier
+    beats:
+      - id: "3.1"
+        who: P1
+        cue: Arth drafts a reorder for loose sugar and raises an R3 gate
+        input:
+          - command: {type: playbooks.start, payload: {playbook: reorder, subject: "${sugar_loose}"}}
+          - tick: true
+        expect:
+          - {view: notifications, path: needs_you.0.type, equals: supply.place_po}
+          - {view: notifications, path: needs_you.0.tier, equals: R3}
+        focus: {device_screen: gate, evidence: playbooks, playbook: reorder}
+      - id: "3.3"
+        who: P1
+        cue: "\"Haan\" → the PO goes to Agarwal"
+        input:
+          - approve_all: true
+          - tick: true
+        expect:
+          - {sim_thread: s1, outbound_template: purchase_order}
+        focus: {device_screen: gate, phone: agarwal, evidence: logs}
+  - id: "4"
+    title: A forwarded payment screenshot
+    beats:
+      - id: "4.1"
+        who: P4
+        cue: "₹450 screenshot from an unknown number"
+        input:
+          - command: {type: sentinel.check, payload: {amount_paise: 45000, utr: "430199990001", paid_at: "2026-10-29T05:30:00Z"}}
+        save: {check: data.check_id}
+        expect:
+          - {view: "verdict/${check}", path: verdict, equals: not_received}
+          - {view: "verdict/${check}", path: headline_key, equals: sentinel.not_received_yet}
+        focus: {device_screen: verdict, evidence: tables}
+  - id: "5"
+    title: A growth plan for Diwali
+    beats:
+      - id: "5.1"
+        who: P1
+        cue: "\"Is Diwali bikri kaise badhayein?\" → diagnosis and a plan (R3)"
+        input:
+          - command: {type: growth.create_plan, payload: {goal_key: goal.diwali_sales, levers: [winback, repeat_order, bundle_preorder], budget_paise: 54900, holdout_bp: 2000}}
+        expect:
+          - {view: grow, path: plans.0.status, equals: active}
+          - {view: grow, path: diagnostics.change_paise, gte: -100000000}
+        focus: {device_screen: grow, evidence: tools}
+  - id: "5b"
+    title: Cash check and the Console pointer
+    beats:
+      - id: "5b.1"
+        who: P1
+        cue: Capital view shows the need and a Console pointer; the device has no apply button
+        expect:
+          - {view: capital, path: console_pointer.route, equals: /console/capital}
+        focus: {device_screen: capital, evidence: tools}
+  - id: "6a"
+    title: Mehta orders on WhatsApp
+    edition: voice
+    beats:
+      - id: "6a.1"
+        who: P5
+        cue: "Mehta: \"2 kilo khuli cheeni bhej dena\""
+        input:
+          - persona_action: {persona: anita, action: message, text: "2 kilo khuli cheeni bhej dena"}
+        expect:
+          - {sim_thread: anita, outbound_template: reply.order_received}
+          - {view: orders, path: by_status.placed, equals: 1}
+        focus: {phone: anita, evidence: playbooks, playbook: concierge}
+      - id: "6a.2"
+        who: P1
+        cue: Double tap accepts the order
+        input:
+          - approve_all: true
+        expect:
+          - {view: orders, path: by_status.accepted, equals: 1}
+        focus: {device_screen: orders, phone: anita}
+  - id: "6b"
+    title: Khata by voice
+    edition: voice
+    beats:
+      - id: "6b.1"
+        who: P1
+        cue: "\"Priya ne 50 jama kiye\" → read-back (R2)"
+        input:
+          - say_for_me: "Priya ji ne 50 jama kiye"
+        expect_turn: {intent: khata_payment, tier: R2}
+        focus: {device_screen: gate, evidence: logs}
+      - id: "6b.2"
+        who: P1
+        cue: "\"Haan\""
+        input:
+          - say_for_me: "haan"
+        expect:
+          - {view: notifications, path: needs_you, len: 0}
+          - {view: trust, path: audit.ok, equals: true}
+  - id: "7"
+    title: A week later
+    beats:
+      - id: "7.1"
+        who: P2
+        cue: Two nights pass; waits resume in order
+        input:
+          - clock: {jump_days: 2}
+        expect:
+          - {view: team, path: runs.0.status, present: true}
+          - {view: home, path: brief.date, present: true}
+        focus: {evidence: playbooks}
+  - id: "8"
+    title: Ask Arth, the language moment, and trust
+    beats:
+      - id: "8.0"
+        who: P1
+        cue: "\"Aaj kitna aaya?\""
+        input:
+          - say_for_me: "Aaj kitna aaya?"
+        expect_turn: {intent: "read:today_sales", speech_contains: aaya}
+        focus: {device_screen: ask}
+      - id: "8.1"
+        who: P2
+        cue: The screen switches to Tamil
+        input:
+          - locale: {screen: ta, speech: ta-IN}
+        expect:
+          - {view: settings/language, path: screen_lang, equals: ta}
+        focus: {device_screen: ask}
+      - id: "8.3"
+        who: P1
+        cue: Audit verify ✓
+        expect:
+          - {view: trust, path: audit.ok, equals: true}
+          - {invariants: true}
+        focus: {device_screen: trust, evidence: logs}
+invariants: default

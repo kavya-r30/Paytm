@@ -2,7 +2,7 @@
 """Arth task runner: a cross-platform replacement for make.
 
 Usage: python dev.py <target> [<target> ...]
-Targets: setup, gen, gen-check, lint, typecheck, test, check, build-web, api, web, seed, scenario
+Targets: setup, gen, gen-check, lint, typecheck, test, check, build-web, api, web, seed, scenario, demo-check, ai-smoke
 (check = gen-check, lint, typecheck, test; gen-check fails when generated contract code is stale)
 """
 from __future__ import annotations
@@ -98,10 +98,17 @@ def seed() -> None:
 
 
 def scenario() -> None:
-    """Run headless scenarios: python dev.py scenario [-- path.yaml]."""
-    extra = sys.argv[sys.argv.index("--") + 1 :] if "--" in sys.argv else ["scenarios/billing_smoke.yaml"]
-    for path in extra:
-        run("uv", "run", "python", "-m", "arth.sim.scenario", path, cwd=BACKEND)
+    """Run headless scenarios once: python dev.py scenario [-- scenarios/<id>/scenario.yaml ...]."""
+    extra = sys.argv[sys.argv.index("--") + 1 :] if "--" in sys.argv else []
+    run("uv", "run", "python", "-m", "arth.sim.scenario", *extra, cwd=BACKEND)
+
+
+def demo_check() -> None:
+    """T8.6: every scenario N times in a row (default 3; the demo bar is -- --runs 10), writes cues.md."""
+    extra = sys.argv[sys.argv.index("--") + 1 :] if "--" in sys.argv else []
+    if "--runs" not in extra:
+        extra = ["--runs", "3", *extra]
+    run("uv", "run", "python", "-m", "arth.sim.scenario", "--cues", *extra, cwd=BACKEND)
 
 
 def ai_smoke() -> None:
@@ -126,6 +133,7 @@ TARGETS: dict[str, Callable[[], None]] = {
     "web": web,
     "seed": seed,
     "scenario": scenario,
+    "demo-check": demo_check,
     "ai-smoke": ai_smoke,
 }
 
