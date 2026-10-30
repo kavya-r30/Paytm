@@ -37,6 +37,25 @@
         },
         "conditions": {
           "type": "object"
+        },
+        "title_key": {
+          "$ref": "./common.schema.json#/definitions/MessageKey"
+        },
+        "summary_params": {
+          "type": "object",
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
         }
       },
       "required": [
@@ -47,7 +66,9 @@
         "status",
         "expires_at",
         "scope",
-        "conditions"
+        "conditions",
+        "title_key",
+        "summary_params"
       ]
     },
     "readback_key": {

@@ -36,6 +36,7 @@ from arth.domains.patron_identity import patron_row, related_ids
 from arth.domains.patron_tables import household_members
 from arth.domains.stock import issue_stock, on_hand, stock_tracked
 from arth.domains.stock_tables import stock_moves
+from arth.domains.summaries import patron_summary
 from arth.governance.commands import CommandBus, CommandError
 from arth.governance.policy import PolicyContext
 from arth.governance.repository import Repository
@@ -87,6 +88,7 @@ async def bill_state(repo: Repository, bill_id: str) -> dict[str, Any]:
         "id": row["id"],
         "status": row["status"],
         "patron_id": row["patron_id"],
+        "patron": await patron_summary(repo, row["patron_id"]),
         "staff_id": row["staff_id"],
         "opened_at": row["opened_at"],
         "closed_at": row["closed_at"],

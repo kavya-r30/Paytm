@@ -31,6 +31,7 @@ from arth.domains.orders import appointments_view, order_detail, orders_list
 from arth.domains.patron_tables import patrons
 from arth.domains.sentinel import verdict_view
 from arth.domains.stock_tables import batches, stock_moves, unmet_demand
+from arth.domains.summaries import gate_summary, item_name, patron_name, quick_items
 from arth.domains.supply import claim_view, grn_view, po_view, suppliers_view
 from arth.domains.tables import items, shifts
 from arth.domains.tax import gst_summary, invoice_view, profit_and_loss
@@ -120,20 +121,24 @@ def pending(screen: str, invalidate_on: list[str]) -> dict[str, Any]:
     }
 
 
-def _gate(row: dict[str, Any]) -> dict[str, Any]:
+async def _gate(repo: Repository, row: dict[str, Any]) -> dict[str, Any]:
+    scope = json.loads(row["scope"])
+    title, params = await gate_summary(repo, scope["type"], scope["payload"])
     return {
         "gate_id": row["id"],
         "thread_id": row["thread_id"],
         "tier": row["tier"],
-        "type": json.loads(row["scope"])["type"],
+        "type": scope["type"],
         "status": row["status"],
         "expires_at": row["expires_at"],
+        "title_key": title,
+        "summary_params": params,
     }
 
 
 async def open_gates(repo: Repository, now: str, status: str = "pending") -> list[dict[str, Any]]:
     rows = await repo.select(approvals, approvals.c.status == status, approvals.c.expires_at > now)
-    return [_gate(r) for r in sorted(rows, key=lambda r: r["expires_at"])]
+    return [await _gate(repo, r) for r in sorted(rows, key=lambda r: r["expires_at"])]
 
 
 @router.get("/v1/views/home")
@@ -276,7 +281,7 @@ async def gate(request: Request, gate_id: str, session: Actor) -> dict[str, Any]
         scope = json.loads(rows[0]["scope"])
         return {
             "gate": {
-                **_gate(rows[0]),
+                **await _gate(repo, rows[0]),
                 "scope": {"type": scope["type"], "payload": scope["payload"]},
                 "conditions": json.loads(rows[0]["conditions"]),
             },
@@ -290,9 +295,12 @@ async def gate(request: Request, gate_id: str, session: Actor) -> dict[str, Any]
 @router.get("/v1/views/bill/{bill_id}")
 async def bill(request: Request, bill_id: str, session: Actor) -> dict[str, Any]:
     async def build(repo: Repository) -> dict[str, Any]:
+        grid, categories = await quick_items(repo)
         return {
             "bill": await bill_state(repo, bill_id),
             "parked_count": len(await repo.select(bills, bills.c.status == "parked")),
+            "quick_items": grid,
+            "categories": categories,
             "invalidate_on": ["bill.changed", "bill.paid", "hint.offered"],
         }
 
@@ -373,6 +381,7 @@ async def park(request: Request, session: Actor) -> dict[str, Any]:
                 {
                     "id": row["id"],
                     "patron_id": row["patron_id"],
+                    "patron_name": await patron_name(repo, row["patron_id"]),
                     "total_paise": state["total_paise"],
                     "lines": len(state["lines"]),
                     "opened_at": row["opened_at"],
@@ -747,7 +756,14 @@ async def rx(request: Request, session: Actor) -> dict[str, Any]:
                     if m["buyer_id"]
                 }
             )
-            recalls.append({"batch_id": batch["id"], "item_id": batch["item_id"], "buyer_ids": buyers})
+            recalls.append(
+                {
+                    "batch_id": batch["id"],
+                    "item_id": batch["item_id"],
+                    "buyer_ids": buyers,
+                    "item_name": await item_name(repo, batch["item_id"]),
+                }
+            )
         return {
             "rx_sales": [
                 {

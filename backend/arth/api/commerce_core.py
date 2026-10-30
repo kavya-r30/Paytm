@@ -19,6 +19,7 @@ from arth.domains.patron_identity import related_ids, resolve_identity
 from arth.domains.patron_tables import patrons
 from arth.domains.patrons import patron_view
 from arth.domains.stock import expiry_view, stock_view
+from arth.domains.summaries import recent_customers
 from arth.governance.commands import CommandError
 from arth.governance.repository import Repository
 from arth.governance.tables import merchants
@@ -62,10 +63,18 @@ async def expiry(request: Request, session: Actor) -> dict[str, Any]:
 
 @router.get("/v1/views/customers/search")
 async def customers(
-    request: Request, session: Actor, q: Annotated[str, Query(min_length=1, max_length=200)]
+    request: Request, session: Actor, q: Annotated[str, Query(max_length=200)] = ""
 ) -> dict[str, Any]:
     async with request.app.state.db.read() as conn:
         repo = Repository(conn, session.merchant_id)
+        recent = await recent_customers(repo)
+        if not q.strip():
+            return {
+                "customers": [],
+                "needs_clarification": False,
+                "recent": recent,
+                "invalidate_on": ["patron.changed", "patron.merged"],
+            }
         result = await resolve_identity(repo, "spoken_name", q)
         rows = {r["id"]: r for r in await repo.select(patrons, patrons.c.erased == 0)}
         return {
@@ -73,6 +82,7 @@ async def customers(
                 {**r, "display_name": rows[r["patron_id"]]["display_name"]} for r in result["candidates"]
             ],
             "needs_clarification": result["needs_clarification"],
+            "recent": recent,
             "invalidate_on": ["patron.changed", "patron.merged"],
         }
 

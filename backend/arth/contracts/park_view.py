@@ -17,6 +17,7 @@ class Bill(BaseModel):
     total_paise: conint(ge=0)
     lines: conint(ge=0)
     opened_at: AwareDatetime
+    patron_name: str | None
 
 
 class ParkView(BaseModel):

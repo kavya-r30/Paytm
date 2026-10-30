@@ -18,6 +18,7 @@ from arth.domains.ledger_projection import account_view
 from arth.domains.ledger_tables import credit_entries, credit_entry_lines
 from arth.domains.merchants import domain_event, owner_only
 from arth.domains.patron_identity import patron_row, related_ids
+from arth.domains.summaries import patron_name
 from arth.governance.commands import CommandBus, CommandError
 from arth.governance.policy import PolicyContext
 from arth.governance.repository import Repository
@@ -74,6 +75,7 @@ async def order_detail(repo: Repository, order_id: str) -> dict[str, Any]:
     return {
         "order": {
             **{k: row[k] for k in ("id", "status", "channel", "patron_id", "total_paise", "created_at")},
+            "patron_name": await patron_name(repo, row["patron_id"]),
             "lines": [
                 {
                     k: line[k]
@@ -100,7 +102,10 @@ async def orders_list(repo: Repository) -> dict[str, Any]:
         by_status[row["status"]] = by_status.get(row["status"], 0) + 1
         result.append(
             {k: row[k] for k in ("id", "status", "channel", "patron_id", "total_paise", "created_at")}
-            | {"lines": len(await _lines(repo, row["id"]))}
+            | {
+                "lines": len(await _lines(repo, row["id"])),
+                "patron_name": await patron_name(repo, row["patron_id"]),
+            }
         )
     return {"orders": result, "by_status": by_status, "invalidate_on": ["order.changed"]}
 

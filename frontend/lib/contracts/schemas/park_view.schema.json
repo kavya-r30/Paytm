@@ -35,6 +35,16 @@
           "opened_at": {
             "type": "string",
             "format": "date-time"
+          },
+          "patron_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
@@ -42,7 +52,8 @@
           "patron_id",
           "total_paise",
           "lines",
-          "opened_at"
+          "opened_at",
+          "patron_name"
         ]
       }
     },

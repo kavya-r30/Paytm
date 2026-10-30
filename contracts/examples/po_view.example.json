@@ -15,7 +15,8 @@
         "amount_paise": 225000,
         "last_price_paise": null
       }
-    ]
+    ],
+    "supplier_name": "Agarwal Traders"
   },
   "price_history": [],
   "invalidate_on": [

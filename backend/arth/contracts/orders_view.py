@@ -19,6 +19,7 @@ class Order(BaseModel):
     total_paise: conint(ge=0)
     created_at: AwareDatetime
     lines: conint(ge=0)
+    patron_name: str | None
 
 
 class OrdersView(BaseModel):

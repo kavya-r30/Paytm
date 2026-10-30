@@ -30,7 +30,9 @@ export interface GrnView {
     expected: number;
     actual: number;
     delta_paise: number;
+    name: string;
   }[];
   claim_id: string | null;
   invalidate_on: string[];
+  supplier_name: string;
 }

@@ -29,6 +29,7 @@ from arth.domains.commerce_tables import (
 from arth.domains.ledger_tables import payable_allocations, payables
 from arth.domains.merchants import domain_event, owner_only
 from arth.domains.stock import receive_stock
+from arth.domains.summaries import item_name, supplier_name
 from arth.governance.commands import CommandBus, CommandError
 from arth.governance.repository import Repository
 from arth.governance.tables import merchants
@@ -88,7 +89,7 @@ async def po_view(repo: Repository, po_id: str) -> dict[str, Any]:
     items = {line["item_id"] for line in lines}
     return {
         "po": {k: po[k] for k in ("id", "supplier_id", "status", "total_paise", "due_on", "created_at")}
-        | {"lines": lines},
+        | {"lines": lines, "supplier_name": await supplier_name(repo, po["supplier_id"])},
         "price_history": [
             {k: h[k] for k in ("item_id", "unit_price_paise", "source", "occurred_at")}
             for h in history
@@ -99,11 +100,11 @@ async def po_view(repo: Repository, po_id: str) -> dict[str, Any]:
 
 
 async def _variances(repo: Repository, po_id: str) -> list[dict[str, Any]]:
+    rows = sorted(await repo.select(grn_variances, grn_variances.c.po_id == po_id), key=lambda r: r["seq"])
     return [
         {k: r[k] for k in ("item_id", "kind", "expected", "actual", "delta_paise")}
-        for r in sorted(
-            await repo.select(grn_variances, grn_variances.c.po_id == po_id), key=lambda r: r["seq"]
-        )
+        | {"name": await item_name(repo, r["item_id"])}
+        for r in rows
     ]
 
 
@@ -124,6 +125,7 @@ async def grn_view(repo: Repository, po_id: str) -> dict[str, Any]:
     claim = await repo.select(claims, claims.c.po_id == po_id)
     return {
         "po_id": po_id,
+        "supplier_name": await supplier_name(repo, (await po_row(repo, po_id))["supplier_id"]),
         "received": received,
         "billed": billed,
         "variances": await _variances(repo, po_id),
@@ -143,6 +145,7 @@ async def claim_view(repo: Repository, claim_id: str) -> dict[str, Any]:
             for k in ("id", "po_id", "supplier_id", "amount_paise", "status", "lang", "created_at")
         },
         "variances": await _variances(repo, claim["po_id"]),
+        "supplier_name": await supplier_name(repo, claim["supplier_id"]),
         "invalidate_on": ["po.changed"],
     }
 

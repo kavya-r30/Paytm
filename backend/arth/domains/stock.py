@@ -1,5 +1,6 @@
 """Physical stock is a sum of moves; sellable stock additionally enforces batch safety."""
 
+import json
 from datetime import date
 from typing import Any
 
@@ -15,6 +16,8 @@ from arth.governance.commands import CommandBus, CommandError
 from arth.governance.events import emit_event
 from arth.governance.repository import Repository
 from arth.governance.tables import merchants
+
+TARGET = 20_000  # default reorder target (milli-units) until L3 reorder points (STK-3)
 
 
 async def on_hand(
@@ -170,9 +173,21 @@ async def stock_view(repo: Repository, clock: SimClock) -> dict[str, Any]:
                 {key: row[key] for key in ("id", "batch_no", "expires_on", "mrp_paise", "cost_paise")}
                 | {"recalled": bool(row["recalled"]), "qty_milli": quantity}
             )
+        from arth.domains.summaries import item_supplier, label
+
+        tracked = await stock_tracked(repo, item["id"])
+        status = (
+            "untracked" if not tracked else "out" if sellable <= 0 else "low" if sellable < TARGET else "ok"
+        )
         result.append(
             {
                 "item_id": item["id"],
+                "name": label(item["names"]),
+                "unit": item["unit"],
+                "category": item["category"],
+                "target_qty_milli": TARGET,
+                "status": status,
+                "supplier_name": await item_supplier(repo, item["id"]),
                 "on_hand_qty_milli": await on_hand(repo, item["id"]),
                 "sellable_qty_milli": sellable,
                 "batches": batch_rows,
@@ -182,6 +197,8 @@ async def stock_view(repo: Repository, clock: SimClock) -> dict[str, Any]:
 
 
 async def expiry_view(repo: Repository, clock: SimClock, within_days: int) -> dict[str, Any]:
+    from arth.domains.summaries import label
+
     today = clock.now_ist().date()
     result = []
     for row in await repo.select(batches):
@@ -190,6 +207,10 @@ async def expiry_view(repo: Repository, clock: SimClock, within_days: int) -> di
             result.append(
                 {
                     "batch_id": row["id"],
+                    "batch_no": row["batch_no"],
+                    "name": label(
+                        json.loads((await repo.select(items, items.c.id == row["item_id"]))[0]["names"])
+                    ),
                     "item_id": row["item_id"],
                     "days_to_expiry": days,
                     "recalled": bool(row["recalled"]),

@@ -253,6 +253,48 @@
               "type": "null"
             }
           ]
+        },
+        "patron": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "display_name",
+                "lang",
+                "khata_balance_paise",
+                "reward_stamps"
+              ],
+              "properties": {
+                "id": {
+                  "$ref": "./common.schema.json#/definitions/PrefixedId"
+                },
+                "display_name": {
+                  "type": "string"
+                },
+                "lang": {
+                  "type": "string"
+                },
+                "khata_balance_paise": {
+                  "anyOf": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "reward_stamps": {
+                  "type": "integer"
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [
@@ -269,7 +311,8 @@
         "lines",
         "payments",
         "ticket",
-        "upi"
+        "upi",
+        "patron"
       ]
     },
     "payee_vpa": {

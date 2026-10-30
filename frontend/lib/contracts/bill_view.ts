@@ -53,7 +53,31 @@ export interface BillView {
       status: "waiting" | "pending" | "paid" | "failed" | "expired";
       expires_at: string;
     } | null;
+    patron: {
+      /**
+       * A ULID prefixed by its kind, e.g. bill_01JBQ0Z7Y8K3M4N5P6Q7R8S9T1 (spec Part C1).
+       */
+      id: string;
+      display_name: string;
+      lang: string;
+      khata_balance_paise: number | null;
+      reward_stamps: number;
+    } | null;
   };
   parked_count: number;
   invalidate_on: string[];
+  quick_items: {
+    /**
+     * A ULID prefixed by its kind, e.g. bill_01JBQ0Z7Y8K3M4N5P6Q7R8S9T1 (spec Part C1).
+     */
+    item_id: string;
+    name: string;
+    price_paise: number;
+    unit: string;
+    category: string;
+  }[];
+  categories: {
+    key: string;
+    label: string;
+  }[];
 }

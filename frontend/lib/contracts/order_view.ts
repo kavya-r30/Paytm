@@ -23,6 +23,7 @@ export interface OrderView {
       amount_paise: number;
       check: boolean;
     }[];
+    patron_name: string | null;
   };
   history: {
     from_state: string | null;

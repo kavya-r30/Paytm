@@ -6,5 +6,6 @@
   "claim_id": null,
   "invalidate_on": [
     "x.changed"
-  ]
+  ],
+  "supplier_name": "Agarwal Traders"
 }

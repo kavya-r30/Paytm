@@ -1057,6 +1057,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/director/session": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["directorSession"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/patrons": {
         parameters: {
             query?: never;
@@ -1368,6 +1384,13 @@ export interface components {
                     recalled: boolean;
                     qty_milli: number;
                 }[];
+                name: string;
+                unit: string;
+                category: string;
+                target_qty_milli: number;
+                /** @enum {unknown} */
+                status: "ok" | "low" | "out" | "untracked";
+                supplier_name: string | null;
             }[];
             invalidate_on: string[];
         };
@@ -1401,6 +1424,8 @@ export interface components {
                 days_to_expiry: number | null;
                 recalled: boolean;
                 qty_milli: number;
+                name: string;
+                batch_no: string;
             }[];
             invalidate_on: string[];
         };
@@ -1413,6 +1438,13 @@ export interface components {
             }[];
             needs_clarification: boolean;
             invalidate_on: string[];
+            recent: {
+                patron_id: components["schemas"]["PrefixedId"];
+                display_name: string;
+                phone_masked: string | null;
+                khata_balance_paise: number | null;
+                reward_stamps: number;
+            }[];
         };
         /** PatronView */
         "patron_view.schema": {
@@ -1597,6 +1629,10 @@ export interface components {
                 status: string;
                 /** Format: date-time */
                 expires_at: string;
+                title_key: components["schemas"]["MessageKey"];
+                summary_params: {
+                    [key: string]: string | number | null;
+                };
             }[];
             brief: Record<string, never> | null;
             data_sufficiency: {
@@ -1628,6 +1664,10 @@ export interface components {
                 status: string;
                 /** Format: date-time */
                 expires_at: string;
+                title_key: components["schemas"]["MessageKey"];
+                summary_params: {
+                    [key: string]: string | number | null;
+                };
             }[];
             done: {
                 command_id: components["schemas"]["PrefixedId"];
@@ -1645,6 +1685,10 @@ export interface components {
                 status: string;
                 /** Format: date-time */
                 expires_at: string;
+                title_key: components["schemas"]["MessageKey"];
+                summary_params: {
+                    [key: string]: string | number | null;
+                };
             }[];
             invalidate_on: string[];
         };
@@ -1660,6 +1704,10 @@ export interface components {
                 expires_at: string;
                 scope: Record<string, never>;
                 conditions: Record<string, never>;
+                title_key: components["schemas"]["MessageKey"];
+                summary_params: {
+                    [key: string]: string | number | null;
+                };
             };
             readback_key: components["schemas"]["MessageKey"] | null;
             invalidate_on: string[];
@@ -1711,9 +1759,27 @@ export interface components {
                     /** Format: date-time */
                     expires_at: string;
                 } | null;
+                patron: {
+                    id: components["schemas"]["PrefixedId"];
+                    display_name: string;
+                    lang: string;
+                    khata_balance_paise: number | null;
+                    reward_stamps: number;
+                } | null;
             };
             parked_count: number;
             invalidate_on: string[];
+            quick_items: {
+                item_id: components["schemas"]["PrefixedId"];
+                name: string;
+                price_paise: number;
+                unit: string;
+                category: string;
+            }[];
+            categories: {
+                key: string;
+                label: string;
+            }[];
         };
         /** BillPayView */
         "bill_pay_view.schema": {
@@ -1761,6 +1827,13 @@ export interface components {
                     status: "waiting" | "pending" | "paid" | "failed" | "expired";
                     /** Format: date-time */
                     expires_at: string;
+                } | null;
+                patron: {
+                    id: components["schemas"]["PrefixedId"];
+                    display_name: string;
+                    lang: string;
+                    khata_balance_paise: number | null;
+                    reward_stamps: number;
                 } | null;
             };
             payee_vpa: string | null;
@@ -1815,6 +1888,13 @@ export interface components {
                     /** Format: date-time */
                     expires_at: string;
                 } | null;
+                patron: {
+                    id: components["schemas"]["PrefixedId"];
+                    display_name: string;
+                    lang: string;
+                    khata_balance_paise: number | null;
+                    reward_stamps: number;
+                } | null;
             };
             invoice: Record<string, never> | null;
             receipt: {
@@ -1843,6 +1923,7 @@ export interface components {
                 lines: number;
                 /** Format: date-time */
                 opened_at: string;
+                patron_name: string | null;
             }[];
             invalidate_on: string[];
         };
@@ -1857,6 +1938,7 @@ export interface components {
                 /** Format: date-time */
                 created_at: string;
                 lines: number;
+                patron_name: string | null;
             }[];
             by_status: {
                 [key: string]: number;
@@ -1882,6 +1964,7 @@ export interface components {
                     amount_paise: number;
                     check: boolean;
                 }[];
+                patron_name: string | null;
             };
             history: {
                 from_state: string | null;
@@ -1928,6 +2011,7 @@ export interface components {
                     amount_paise: number;
                     last_price_paise: number | null;
                 }[];
+                supplier_name: string;
             };
             price_history: {
                 item_id: components["schemas"]["PrefixedId"];
@@ -1958,9 +2042,11 @@ export interface components {
                 expected: number;
                 actual: number;
                 delta_paise: number;
+                name: string;
             }[];
             claim_id: components["schemas"]["PrefixedId"] | null;
             invalidate_on: string[];
+            supplier_name: string;
         };
         /** ClaimView */
         "claim_view.schema": {
@@ -1981,8 +2067,10 @@ export interface components {
                 expected: number;
                 actual: number;
                 delta_paise: number;
+                name: string;
             }[];
             invalidate_on: string[];
+            supplier_name: string;
         };
         /** DemandView */
         "demand_view.schema": {
@@ -2364,11 +2452,14 @@ export interface components {
                 item_id: components["schemas"]["PrefixedId"];
                 /** Format: date */
                 due_on: string;
+                patron_name: string;
+                item_name: string;
             }[];
             recalls: {
                 batch_id: components["schemas"]["PrefixedId"];
                 item_id: components["schemas"]["PrefixedId"];
                 buyer_ids: components["schemas"]["PrefixedId"][];
+                item_name: string;
             }[];
             invalidate_on: string[];
         };
@@ -2484,6 +2575,13 @@ export interface components {
             }[];
             tentative_within_60_days: number;
             invalidate_on: string[];
+        };
+        /** SessionResult */
+        "session_result.schema": {
+            token: string;
+            staff_id: string;
+            /** Format: date-time */
+            expires_at: string;
         };
         /**
          * @description UI (screen) locale.
@@ -2622,13 +2720,6 @@ export interface components {
             pin: string;
             /** @enum {unknown} */
             channel: "device" | "console";
-        };
-        /** SessionResult */
-        "session_result.schema": {
-            token: string;
-            staff_id: string;
-            /** Format: date-time */
-            expires_at: string;
         };
         /** StaffAdd */
         "staff_add.schema": {
@@ -2907,8 +2998,8 @@ export interface operations {
     };
     getCustomerSearchView: {
         parameters: {
-            query: {
-                q: string;
+            query?: {
+                q?: string;
             };
             header?: never;
             path?: never;
@@ -4440,6 +4531,32 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["calendar_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    directorSession: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description A real staff session for a seeded shop (presenter only) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["session_result.schema"];
                 };
             };
             401: components["responses"]["Problem"];

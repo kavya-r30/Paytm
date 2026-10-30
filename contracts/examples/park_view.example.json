@@ -5,7 +5,8 @@
       "patron_id": null,
       "total_paise": 9000,
       "lines": 1,
-      "opened_at": "2026-10-30T04:00:00Z"
+      "opened_at": "2026-10-30T04:00:00Z",
+      "patron_name": null
     }
   ],
   "invalidate_on": [

@@ -68,13 +68,49 @@
                 "qty_milli"
               ]
             }
+          },
+          "name": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "target_qty_milli": {
+            "type": "integer"
+          },
+          "status": {
+            "enum": [
+              "ok",
+              "low",
+              "out",
+              "untracked"
+            ]
+          },
+          "supplier_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
           "item_id",
           "on_hand_qty_milli",
           "sellable_qty_milli",
-          "batches"
+          "batches",
+          "name",
+          "unit",
+          "category",
+          "target_qty_milli",
+          "status",
+          "supplier_name"
         ]
       }
     },

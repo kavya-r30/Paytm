@@ -45,6 +45,16 @@
           "lines": {
             "type": "integer",
             "minimum": 0
+          },
+          "patron_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
@@ -54,7 +64,8 @@
           "patron_id",
           "total_paise",
           "created_at",
-          "lines"
+          "lines",
+          "patron_name"
         ]
       }
     },

@@ -16,7 +16,8 @@
         "amount_paise": 9000,
         "check": false
       }
-    ]
+    ],
+    "patron_name": null
   },
   "history": [],
   "pick_list": [
