@@ -104,6 +104,11 @@ def scenario() -> None:
         run("uv", "run", "python", "-m", "arth.sim.scenario", path, cwd=BACKEND)
 
 
+def ai_smoke() -> None:
+    """Live provider smoke test (needs network + backend/.env); records cassettes for offline replay."""
+    run("uv", "run", "python", "-m", "arth.ai.smoke", cwd=BACKEND)
+
+
 def web() -> None:
     run("pnpm", "--filter", "frontend", "run", "dev")
 
@@ -121,6 +126,7 @@ TARGETS: dict[str, Callable[[], None]] = {
     "web": web,
     "seed": seed,
     "scenario": scenario,
+    "ai-smoke": ai_smoke,
 }
 
 if __name__ == "__main__":

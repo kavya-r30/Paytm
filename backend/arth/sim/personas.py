@@ -34,7 +34,32 @@ class PersonaEngine:
         if mode == "manual":
             pending = self.manual.get(persona_id)
             return pending.popleft() if pending else None
-        if mode == "llm":
-            raise NotImplementedError("persona LLM mode arrives with the AI platform (T4.16)")
         script: dict[str, str] = card.get("script", {})
         return script.get(cue)
+
+    async def reply_llm(self, router: object, persona_id: str, message: str) -> str | None:
+        """T4.16: LLM persona mode (Arena); falls back to the scripted cue when no provider is reachable."""
+        from arth.ai.prompts import prompt
+        from arth.ai.router import ProviderRouter, ProviderUnavailable
+
+        card = self.cards[persona_id]
+        if not isinstance(router, ProviderRouter):
+            return self.reply(persona_id, "greeting")
+        spec = prompt("persona.v1")
+        try:
+            result = await router.chat(
+                spec["role"],
+                [
+                    {
+                        "role": "system",
+                        "content": spec["system"]
+                        + " Card: "
+                        + str({k: card[k] for k in ("name", "role", "lang", "traits")}),
+                    },
+                    {"role": "user", "content": message},
+                ],
+                data_tag="synthetic",
+            )
+        except ProviderUnavailable:
+            return self.reply(persona_id, "greeting")
+        return result.text or None

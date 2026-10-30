@@ -293,6 +293,7 @@ def test_no_user_facing_string_says_fake():
         if p.is_file()
         and p.suffix in {".json", ".py", ".yaml", ".csv", ".ts"}
         and "fake" in p.read_text(encoding="utf-8", errors="ignore").lower()
+        and p.name != "guards.py"  # the Critic's dignity rule has to name the word it blocks
     ]
     assert offenders == [], offenders  # SEN-3
     assert Path(__file__).exists()
