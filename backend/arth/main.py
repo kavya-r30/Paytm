@@ -18,7 +18,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import select
 
-from arth.api import commerce, commerce_core, director, governance, health, intel, sim, stream, views
+from arth.ai.conductor import Conductor
+from arth.ai.router import ProviderRouter
+from arth.api import commerce, commerce_core, director, governance, health, intel, sim, stream, turns, views
 from arth.api.problems import install_problem_handlers
 from arth.core.calendar import CalendarIndex, load_calendar
 from arth.core.clock import SimClock, iso_utc
@@ -87,6 +89,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         app.state.sim = Simulators(app.state.commands, app.state.events, signing_key.get_secret_value())
         app.state.personas = PersonaEngine()
         register_intel(app.state.commands, app.state.calendar)
+        app.state.router = ProviderRouter(settings, app.state.providers, spans)
+        app.state.conductor = Conductor(app.state.commands, app.state.router, app.state.calendar)
 
         async def hourly_alerts(job: Any) -> None:
             stamp = iso_utc(clock.now())[:13]
@@ -168,6 +172,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(views.router)
     app.include_router(sim.router)
     app.include_router(intel.router)
+    app.include_router(turns.router)
     return app
 
 

@@ -25,6 +25,7 @@ const contractNames = [
   'approval',
   'approval_decided',
   'approval_requested',
+  'ask_view',
   'audit_verification',
   'audit_verified',
   'batch_recalled',
@@ -250,6 +251,8 @@ const contractNames = [
   'treasury_refund',
   'treasury_resolve_exception',
   'trust_view',
+  'tts_result',
+  'turn_request',
   'verdict_view',
   'view_invalidate',
 ];

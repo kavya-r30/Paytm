@@ -72,3 +72,4 @@ L2 and announce it.
   only approve/edit/snooze until it exists. **Request 7 (when L4 lands):** a turns endpoint (e.g. `POST /v1/turns
   {text, surface}` → envelope); the ask dock routes locally via an intent table until then.
 - Lane A (30 Oct): L3 done (CP-3). `/v1/views/forecast` now returns `forecast_view` (was `layer_pending_view`); new `/v1/views/insights`, `/v1/charts/{1..12}`, `/v1/analytics/{tool}`. See issue #2.
+- Lane A (30 Oct): L4 done offline. Request 7 shipped: `POST /v1/turns {text|audio_b64, surface, bill_id?}` → envelope v2; `GET /v1/views/ask` now real (`ask_view`); `GET /v1/tts`. **Ask for Lane B:** run `python dev.py ai-smoke` locally (providers are blocked in Lane A's cloud session) and commit `backend/cassettes/`. See issue #2.

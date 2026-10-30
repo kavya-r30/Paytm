@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/tts_result.schema.json",
+  "title": "TtsResult",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "text": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "spoken_text": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "lang": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "audio_b64": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "mode": {
+      "enum": [
+        "live",
+        "replay",
+        "unavailable"
+      ]
+    },
+    "invalidate_on": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    }
+  },
+  "required": [
+    "text",
+    "spoken_text",
+    "lang",
+    "audio_b64",
+    "mode",
+    "invalidate_on"
+  ]
+}

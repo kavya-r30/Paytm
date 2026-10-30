@@ -132,20 +132,6 @@ paths:
               schema: {$ref: './home_view.schema.json'}
         '401': {$ref: '#/components/responses/Problem'}
         '409': {$ref: '#/components/responses/Problem'}
-  /v1/views/ask:
-    get:
-      operationId: getAskView
-      security: [{device: []}, {console: []}]
-      parameters:
-        - {in: query, name: session, required: false, schema: {type: string}}
-      responses:
-        '200':
-          description: Scoped merchant read model
-          content:
-            application/json:
-              schema: {$ref: './layer_pending_view.schema.json'}
-        '401': {$ref: '#/components/responses/Problem'}
-        '409': {$ref: '#/components/responses/Problem'}
   /v1/views/notifications:
     get:
       operationId: getNotificationsView
@@ -1011,6 +997,53 @@ paths:
         '401': {$ref: '#/components/responses/Problem'}
         '404': {$ref: '#/components/responses/Problem'}
         '422': {$ref: '#/components/responses/Problem'}
+  /v1/views/ask:
+    get:
+      operationId: getAskView
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: query, name: session, required: false, schema: {type: string}}
+      responses:
+        '200':
+          description: The shared turn log (session memory)
+          content:
+            application/json:
+              schema: {$ref: './ask_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+  /v1/turns:
+    post:
+      operationId: postTurn
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: header, name: idempotency-key, required: true, schema: {type: string}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: './turn_request.schema.json'}
+      responses:
+        '200':
+          description: Response envelope v2
+          content:
+            application/json:
+              schema: {$ref: './envelope.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '422': {$ref: '#/components/responses/Problem'}
+        '503': {$ref: '#/components/responses/Problem'}
+  /v1/tts:
+    get:
+      operationId: getTts
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: query, name: text, required: true, schema: {type: string}}
+        - {in: query, name: lang, required: false, schema: {type: string}}
+      responses:
+        '200':
+          description: Normalised spoken text and audio when a provider is reachable
+          content:
+            application/json:
+              schema: {$ref: './tts_result.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
   /v1/patrons:
     post:
       operationId: patronsadd

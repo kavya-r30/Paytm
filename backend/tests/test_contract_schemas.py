@@ -40,6 +40,7 @@ def test_discovery_finds_every_contract() -> None:
         "approval",
         "approval_decided",
         "approval_requested",
+        "ask_view",
         "audit_verification",
         "audit_verified",
         "batch_recalled",
@@ -265,6 +266,8 @@ def test_discovery_finds_every_contract() -> None:
         "treasury_refund",
         "treasury_resolve_exception",
         "trust_view",
+        "tts_result",
+        "turn_request",
         "verdict_view",
         "view_invalidate",
     }
