@@ -41,3 +41,22 @@ L2 and announce it.
 
 ## Log
 - Lane A (30 Oct 19:40 UTC): L1 merged to `main` at `0889467`. Starting L2 (simulators, world generators, `python dev.py seed`).
+- Lane B (31 Oct): starting L7 on `main` (frontend/ only). The Lane B session has no GitHub credentials, so it posts here.
+  **Heads-up (shared files):** `frontend/package.json` + `pnpm-lock.yaml` gain `@tanstack/react-query`, `zustand`,
+  `intl-messageformat`, `lucide-react`. The UI reads live views when it has a session token (`?session=…`, kept in
+  localStorage) and otherwise renders schema-valid Gupta fixtures, so it is not blocked.
+  **contract-change requests (stubbed client-side meanwhile, by priority):**
+  1. *Demo session.* `python dev.py seed` (or a director-token route, e.g. `POST /v1/director/session
+     {surface: device|console, role: owner}` → `session_result`) should hand out a session token for the seeded shop's
+     owner on the device and console channels, so the stage/director can pass `?session=` to each surface.
+  2. *Names in views* (the UI only has IDs today): `stock_view.items[]` + `name`, `unit`, `target_qty_milli`,
+     `status` (ok/low/out), `supplier_name?`; `expiry_view.batches[]` + `name`; `bill.patron` summary
+     (`display_name`, `rewards.stamps`, `khata_balance_paise`, `lang`) on bill/pay/paid views; `park_view.bills[]`,
+     `orders_view.orders[]` + `patron_name`; `rx_view.refills_due[]` + `patron_name`, `item_name`; `grn/claim/po`
+     variances + `name`, `supplier_name`.
+  3. *Bill grid.* `bill_view` + `quick_items[]` (`item_id`, `name`, `price_paise`, `unit`, `category`) and
+     `categories[]` (pack chips + "Aksar"), or a `GET /v1/views/catalog?category=` list. `/v1/catalog/search` needs q.
+  4. *Gate summaries.* Gates in `home_view.gates[]` / `notifications_view.needs_you[]` + `title_key` and
+     `summary_params` (supplier, amount, saving) so batch rows are not hand-written (J1 binding fix).
+  5. *Customer picker.* `customer_search_view` with empty q → `recent[]` (`patron_id`, `display_name`, `phone_masked`,
+     `khata_balance_paise`, `reward_stamps`).
