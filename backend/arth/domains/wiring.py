@@ -19,6 +19,7 @@ from arth.domains.tax import register_books
 from arth.domains.treasury import register_treasury
 from arth.domains.trust import register_trust
 from arth.governance.commands import CommandBus
+from arth.growth.engine import register_growth
 
 
 @dataclass(frozen=True)
@@ -43,4 +44,5 @@ def register_commerce(bus: CommandBus, packs: PackRegistry, signing_key: str) ->
     register_capital(bus)
     register_sentinel(bus)
     register_inbox(bus)
+    register_growth(bus, packs)
     return Services(staff=staff, patrons=patrons)

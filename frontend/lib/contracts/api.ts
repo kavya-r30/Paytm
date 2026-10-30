@@ -1185,6 +1185,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/auth/step-up": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["postStepUp"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/public/storefront/{slug}/orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["postStorefrontOrder"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/patrons": {
         parameters: {
             query?: never;
@@ -1881,6 +1913,16 @@ export interface components {
                 key: string;
                 label: string;
             }[];
+            hint?: {
+                hint_id: components["schemas"]["PrefixedId"];
+                patron_id: components["schemas"]["PrefixedId"];
+                item_id: components["schemas"]["PrefixedId"];
+                name: string;
+                price_paise: number;
+                reason_key: components["schemas"]["MessageKey"];
+                /** @constant */
+                audience: "owner";
+            } | null;
         };
         /** BillPayView */
         "bill_pay_view.schema": {
@@ -2173,15 +2215,74 @@ export interface components {
             invalidate_on: string[];
             supplier_name: string;
         };
-        /** LayerPendingView */
-        "layer_pending_view.schema": {
-            screen: string;
-            /** @enum {unknown} */
-            status: "needs_more_data" | "not_built_yet";
-            /** @enum {unknown} */
-            layer: "L3" | "L4" | "L5" | "L6";
-            reason_key: components["schemas"]["MessageKey"];
-            items: Record<string, never>[];
+        /** GrowView */
+        "grow_view.schema": {
+            diagnostics: {
+                current: {
+                    customers: number;
+                    visits: number;
+                    sales_paise: number;
+                };
+                previous: {
+                    customers: number;
+                    visits: number;
+                    sales_paise: number;
+                };
+                change_paise: number;
+                parts: {
+                    customers_paise: number;
+                    frequency_paise: number;
+                    basket_paise: number;
+                };
+            };
+            peers: Record<string, never>;
+            levers: {
+                name: string;
+                enabled: boolean;
+                eligible: number;
+                estimate_paise: number;
+                /** @enum {unknown} */
+                label: "estimate";
+                gate: string;
+            }[];
+            plans: {
+                id: components["schemas"]["PrefixedId"];
+                goal_key: string;
+                status: string;
+                budget_paise: number;
+                levers: string[];
+            }[];
+            advisor: {
+                account_id: components["schemas"]["PrefixedId"];
+                patron_id: components["schemas"]["PrefixedId"];
+                current_limit_paise: number;
+                suggested_limit_paise: number;
+                reason_key: components["schemas"]["MessageKey"];
+            }[];
+            invalidate_on: string[];
+        };
+        /** PlanView */
+        "plan_view.schema": {
+            plan: {
+                id: components["schemas"]["PrefixedId"];
+                goal_key: string;
+                status: string;
+                budget_paise: number;
+                holdout_bp: number;
+                levers: string[];
+                diagnosis: Record<string, never>;
+            };
+            campaigns: {
+                id: components["schemas"]["PrefixedId"];
+                plan_id: components["schemas"]["PrefixedId"];
+                lever: string;
+                status: string;
+                stop_reason: string | null;
+                treated: number;
+                holdout: number;
+                sent: number;
+                result: Record<string, never>;
+            }[];
             invalidate_on: string[];
         };
         /** DemandView */
@@ -2199,6 +2300,59 @@ export interface components {
             }[];
             /** @enum {unknown} */
             status: "needs_more_data" | "ready";
+            invalidate_on: string[];
+        };
+        /** BundlesView */
+        "bundles_view.schema": {
+            bundles: {
+                items: components["schemas"]["PrefixedId"][];
+                names: string[];
+                price_paise: number;
+                margin_bp: number;
+                support: number;
+            }[];
+            preorders: {
+                id: components["schemas"]["PrefixedId"];
+                patron_id: components["schemas"]["PrefixedId"];
+                total_paise: number;
+                deposit_paise: number;
+                status: string;
+            }[];
+            invalidate_on: string[];
+        };
+        /** GrowthLedgerView */
+        "growth_ledger_view.schema": {
+            entries: {
+                campaign_id: components["schemas"]["PrefixedId"];
+                lever: string;
+                treated_n: number;
+                holdout_n: number;
+                measured: Record<string, never>;
+                direct_paise: number;
+                reward_cost_paise: number;
+                /** @enum {unknown} */
+                label: "measured" | "direct" | "estimated";
+            }[];
+            impact: {
+                measured_paise: number;
+                direct_paise: number;
+                estimated_paise: number;
+            };
+            invalidate_on: string[];
+        };
+        /** CampaignView */
+        "campaign_view.schema": {
+            campaign: {
+                id: components["schemas"]["PrefixedId"];
+                plan_id: components["schemas"]["PrefixedId"];
+                lever: string;
+                status: string;
+                stop_reason: string | null;
+                treated: number;
+                holdout: number;
+                sent: number;
+                result: Record<string, never>;
+            };
             invalidate_on: string[];
         };
         /** OffersView */
@@ -3815,7 +3969,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["layer_pending_view.schema"];
+                    "application/json": components["schemas"]["grow_view.schema"];
                 };
             };
             401: components["responses"]["Problem"];
@@ -3839,7 +3993,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["layer_pending_view.schema"];
+                    "application/json": components["schemas"]["plan_view.schema"];
                 };
             };
             401: components["responses"]["Problem"];
@@ -3883,7 +4037,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["layer_pending_view.schema"];
+                    "application/json": components["schemas"]["bundles_view.schema"];
                 };
             };
             401: components["responses"]["Problem"];
@@ -3905,7 +4059,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["layer_pending_view.schema"];
+                    "application/json": components["schemas"]["growth_ledger_view.schema"];
                 };
             };
             401: components["responses"]["Problem"];
@@ -3929,7 +4083,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["layer_pending_view.schema"];
+                    "application/json": components["schemas"]["campaign_view.schema"];
                 };
             };
             401: components["responses"]["Problem"];
@@ -5063,6 +5217,60 @@ export interface operations {
             };
             401: components["responses"]["Problem"];
             409: components["responses"]["Problem"];
+        };
+    };
+    postStepUp: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description The Console session may run R4 actions for 10 minutes (simulated OTP) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": Record<string, never>;
+                };
+            };
+            401: components["responses"]["Problem"];
+            403: components["responses"]["Problem"];
+        };
+    };
+    postStorefrontOrder: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description The cart became an order draft (STO-2); the owner accepts it */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": Record<string, never>;
+                };
+            };
+            404: components["responses"]["Problem"];
+            422: components["responses"]["Problem"];
         };
     };
     patronsadd: {

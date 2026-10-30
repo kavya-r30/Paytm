@@ -75,7 +75,10 @@ async def test_router_falls_back_on_timeout_and_rate_limit(tmp_path):
     )
     with pytest.raises(ProviderUnavailable) as info:
         await router.chat("llm.fast", [{"role": "user", "content": "x"}])
-    assert "mistral:HTTPStatusError" in str(info.value) and router.status["mistral"] == "fallback"
+    assert (
+        "mistral/mistral-small-latest:HTTPStatusError" in str(info.value)
+        and router.status["mistral"] == "fallback"
+    )
     router.buckets["mistral"].tokens = 0
     router.buckets["mistral"].rpm = 0
     with pytest.raises(ProviderUnavailable, match="rate_limited"):

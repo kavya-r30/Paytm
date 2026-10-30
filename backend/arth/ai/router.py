@@ -86,6 +86,7 @@ class ProviderRouter:
         self.record = settings.mode in {"dev", "demo"}
         self.status: dict[str, str] = {name: "unknown" for name in providers.providers}
         self.spend_paise = 0
+        self.last_errors: dict[str, list[str]] = {}  # role → per-hop failures of the last call (diagnostics)
 
     # public API -------------------------------------------------------------------------------
     async def chat(
@@ -119,7 +120,7 @@ class ProviderRouter:
         self, role: str, request: dict[str, Any], data_tag: str, payload: dict[str, Any] | None = None
     ) -> Result:
         chain = self.providers.roles[role].chain
-        errors = []
+        errors: list[str] = []
         for hop in chain:
             started = time.monotonic()
             try:
@@ -148,6 +149,7 @@ class ProviderRouter:
                     self.status[hop.provider] = "live"
                     if self.record:
                         self._store(role, request, result)
+                self.last_errors[role] = errors
                 result.latency_ms = int((time.monotonic() - started) * 1000)
                 self.spend_paise += result.cost_paise
                 await self._span(role, result, ok=True)
@@ -155,7 +157,13 @@ class ProviderRouter:
             except (TimeoutError, ProviderUnavailable, httpx.HTTPError, KeyError, ValueError) as exc:
                 if hop.provider != "cassette":
                     self.status[hop.provider] = "fallback"
-                errors.append(f"{hop.provider}:{type(exc).__name__}:{exc}")
+                detail = ""
+                if isinstance(exc, httpx.HTTPStatusError):
+                    detail = " " + exc.response.text[:200].replace(
+                        "\n", " "
+                    )  # provider error body, never the key
+                errors.append(f"{hop.provider}/{hop.model}:{type(exc).__name__}:{exc}{detail}")
+        self.last_errors[role] = errors
         raise ProviderUnavailable("; ".join(errors))
 
     async def _span(self, role: str, result: Result, ok: bool) -> None:
@@ -261,7 +269,7 @@ class ProviderRouter:
                         f"{ENDPOINTS['sarvam']}/text-to-speech",
                         headers=headers,
                         json={
-                            "inputs": [request["text"]],
+                            "text": request["text"],
                             "target_language_code": request["lang"],
                             "speaker": request["speaker"],
                             "model": model,

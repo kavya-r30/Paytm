@@ -1,6 +1,11 @@
 # Arth: Handoff for L1 (continue in a fresh Claude Code / Codex session)
 
-## Current checkpoint (30 Oct 2026, CP-5) — L5 DONE
+## Current checkpoint (30 Oct 2026, CP-6) — L6 DONE
+
+L6 growth is in `backend/arth/growth/` (plan: `docs/superpowers/plans/2026-10-30-arth-L6-growth.md`). Migration 0010
+is frozen. Lane B's requests 8–10 are done. Next: L8 scenario library and demo, together with Lane B.
+
+## Checkpoint CP-5 — L5 DONE
 
 L5 agents are in `backend/arth/agents/` (plan: `docs/superpowers/plans/2026-10-30-arth-L5-agents.md`). The dispatch
 loop ticks the runtime; Night Shift runs at 22:00 IST. Migration 0009 is frozen. Next: L6 growth.

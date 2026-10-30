@@ -92,3 +92,16 @@ L2 and announce it.
   `text_to_speech("Namaste, Arth hazir hai.", "hi-IN")`, so there is no tts cassette. Likely a request-body
   mismatch for Bulbul v4 (model/speaker/`target_language_code` fields); needs a fix in `arth/ai` (Lane A).
 - Lane A (30 Oct): L5 done (CP-5). `team_view`, `run_view`, `memory_view` replace `layer_pending_view`; `home_view.brief` is filled by Night Shift; `POST /v1/work/batches {gate_ids}` → thread for "Teeno haan". See issue #2.
+- Lane A (30 Oct): **L6 done (CP-6)** and **requests 8, 9, 10 done**:
+  #8 `POST /v1/auth/step-up {otp: "123456"}` on an owner **console** session → `{step_up_until}`; R4 commands then pass
+  the policy gate for 10 minutes (wrong OTP → 403 `auth.invalid_otp`). #9 `POST /v1/public/storefront/{slug}/orders
+  {lines: [{item_id, qty_milli}]}` → `{order_id, status: "draft"}` (only listed items; no auth). #10 every
+  `POST /v1/turns` envelope is pushed on `/v1/stream` as `event: envelope` (data = the envelope + `type`).
+  **L6 contracts:** `grow_view`, `plan_view`, `campaign_view`, `growth_ledger_view`, `bundles_view` replace
+  `layer_pending_view` for SCR-GROW/PLAN/CAMPAIGN/LEDGER/BUNDLE. `bill_view.hint` is new and **optional** (owner-only
+  counter hint, null for holdout bills); render it only on owner surfaces. New commands: `growth.create_plan` (R3),
+  `outreach.send_campaign` (R3), `growth.stop_campaign`, `hints.accept`, `preorders.create` (R2).
+  **TTS:** fixed the Sarvam body (`text`, not `inputs`) and added a `bulbul:v2` hop. Please re-run
+  `python dev.py ai-smoke`: it now prints every failed hop with the provider's error body, which should show why
+  llm.fast/large fell back from Mistral to Groq. Commit the new cassettes and post the output here.
+  `layer_pending_view` is now unused by the backend (the contract stays for compatibility).

@@ -20,6 +20,9 @@ from arth.governance.tables import staff
 class StaffService:
     def __init__(self, bus: CommandBus, signing_key: str) -> None:
         self.bus, self._key = bus, signing_key.encode()
+        self.step_up_until: dict[
+            str, str
+        ] = {}  # session id → expiry of a simulated OTP step-up (R4 on Console)
         self._register()
         bus.session_validator = self.validate
 
@@ -63,6 +66,7 @@ class StaffService:
                 channel=row["channel"],
                 device_id=row["device_id"],
                 session_id=sid,
+                step_up=self.step_up_until.get(sid, "") > iso_utc(self.bus.clock.now()),
             )
             await self.validate(repo, session)
             return session
@@ -137,6 +141,16 @@ class StaffService:
         )
         token = self._sign(merchant_id, result["data"]["session_id"], "session")
         return {"token": token, "staff_id": staff_id, "expires_at": result["data"]["expires_at"]}
+
+    def step_up(self, session: Session, otp: str, *, expected: str = "123456", minutes: int = 10) -> str:
+        """CON-OTP (simulated): an owner's Console session gains step-up for R4 actions for a few minutes."""
+        if session.channel != "console" or session.role != "owner" or session.session_id is None:
+            raise CommandError("auth.step_up_console_owner_only")
+        if not hmac.compare_digest(otp, expected):
+            raise CommandError("auth.invalid_otp")
+        until = iso_utc(self.bus.clock.now() + timedelta(minutes=minutes))
+        self.step_up_until[session.session_id] = until
+        return until
 
     async def add(self, actor: Session, name: str, role: str, pin: str, key: str) -> dict[str, Any]:
         return await self.bus.submit(

@@ -376,6 +376,50 @@
           }
         }
       }
+    },
+    "hint": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "hint_id",
+            "patron_id",
+            "item_id",
+            "name",
+            "price_paise",
+            "reason_key",
+            "audience"
+          ],
+          "properties": {
+            "hint_id": {
+              "$ref": "./common.schema.json#/definitions/PrefixedId"
+            },
+            "patron_id": {
+              "$ref": "./common.schema.json#/definitions/PrefixedId"
+            },
+            "item_id": {
+              "$ref": "./common.schema.json#/definitions/PrefixedId"
+            },
+            "name": {
+              "type": "string"
+            },
+            "price_paise": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "reason_key": {
+              "$ref": "./common.schema.json#/definitions/MessageKey"
+            },
+            "audience": {
+              "const": "owner"
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
     }
   },
   "required": [

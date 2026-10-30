@@ -30,6 +30,7 @@ from arth.api import (
     commerce_core,
     director,
     governance,
+    growth,
     health,
     intel,
     sim,
@@ -111,6 +112,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         install_playbooks(app.state.runtime, app.state.events)
         register_agent_commands(app.state.commands, app.state.runtime)
         app.state.helpers = load_helpers()
+        growth.install_guardrails(app.state.events, clock)
 
         async def night_shift(job: Any) -> None:
             stamp = clock.now_ist().date().isoformat()
@@ -208,6 +210,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(intel.router)
     app.include_router(turns.router)
     app.include_router(agents.router)
+    app.include_router(growth.router)
     return app
 
 

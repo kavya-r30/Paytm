@@ -10,6 +10,7 @@ from datetime import timedelta
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Query, Request
+from pydantic import BaseModel, Field
 
 from arth.agents.views import latest_brief
 from arth.api.commerce import Actor
@@ -42,6 +43,7 @@ from arth.governance.audit import verify_audit
 from arth.governance.commands import CommandError
 from arth.governance.repository import Repository
 from arth.governance.tables import approvals, audit_log, commands, staff
+from arth.growth.engine import hint_for
 
 router = APIRouter()
 IST = timedelta(hours=5, minutes=30)
@@ -55,7 +57,7 @@ PO = {"po.changed", "po.variance_found", "po.supplier_added", "credit.payable_ch
 VIEW_TOPICS: dict[str, set[str]] = {
     "home": BILL | PAY | {"approval.requested", "approval.decided", "credit.changed", "clock.hour"},
     "notifications": {"approval.requested", "approval.decided", "command.executed"},
-    "bill": BILL | {"hint.offered"},
+    "bill": BILL | {"hint.offered", "growth.updated"},
     "bill/pay": BILL | PAY | OFFER,
     "bill/paid": BILL | PAY | OFFER | {"tax.invoice_issued"},
     "park": BILL,
@@ -92,14 +94,12 @@ VIEW_TOPICS: dict[str, set[str]] = {
     "team": {"playbook.updated", "approval.requested", "approval.decided", "agents.paused"},
     "runs": {"playbook.updated"},
     "memory": {"memory.changed"},
+    "grow": {"growth.updated", "bill.paid", "preorder.changed"},
+    "grow/plans": {"growth.updated"},
+    "grow/ledger": {"growth.updated", "bill.paid"},
+    "grow/bundles": {"growth.updated", "preorder.changed"},
+    "campaigns": {"growth.updated"},
     "trust": {"command.executed", "approval.decided", "privacy.erased", "privacy.sharing_changed"},
-}
-PENDING = {
-    "grow": ("L6", "sufficiency.growth_pending"),
-    "grow/plans": ("L6", "sufficiency.plan_pending"),
-    "grow/bundles": ("L6", "sufficiency.bundles_pending"),
-    "grow/ledger": ("L6", "sufficiency.ledger_pending"),
-    "campaigns": ("L6", "sufficiency.campaign_pending"),
 }
 
 
@@ -108,18 +108,6 @@ async def read(
 ) -> dict[str, Any]:
     async with request.app.state.db.read() as conn:
         return await build(Repository(conn, session.merchant_id))
-
-
-def pending(screen: str, invalidate_on: list[str]) -> dict[str, Any]:
-    layer, reason = PENDING[screen]
-    return {
-        "screen": screen,
-        "status": "not_built_yet",
-        "layer": layer,
-        "reason_key": reason,
-        "items": [],
-        "invalidate_on": invalidate_on,
-    }
 
 
 async def _gate(repo: Repository, row: dict[str, Any]) -> dict[str, Any]:
@@ -285,6 +273,7 @@ async def bill(request: Request, bill_id: str, session: Actor) -> dict[str, Any]
         grid, categories = await quick_items(repo)
         return {
             "bill": await bill_state(repo, bill_id),
+            "hint": await hint_for(repo, request.app.state.clock, bill_id),  # owner audience only (GRW-4)
             "parked_count": len(await repo.select(bills, bills.c.status == "parked")),
             "quick_items": grid,
             "categories": categories,
@@ -416,16 +405,6 @@ async def claim(request: Request, claim_id: str, session: Actor) -> dict[str, An
     return await read(request, session, lambda repo: claim_view(repo, claim_id))
 
 
-@router.get("/v1/views/grow")
-async def grow(request: Request, session: Actor) -> dict[str, Any]:
-    return pending("grow", ["growth.updated", "demand.logged", "preorder.changed"])
-
-
-@router.get("/v1/views/grow/plans/{plan_id}")
-async def grow_plan(request: Request, plan_id: str, session: Actor) -> dict[str, Any]:
-    return pending("grow/plans", ["growth.updated"])
-
-
 @router.get("/v1/views/grow/demand")
 async def grow_demand(request: Request, session: Actor) -> dict[str, Any]:
     async def build(repo: Repository) -> dict[str, Any]:
@@ -438,21 +417,6 @@ async def grow_demand(request: Request, session: Actor) -> dict[str, Any]:
         }
 
     return await read(request, session, build)
-
-
-@router.get("/v1/views/grow/bundles")
-async def grow_bundles(request: Request, session: Actor) -> dict[str, Any]:
-    return pending("grow/bundles", ["growth.updated", "preorder.changed"])
-
-
-@router.get("/v1/views/grow/ledger")
-async def grow_ledger(request: Request, session: Actor) -> dict[str, Any]:
-    return pending("grow/ledger", ["growth.updated"])
-
-
-@router.get("/v1/views/campaigns/{campaign_id}")
-async def campaign(request: Request, campaign_id: str, session: Actor) -> dict[str, Any]:
-    return pending("campaigns", ["growth.updated"])
 
 
 @router.get("/v1/views/offers")
@@ -785,3 +749,45 @@ async def public(request: Request, slug: str) -> dict[str, Any]:
                 404, "storefront.not_found", "error.storefront.not_found", title="Not found"
             ) from exc
     return {**page, "invalidate_on": ["storefront.published", "catalog.price_changed", "stock.changed"]}
+
+
+class StorefrontLine(BaseModel):
+    item_id: str = Field(pattern=r"^item_[0-9A-HJKMNP-TV-Z]{26}$")
+    qty_milli: int = Field(gt=0, le=100_000)
+
+
+class StorefrontOrder(BaseModel):
+    lines: list[StorefrontLine] = Field(min_length=1, max_length=30)
+
+
+@router.post("/v1/public/storefront/{slug}/orders")
+async def storefront_order(request: Request, slug: str, body: StorefrontOrder) -> dict[str, Any]:
+    """STO-2: a storefront cart becomes an order *draft* only (as from WhatsApp); the owner accepts it."""
+    from arth.core.ids import new_id
+    from arth.governance.policy import Session
+
+    state = request.app.state
+    async with state.db.read() as conn:
+        merchant_id = await Repository.storefront_slug_owner(conn, slug)
+        if merchant_id is None:
+            raise ProblemError(404, "storefront.not_found", "error.storefront.not_found", title="Not found")
+        page = await public_storefront(Repository(conn, merchant_id), state.clock, state.packs)
+    listed = {i["item_id"]: i for i in page["items"]}
+    if any(line.item_id not in listed for line in body.lines):
+        raise ProblemError(
+            422, "storefront.item_not_listed", "error.storefront.item_not_listed", title="Not listed"
+        )
+    customer = Session(merchant_id, new_id("system"), "system", actor_kind="customer")
+    lines = [
+        {
+            "item_id": line.item_id,
+            "text": listed[line.item_id]["names"].get("en", line.item_id)[:200],
+            "qty_milli": line.qty_milli,
+            "confidence_bp": 10000,
+        }
+        for line in body.lines
+    ]
+    result = await state.commands.submit(
+        customer, "orders.create_draft", {"channel": "storefront", "lines": lines}, new_id("web")
+    )
+    return {"order_id": result["data"]["order_id"], "status": "draft"}

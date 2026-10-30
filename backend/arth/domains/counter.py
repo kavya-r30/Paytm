@@ -218,6 +218,17 @@ def register_counter(bus: CommandBus, packs: PackRegistry) -> None:
             },
         )
 
+    async def offer_hint(repo: Repository, bill_id: str, patron_id: str) -> None:
+        """GRW-4: assign the hint arm (20% holdout) the moment a known patron is on the bill."""
+        from arth.growth.engine import record_hint
+        from arth.growth.tables import hints
+
+        await record_hint(repo, clock, bill_id, patron_id)
+        row = (await repo.select(hints, hints.c.bill_id == bill_id))[0]
+        await domain_event(
+            bus, repo, "hint.offered", {"hint_id": row["id"], "bill_id": bill_id, "arm": row["arm"]}
+        )
+
     async def open_bill(repo: Repository, payload: dict[str, Any]) -> dict[str, Any]:
         if payload.get("patron_id"):
             await patron_row(repo, payload["patron_id"])
@@ -232,6 +243,8 @@ def register_counter(bus: CommandBus, packs: PackRegistry) -> None:
                 "opened_at": iso_utc(clock.now()),
             },
         )
+        if payload.get("patron_id"):
+            await offer_hint(repo, identity, payload["patron_id"])
         await changed(repo, identity)
         return {"bill_id": identity}
 
@@ -377,6 +390,7 @@ def register_counter(bus: CommandBus, packs: PackRegistry) -> None:
         await _open_bill(repo, payload["bill_id"])
         await patron_row(repo, payload["patron_id"])
         await repo.update(bills, {"patron_id": payload["patron_id"]}, bills.c.id == payload["bill_id"])
+        await offer_hint(repo, payload["bill_id"], payload["patron_id"])
         await changed(repo, payload["bill_id"])
         return payload
 

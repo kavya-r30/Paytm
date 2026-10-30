@@ -38,6 +38,8 @@ async def main() -> int:
         try:
             result = await call
             print(f"{name}: {result.provider}/{result.model} {result.mode} {result.latency_ms} ms")
+            for error in router.last_errors.get(result.role, []):
+                print(f"    earlier hop failed: {error}")
         except ProviderUnavailable as exc:
             failures += 1
             print(f"{name}: UNAVAILABLE {exc}")

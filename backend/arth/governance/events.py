@@ -61,6 +61,14 @@ class Dispatcher:
     def unsubscribe(self, queue: asyncio.Queue[dict[str, Any]]) -> None:
         self.subscribers.pop(queue, None)
 
+    def publish(self, merchant_id: str, item: dict[str, Any]) -> None:
+        """Push a non-persisted stream item (e.g. a turn's envelope) to this merchant's live subscribers."""
+        for queue, owner in list(self.subscribers.items()):
+            if owner == merchant_id:
+                if queue.full():
+                    queue.get_nowait()
+                queue.put_nowait(item)
+
     def declare_view(self, name: str, topics: set[str]) -> None:
         self.views[name] = topics
 

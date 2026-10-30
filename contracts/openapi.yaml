@@ -313,7 +313,7 @@ paths:
           description: Scoped merchant read model
           content:
             application/json:
-              schema: {$ref: './layer_pending_view.schema.json'}
+              schema: {$ref: './grow_view.schema.json'}
         '401': {$ref: '#/components/responses/Problem'}
         '409': {$ref: '#/components/responses/Problem'}
   /v1/views/grow/plans/{plan_id}:
@@ -327,7 +327,7 @@ paths:
           description: Scoped merchant read model
           content:
             application/json:
-              schema: {$ref: './layer_pending_view.schema.json'}
+              schema: {$ref: './plan_view.schema.json'}
         '401': {$ref: '#/components/responses/Problem'}
         '409': {$ref: '#/components/responses/Problem'}
   /v1/views/grow/demand:
@@ -351,7 +351,7 @@ paths:
           description: Scoped merchant read model
           content:
             application/json:
-              schema: {$ref: './layer_pending_view.schema.json'}
+              schema: {$ref: './bundles_view.schema.json'}
         '401': {$ref: '#/components/responses/Problem'}
         '409': {$ref: '#/components/responses/Problem'}
   /v1/views/grow/ledger:
@@ -363,7 +363,7 @@ paths:
           description: Scoped merchant read model
           content:
             application/json:
-              schema: {$ref: './layer_pending_view.schema.json'}
+              schema: {$ref: './growth_ledger_view.schema.json'}
         '401': {$ref: '#/components/responses/Problem'}
         '409': {$ref: '#/components/responses/Problem'}
   /v1/views/campaigns/{campaign_id}:
@@ -377,7 +377,7 @@ paths:
           description: Scoped merchant read model
           content:
             application/json:
-              schema: {$ref: './layer_pending_view.schema.json'}
+              schema: {$ref: './campaign_view.schema.json'}
         '401': {$ref: '#/components/responses/Problem'}
         '409': {$ref: '#/components/responses/Problem'}
   /v1/views/offers:
@@ -1061,6 +1061,42 @@ paths:
               schema: {type: object}
         '401': {$ref: '#/components/responses/Problem'}
         '409': {$ref: '#/components/responses/Problem'}
+  /v1/auth/step-up:
+    post:
+      operationId: postStepUp
+      security: [{console: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        '200':
+          description: The Console session may run R4 actions for 10 minutes (simulated OTP)
+          content:
+            application/json:
+              schema: {type: object}
+        '401': {$ref: '#/components/responses/Problem'}
+        '403': {$ref: '#/components/responses/Problem'}
+  /v1/public/storefront/{slug}/orders:
+    post:
+      operationId: postStorefrontOrder
+      security: []
+      parameters:
+        - {in: path, name: slug, required: true, schema: {type: string}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        '200':
+          description: The cart became an order draft (STO-2); the owner accepts it
+          content:
+            application/json:
+              schema: {type: object}
+        '404': {$ref: '#/components/responses/Problem'}
+        '422': {$ref: '#/components/responses/Problem'}
   /v1/patrons:
     post:
       operationId: patronsadd
