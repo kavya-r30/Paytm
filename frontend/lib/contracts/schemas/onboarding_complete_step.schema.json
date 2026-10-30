@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/onboarding_complete_step.schema.json",
+  "title": "OnboardingCompleteStep",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "step": {
+      "enum": [
+        "language",
+        "pack",
+        "details",
+        "catalog",
+        "people"
+      ]
+    }
+  },
+  "required": [
+    "step"
+  ]
+}

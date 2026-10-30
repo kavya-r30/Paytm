@@ -1,0 +1,45 @@
+roles:
+  llm.fast:
+    chain:
+      - { provider: mistral, model: mistral-small-latest, timeout_ms: 2500, json: true }
+      - { provider: groq, model: openai/gpt-oss-20b, timeout_ms: 2500, json: true }
+      - { provider: cassette }
+  llm.large:
+    chain:
+      - { provider: mistral, model: mistral-large-latest, timeout_ms: 4000, json: true }
+      - { provider: groq, model: openai/gpt-oss-120b, timeout_ms: 4000, json: true }
+      - { provider: cassette }
+  vision:
+    chain:
+      - { provider: mistral, model: mistral-medium-latest, timeout_ms: 4000 }
+      - { provider: mistral, model: mistral-small-latest, timeout_ms: 4000 }
+      - { provider: cassette }
+  ocr:
+    chain:
+      - { provider: mistral, model: mistral-ocr-latest, timeout_ms: 20000 }
+      - { provider: sarvam, model: sarvam-vision, timeout_ms: 20000 }
+      - { provider: cassette }
+  stt:
+    chain:
+      - { provider: sarvam, model: 'saaras:v4', timeout_ms: 2500, langs: [hi, en, mr, ta, bn, gu, te] }
+      - { provider: groq, model: whisper-large-v3, timeout_ms: 3000 }
+  tts:
+    chain:
+      - { provider: sarvam, model: 'bulbul:v4-flash', timeout_ms: 2000, langs: [hi, en, mr, ta, bn, gu, te] }
+      - { provider: sarvam, model: 'bulbul:v3', timeout_ms: 2000 }
+      - { provider: cassette }
+  translate:
+    chain:
+      - { provider: sarvam, model: sarvam-translate, timeout_ms: 2000 }
+  guard:
+    chain:
+      - { provider: mistral, model: mistral-small-latest, timeout_ms: 1000, json: true }
+      - { provider: groq, model: openai/gpt-oss-20b, timeout_ms: 1000, json: true }
+  persona:
+    chain:
+      - { provider: groq, model: openai/gpt-oss-20b, timeout_ms: 3000 }
+      - { provider: cassette }
+providers:
+  mistral: { api_key_env: MISTRAL_API_KEY, data_tag: merchant_ok_if_paid_plan }
+  groq: { api_key_env: GROQ_API_KEY, data_tag: synthetic_only_on_free_tier }
+  sarvam: { api_key_env: SARVAM_API_KEY, data_tag: merchant_ok_if_paid_plan, rate: { rpm: 60 } }

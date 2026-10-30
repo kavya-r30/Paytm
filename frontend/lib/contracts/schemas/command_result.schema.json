@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/command_result.schema.json",
+  "title": "CommandResult",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "command_id",
+    "status"
+  ],
+  "properties": {
+    "scope": {
+      "type": "object", "additionalProperties": false, "required": ["type", "payload", "conditions"],
+      "properties": {"type": {"type": "string"}, "payload": {"type": "object"}, "conditions": {"type": "object"}}
+    },
+    "expires_at": {"type": "string", "format": "date-time"},
+    "command_id": {
+      "$ref": "common.schema.json#/definitions/PrefixedId"
+    },
+    "status": {
+      "enum": [
+        "executed",
+        "needs_approval",
+        "queued",
+        "snoozed"
+      ]
+    },
+    "tier": {
+      "$ref": "common.schema.json#/definitions/Tier"
+    },
+    "data": {
+      "type": "object"
+    },
+    "envelope": {
+      "$ref": "envelope.schema.json"
+    },
+    "gate_id": {
+      "$ref": "common.schema.json#/definitions/PrefixedId"
+    },
+    "thread_id": {
+      "$ref": "common.schema.json#/definitions/PrefixedId"
+    },
+    "due_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

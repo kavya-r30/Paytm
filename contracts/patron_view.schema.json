@@ -1,0 +1,94 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/patron_view.schema.json",
+  "title": "PatronView",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "patron_id": {
+      "$ref": "./common.schema.json#/definitions/PrefixedId"
+    },
+    "display_name": {
+      "type": "string"
+    },
+    "lang": {
+      "type": "string"
+    },
+    "consent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "marketing": {
+          "type": "boolean"
+        },
+        "reminders": {
+          "type": "boolean"
+        },
+        "receipts": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "marketing",
+        "reminders",
+        "receipts"
+      ]
+    },
+    "household_members": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "display_name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "display_name"
+        ]
+      }
+    },
+    "rewards": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "stamps": {
+          "type": "integer"
+        },
+        "available_rewards": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "available_value_paise": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "stamps",
+        "available_rewards",
+        "available_value_paise"
+      ]
+    },
+    "invalidate_on": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "patron_id",
+    "display_name",
+    "lang",
+    "consent",
+    "household_members",
+    "rewards",
+    "invalidate_on"
+  ]
+}

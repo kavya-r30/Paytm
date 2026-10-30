@@ -1,0 +1,92 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/stock_view.schema.json",
+  "title": "StockView",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "item_id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "on_hand_qty_milli": {
+            "type": "integer"
+          },
+          "sellable_qty_milli": {
+            "type": "integer"
+          },
+          "batches": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "$ref": "./common.schema.json#/definitions/PrefixedId"
+                },
+                "batch_no": {
+                  "type": "string"
+                },
+                "expires_on": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "date"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "mrp_paise": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "cost_paise": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "recalled": {
+                  "type": "boolean"
+                },
+                "qty_milli": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "batch_no",
+                "expires_on",
+                "mrp_paise",
+                "cost_paise",
+                "recalled",
+                "qty_milli"
+              ]
+            }
+          }
+        },
+        "required": [
+          "item_id",
+          "on_hand_qty_milli",
+          "sellable_qty_milli",
+          "batches"
+        ]
+      }
+    },
+    "invalidate_on": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "items",
+    "invalidate_on"
+  ]
+}

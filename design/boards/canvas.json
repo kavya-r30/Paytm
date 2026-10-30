@@ -1,0 +1,351 @@
+{
+ "v": 3,
+ "createdOnFiles": {
+  "v": 1,
+  "at": "2026-10-30T06:00:03Z"
+ },
+ "title": "Arth UI — 4:3 Device",
+ "launch": {
+  "view": "canvas",
+  "page": "screens"
+ },
+ "pages": [
+  {
+   "id": "components",
+   "name": "Components"
+  },
+  {
+   "id": "screens",
+   "name": "Screens 4:3"
+  },
+  {
+   "id": "product",
+   "name": "Product render"
+  }
+ ],
+ "boards": {
+  "Main.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 1440,
+   "h": 1080,
+   "title": "Foundations · Paytm palette",
+   "page": "components"
+  },
+  "Mascot.dc.html": {
+   "x": 1520,
+   "y": 0,
+   "w": 200,
+   "h": 220,
+   "title": "Arth orb (component)",
+   "page": "components"
+  },
+  "MascotStates.dc.html": {
+   "x": 0,
+   "y": 1200,
+   "w": 1440,
+   "h": 760,
+   "title": "Arth orb · mascot states",
+   "page": "components"
+  },
+  "Voice.dc.html": {
+   "x": 0,
+   "y": 2080,
+   "w": 1440,
+   "h": 900,
+   "title": "Voice components",
+   "page": "components"
+  },
+  "Navigation.dc.html": {
+   "x": 0,
+   "y": 3100,
+   "w": 1440,
+   "h": 980,
+   "title": "Navigation, Arth dock, language",
+   "page": "components"
+  },
+  "Billing.dc.html": {
+   "x": 0,
+   "y": 4120,
+   "w": 1440,
+   "h": 1040,
+   "title": "Billing components",
+   "page": "components"
+  },
+  "Cards.dc.html": {
+   "x": 0,
+   "y": 5280,
+   "w": 1440,
+   "h": 1260,
+   "title": "Cards: approvals, insights, forecasts, khata, stock, offers",
+   "page": "components"
+  },
+  "CustomerDisplay.dc.html": {
+   "x": 0,
+   "y": 6660,
+   "w": 1440,
+   "h": 520,
+   "title": "Customer display",
+   "page": "components"
+  },
+  "Phones.dc.html": {
+   "x": 0,
+   "y": 7300,
+   "w": 1440,
+   "h": 900,
+   "title": "Messages: customer, khata, supplier",
+   "page": "components"
+  },
+  "VoiceEdition.dc.html": {
+   "x": 0,
+   "y": 8320,
+   "w": 1440,
+   "h": 720,
+   "title": "Arth Voice (screenless)",
+   "page": "components"
+  },
+  "Console.dc.html": {
+   "x": 0,
+   "y": 9160,
+   "w": 1440,
+   "h": 960,
+   "title": "Console: capital and growth ledger",
+   "page": "components"
+  },
+  "Product.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 1600,
+   "h": 1100,
+   "title": "Arth Display soundbox",
+   "page": "product"
+  },
+  "ScreenHome.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 960,
+   "h": 720,
+   "title": "Aaj · Home",
+   "page": "screens",
+   "radius": 24,
+   "is_interactive": true
+  },
+  "ScreenHomeHindi.dc.html": {
+   "x": 1040,
+   "y": 0,
+   "w": 960,
+   "h": 720,
+   "title": "आज · Home in Hindi",
+   "page": "screens",
+   "radius": 24,
+   "is_interactive": true
+  },
+  "ScreenBilling.dc.html": {
+   "x": 2080,
+   "y": 0,
+   "w": 960,
+   "h": 720,
+   "title": "Bill · customer on top",
+   "page": "screens",
+   "radius": 24,
+   "is_interactive": true
+  },
+  "ScreenCustomer.dc.html": {
+   "x": 3120,
+   "y": 0,
+   "w": 960,
+   "h": 720,
+   "title": "Choose or add customer",
+   "page": "screens",
+   "radius": 24,
+   "is_interactive": true
+  },
+  "ScreenPayment.dc.html": {
+   "x": 0,
+   "y": 840,
+   "w": 960,
+   "h": 720,
+   "title": "Payment QR",
+   "page": "screens",
+   "radius": 24,
+   "is_interactive": true
+  },
+  "ScreenPaid.dc.html": {
+   "x": 1040,
+   "y": 840,
+   "w": 960,
+   "h": 720,
+   "title": "Paid · WhatsApp receipt",
+   "page": "screens",
+   "radius": 24,
+   "is_interactive": true
+  },
+  "ScreenAsk.dc.html": {
+   "x": 2080,
+   "y": 840,
+   "w": 960,
+   "h": 720,
+   "title": "Ask Arth · answer with chart",
+   "page": "screens",
+   "radius": 24,
+   "is_interactive": true
+  },
+  "ScreenTeam.dc.html": {
+   "x": 3120,
+   "y": 840,
+   "w": 960,
+   "h": 720,
+   "title": "Arth ki team · 8 helpers",
+   "page": "screens",
+   "radius": 24,
+   "is_interactive": true
+  },
+  "ScreenApproval.dc.html": {
+   "x": 0,
+   "y": 1680,
+   "w": 960,
+   "h": 720,
+   "title": "One decision · supplier rates",
+   "page": "screens",
+   "radius": 24,
+   "is_interactive": true
+  },
+  "ScreenClaim.dc.html": {
+   "x": 1040,
+   "y": 1680,
+   "w": 960,
+   "h": 720,
+   "title": "Supplier claim on WhatsApp",
+   "page": "screens",
+   "radius": 24,
+   "is_interactive": true
+  },
+  "ScreenForecast.dc.html": {
+   "x": 2080,
+   "y": 1680,
+   "w": 960,
+   "h": 720,
+   "title": "Andaaza · forecast range",
+   "page": "screens",
+   "radius": 24,
+   "is_interactive": true
+  },
+  "ScreenKhata.dc.html": {
+   "x": 3120,
+   "y": 1680,
+   "w": 960,
+   "h": 720,
+   "title": "Khata · WhatsApp reminder",
+   "page": "screens",
+   "radius": 24,
+   "is_interactive": true
+  },
+  "ScreenInventory.dc.html": {
+   "x": 0,
+   "y": 2520,
+   "w": 960,
+   "h": 720,
+   "title": "Stock · Arth suggestion",
+   "page": "screens",
+   "radius": 24,
+   "is_interactive": true
+  },
+  "ScreenOffers.dc.html": {
+   "x": 1040,
+   "y": 2520,
+   "w": 960,
+   "h": 720,
+   "title": "Offers · measured idea",
+   "page": "screens",
+   "radius": 24,
+   "is_interactive": true
+  },
+  "ScreenMenu.dc.html": {
+   "x": 2080,
+   "y": 2520,
+   "w": 960,
+   "h": 720,
+   "title": "More",
+   "page": "screens",
+   "radius": 24,
+   "is_interactive": true
+  },
+  "ScreenLanguage.dc.html": {
+   "x": 3120,
+   "y": 2520,
+   "w": 960,
+   "h": 720,
+   "title": "Bhasha · language",
+   "page": "screens",
+   "radius": 24,
+   "is_interactive": true
+  },
+  "Details.dc.html": {
+   "x": 0,
+   "y": 10240,
+   "w": 1440,
+   "h": 1000,
+   "title": "Details: customer, WhatsApp, helpers, language",
+   "page": "components"
+  },
+  "AILayer.dc.html": {
+   "x": 0,
+   "y": 11360,
+   "w": 1440,
+   "h": 1060,
+   "title": "AI layer: brief, live voice, pipeline, nudges, undo, learning",
+   "page": "components"
+  }
+ },
+ "order": [
+  "Main.dc.html",
+  "Mascot.dc.html",
+  "MascotStates.dc.html",
+  "AILayer.dc.html",
+  "Voice.dc.html",
+  "Navigation.dc.html",
+  "Details.dc.html",
+  "Billing.dc.html",
+  "Cards.dc.html",
+  "CustomerDisplay.dc.html",
+  "Phones.dc.html",
+  "VoiceEdition.dc.html",
+  "Console.dc.html",
+  "ScreenHome.dc.html",
+  "ScreenHomeHindi.dc.html",
+  "ScreenBilling.dc.html",
+  "ScreenCustomer.dc.html",
+  "ScreenPayment.dc.html",
+  "ScreenPaid.dc.html",
+  "ScreenAsk.dc.html",
+  "ScreenTeam.dc.html",
+  "ScreenApproval.dc.html",
+  "ScreenClaim.dc.html",
+  "ScreenForecast.dc.html",
+  "ScreenKhata.dc.html",
+  "ScreenInventory.dc.html",
+  "ScreenOffers.dc.html",
+  "ScreenMenu.dc.html",
+  "ScreenLanguage.dc.html",
+  "Product.dc.html"
+ ],
+ "notes": {
+  "compTitle": {
+   "x": 0,
+   "y": -300,
+   "text": "Arth · Clear Counter components",
+   "kind": "title1",
+   "maxW": 1720,
+   "page": "components"
+  },
+  "screenTitle": {
+   "x": 0,
+   "y": -300,
+   "text": "Arth Display · 4:3 screens · Paytm palette",
+   "kind": "title1",
+   "maxW": 4080,
+   "page": "screens"
+  }
+ },
+ "designSystems": []
+}

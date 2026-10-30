@@ -1,0 +1,14 @@
+{
+  "account_id": "account_01K8S08QNN0000000000000000",
+  "as_of": "2026-10-30T04:00:00Z",
+  "entries": [],
+  "payments": [],
+  "entries_paise": 0,
+  "allocated_paise": 0,
+  "balance_paise": 0,
+  "advance_paise": 0,
+  "invalidate_on": [
+    "credit.changed"
+  ],
+  "pay_link_ref": null
+}

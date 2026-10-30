@@ -1,0 +1,431 @@
+openapi: 3.1.0
+info:
+  title: Arth API
+  version: 0.1.0
+  description: Spec Part C2. L0 exposes health, the SSE stream and a director ping; later layers add their families.
+paths:
+  /v1/views/stock:
+    get:
+      operationId: getStockView
+      security: [{device: []}, {console: []}]
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './stock_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/expiry:
+    get:
+      operationId: getExpiryView
+      security: [{device: []}, {console: []}]
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './expiry_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/customers/search:
+    get:
+      operationId: getCustomerSearchView
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: query, name: q, required: true, schema: {type: string, minLength: 1, maxLength: 200}}
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './customer_search_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/patron/{patron_id}:
+    get:
+      operationId: getPatronView
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: path, name: patron_id, required: true, schema: {type: string}}
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './patron_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/khata:
+    get:
+      operationId: getKhataView
+      security: [{device: []}, {console: []}]
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './khata_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/khata/{patron_id}:
+    get:
+      operationId: getKhataAccountView
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: path, name: patron_id, required: true, schema: {type: string}}
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './khata_account_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/statement/{account_id}:
+    get:
+      operationId: getLedgerStatementView
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: path, name: account_id, required: true, schema: {type: string}}
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './ledger_statement_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/promises:
+    get:
+      operationId: getPromisesView
+      security: [{device: []}, {console: []}]
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './promises_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/payables:
+    get:
+      operationId: getPayablesView
+      security: [{device: []}, {console: []}]
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './payables_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/patrons:
+    post:
+      operationId: patronsadd
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: header, name: Idempotency-Key, required: true, schema: {type: string, minLength: 1, maxLength: 200}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: './commands/patrons_add.schema.json'}
+      responses:
+        '200':
+          description: PII-safe command result
+          content:
+            application/json:
+              schema: {$ref: './command_result.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+    patch:
+      operationId: patronsupdate_profile
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: header, name: Idempotency-Key, required: true, schema: {type: string, minLength: 1, maxLength: 200}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: './commands/patrons_update_profile.schema.json'}
+      responses:
+        '200':
+          description: PII-safe command result
+          content:
+            application/json:
+              schema: {$ref: './command_result.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/staff/login:
+    post:
+      operationId: staffLogin
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: header, name: Idempotency-Key, required: true, schema: {type: string, minLength: 1, maxLength: 200}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: './commands/staff_login.schema.json'}
+      responses:
+        '200':
+          description: staffLogin result
+          content:
+            application/json:
+              schema: {$ref: './session_result.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/staff:
+    post:
+      operationId: addStaff
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: header, name: Idempotency-Key, required: true, schema: {type: string, minLength: 1, maxLength: 200}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: './commands/staff_add.schema.json'}
+      responses:
+        '200':
+          description: addStaff result
+          content:
+            application/json:
+              schema: {$ref: './command_result.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/catalog/search:
+    get:
+      operationId: searchCatalog
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: query, name: q, required: true, schema: {type: string, minLength: 1, maxLength: 200}}
+      responses:
+        '200':
+          description: searchCatalog result
+          content:
+            application/json:
+              schema: {$ref: './catalog_search_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/catalog/resolve:
+    get:
+      operationId: resolveCatalog
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: query, name: q, required: true, schema: {type: string, minLength: 1, maxLength: 200}}
+      responses:
+        '200':
+          description: resolveCatalog result
+          content:
+            application/json:
+              schema: {$ref: './resolution_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/settings/language:
+    get:
+      operationId: languageSettings
+      security: [{device: []}, {console: []}]
+      responses:
+        '200':
+          description: languageSettings result
+          content:
+            application/json:
+              schema: {$ref: './settings_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/onboarding:
+    get:
+      operationId: onboardingView
+      security: [{device: []}, {console: []}]
+      responses:
+        '200':
+          description: onboardingView result
+          content:
+            application/json:
+              schema: {$ref: './onboarding_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/settings/staff:
+    get:
+      operationId: staffSettings
+      security: [{device: []}, {console: []}]
+      responses:
+        '200':
+          description: staffSettings result
+          content:
+            application/json:
+              schema: {$ref: './staff_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/staff/login:
+    get:
+      operationId: staffLoginView
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: header, name: X-Device-Credential, required: true, schema: {type: string}}
+      responses:
+        '200':
+          description: staffLoginView result
+          content:
+            application/json:
+              schema: {$ref: './staff_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/shift:
+    get:
+      operationId: shiftView
+      security: [{device: []}, {console: []}]
+      responses:
+        '200':
+          description: shiftView result
+          content:
+            application/json:
+              schema: {$ref: './shift_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/item/{item_id}:
+    get:
+      operationId: itemView
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: path, name: item_id, required: true, schema: {type: string}}
+      responses:
+        '200':
+          description: itemView result
+          content:
+            application/json:
+              schema: {$ref: './catalog_item_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/commands:
+    post:
+      operationId: submitCommand
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: header, name: Idempotency-Key, required: true, schema: {type: string, minLength: 1, maxLength: 200}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: './command.schema.json'}
+      responses:
+        '200':
+          description: Stored command result or approval gate
+          content:
+            application/json:
+              schema: {$ref: './command_result.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/approvals/{thread_id}:
+    post:
+      operationId: decideApproval
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: path, name: thread_id, required: true, schema: {type: string}}
+        - {in: header, name: Idempotency-Key, required: true, schema: {type: string, minLength: 1, maxLength: 200}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: './approval.schema.json'}
+      responses:
+        '200':
+          description: Decision results, one per gate for a batch
+          content:
+            application/json:
+              schema:
+                anyOf:
+                  - {$ref: './command_result.schema.json'}
+                  - {type: object, properties: {items: {type: array, items: {$ref: './command_result.schema.json'}}}, required: [items], additionalProperties: false}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/audit/verify:
+    get:
+      operationId: verifyAudit
+      security: [{device: []}, {console: []}]
+      responses:
+        '200':
+          description: Merchant audit integrity
+          content:
+            application/json:
+              schema: {$ref: './audit_verification.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+  /healthz:
+    get:
+      operationId: getHealth
+      security: []
+      responses:
+        '200':
+          description: Service health
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Health' }
+  /v1/stream:
+    get:
+      operationId: getStream
+      security: [{device: []}, {console: []}]
+      description: >-
+        Server-sent events. L0 streams spans; L1 adds domain events, envelopes and view invalidations.
+        Requires a server-provisioned merchant session. Domain events and spans are merchant filtered.
+      responses:
+        '401': {$ref: '#/components/responses/Problem'}
+        '200':
+          description: SSE stream
+          content:
+            text/event-stream:
+              schema: { type: string }
+  /v1/director/ping:
+    get:
+      operationId: directorPing
+      security:
+        - director: []
+      responses:
+        '200':
+          description: Director token accepted
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Ok' }
+        '401':
+          $ref: '#/components/responses/Problem'
+components:
+  securitySchemes:
+    director:
+      type: http
+      scheme: bearer
+      description: Presenter token for /v1/director/* (L0).
+    device:
+      type: http
+      scheme: bearer
+      description: Reserved for L1 device sessions (STF-2); no L0 route uses it yet.
+    console:
+      type: http
+      scheme: bearer
+      description: Reserved for L1 Console sessions (STF-2); no L0 route uses it yet.
+  responses:
+    Problem:
+      description: RFC 9457 problem details (spec Part C1)
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+  schemas:
+    Problem:
+      $ref: './problem.schema.json'
+    Health:
+      type: object
+      required: [status, mode, clock, packs, providers]
+      properties:
+        status: { type: string, enum: [ok] }
+        mode: { type: string, enum: [dev, test, demo, prod] }
+        clock: { type: string, format: date-time }
+        packs: { type: array, items: { type: string } }
+        providers:
+          type: object
+          description: Whether each AI provider has an API key configured (booleans only, never the key)
+          additionalProperties: { type: boolean }
+    Ok:
+      type: object
+      required: [ok]
+      properties:
+        ok: { type: boolean }

@@ -1,0 +1,136 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/envelope.schema.json",
+  "title": "Envelope",
+  "description": "Everything Arth says or shows arrives as one envelope (spec Part C3).",
+  "type": "object",
+  "required": ["turn_id", "lang", "audience", "cards", "followups", "provenance", "presence", "sensitivity"],
+  "additionalProperties": false,
+  "properties": {
+    "turn_id": { "type": "string", "pattern": "^turn_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "lang": { "$ref": "#/definitions/Lang" },
+    "speech": { "anyOf": [{ "$ref": "#/definitions/Speech" }, { "type": "null" }] },
+    "caption": { "anyOf": [{ "$ref": "#/definitions/Caption" }, { "type": "null" }] },
+    "audience": { "$ref": "common.schema.json#/definitions/Audience" },
+    "cards": { "type": "array", "items": { "$ref": "#/definitions/Card" } },
+    "nav": { "anyOf": [{ "$ref": "#/definitions/Nav" }, { "type": "null" }] },
+    "followups": {
+      "type": "array",
+      "description": "v6: at most 3; UI shows 2–3 chips including screen defaults.",
+      "maxItems": 3,
+      "items": { "$ref": "#/definitions/Followup" }
+    },
+    "provenance": { "type": "array", "items": { "$ref": "#/definitions/Provenance" } },
+    "presence": { "$ref": "#/definitions/Presence" },
+    "led": { "anyOf": [{ "$ref": "#/definitions/Led" }, { "type": "null" }] },
+    "tier": { "anyOf": [{ "$ref": "common.schema.json#/definitions/Tier" }, { "type": "null" }] },
+    "undo": { "anyOf": [{ "$ref": "#/definitions/Undo" }, { "type": "null" }] },
+    "sensitivity": { "type": "string", "enum": ["normal", "discreet"] },
+    "fallback": { "anyOf": [{ "$ref": "#/definitions/Fallback" }, { "type": "null" }] }
+  },
+  "definitions": {
+    "Lang": {
+      "type": "object",
+      "required": ["screen", "speech"],
+      "additionalProperties": false,
+      "properties": {
+        "screen": { "$ref": "common.schema.json#/definitions/Locale" },
+        "speech": { "$ref": "common.schema.json#/definitions/SpeechLocale" }
+      }
+    },
+    "Speech": {
+      "type": "object",
+      "required": ["text"],
+      "additionalProperties": false,
+      "properties": {
+        "text": { "$ref": "common.schema.json#/definitions/NonEmptyString" },
+        "voice": { "type": "string" },
+        "ssml_ready": { "type": "boolean" }
+      }
+    },
+    "Caption": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": { "heard": { "type": "string" }, "said": { "type": "string" } }
+    },
+    "Card": {
+      "type": "object",
+      "description": "Base card. Each card type adds its own fields; per-type schemas arrive with the layer that produces them (see contracts/README.md).",
+      "required": ["type"],
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "bill", "hint", "approval", "batch", "verdict", "chart", "forecast", "brief", "offer", "plan",
+            "campaign", "patron", "stock", "po", "quote_compare", "claim", "memory", "draft", "capital",
+            "nudge", "pipeline", "receipt", "health"
+          ]
+        },
+        "id": { "$ref": "common.schema.json#/definitions/PrefixedId" },
+        "audience": { "$ref": "common.schema.json#/definitions/Audience" },
+        "note": { "type": "string", "description": "Arth's annotation; grounded before it is sent" }
+      }
+    },
+    "Nav": {
+      "type": "object",
+      "required": ["screen"],
+      "additionalProperties": false,
+      "properties": {
+        "screen": { "$ref": "common.schema.json#/definitions/NonEmptyString" },
+        "params": { "type": "object", "additionalProperties": { "type": "string" } }
+      }
+    },
+    "Followup": {
+      "type": "object",
+      "required": ["label_key", "turn_text"],
+      "additionalProperties": false,
+      "properties": {
+        "label_key": { "$ref": "common.schema.json#/definitions/MessageKey" },
+        "turn_text": { "$ref": "common.schema.json#/definitions/NonEmptyString" }
+      }
+    },
+    "Provenance": {
+      "type": "object",
+      "required": ["kind"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "$ref": "common.schema.json#/definitions/NonEmptyString" },
+        "count": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "Presence": {
+      "type": "object",
+      "required": ["state"],
+      "additionalProperties": false,
+      "properties": {
+        "state": {
+          "type": "string",
+          "enum": ["idle", "listening", "thinking", "speaking", "needs_you", "done", "alert"]
+        },
+        "gaze": { "type": "string" }
+      }
+    },
+    "Led": {
+      "type": "object",
+      "required": ["pattern", "color"],
+      "additionalProperties": false,
+      "properties": { "pattern": { "type": "string" }, "color": { "type": "string" } }
+    },
+    "Undo": {
+      "type": "object",
+      "required": ["command_id", "until"],
+      "additionalProperties": false,
+      "properties": {
+        "command_id": { "$ref": "common.schema.json#/definitions/PrefixedId" },
+        "until": { "type": "string", "format": "date-time" }
+      }
+    },
+    "Fallback": {
+      "type": "object",
+      "required": ["channel"],
+      "additionalProperties": false,
+      "properties": { "channel": { "type": "string" }, "thread": { "type": "string" } }
+    }
+  }
+}

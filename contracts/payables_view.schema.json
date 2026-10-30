@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/payables_view.schema.json",
+  "title": "PayablesView",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "payables": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "supplier_ref": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "amount_paise": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "due_on": {
+            "type": "string",
+            "format": "date"
+          },
+          "paid_paise": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "balance_paise": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "id",
+          "supplier_ref",
+          "amount_paise",
+          "due_on",
+          "paid_paise",
+          "balance_paise"
+        ]
+      }
+    },
+    "invalidate_on": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "payables",
+    "invalidate_on"
+  ]
+}

@@ -1,0 +1,602 @@
+[
+  {
+    "query": "Tata Salt",
+    "sku": "TATA-SALT"
+  },
+  {
+    "query": "टाटा नमक",
+    "sku": "TATA-SALT"
+  },
+  {
+    "query": "Tata namak",
+    "sku": "TATA-SALT"
+  },
+  {
+    "query": "tata salt packet",
+    "sku": "TATA-SALT"
+  },
+  {
+    "query": "tata saltt",
+    "sku": "TATA-SALT"
+  },
+  {
+    "query": "TATA—SALT",
+    "sku": "TATA-SALT"
+  },
+  {
+    "query": "Aashirvaad Salt",
+    "sku": "ASH-SALT"
+  },
+  {
+    "query": "आशीर्वाद नमक",
+    "sku": "ASH-SALT"
+  },
+  {
+    "query": "Aashirvaad namak",
+    "sku": "ASH-SALT"
+  },
+  {
+    "query": "ashirvad salt",
+    "sku": "ASH-SALT"
+  },
+  {
+    "query": "aashirvad saltt",
+    "sku": "ASH-SALT"
+  },
+  {
+    "query": "AASHIRVAAD SALT",
+    "sku": "ASH-SALT"
+  },
+  {
+    "query": "Aashirvaad Atta",
+    "sku": "ASH-ATTA"
+  },
+  {
+    "query": "आशीर्वाद आटा",
+    "sku": "ASH-ATTA"
+  },
+  {
+    "query": "Aashirvaad atta",
+    "sku": "ASH-ATTA"
+  },
+  {
+    "query": "ashirvad flour",
+    "sku": "ASH-ATTA"
+  },
+  {
+    "query": "aashirvaad ataa",
+    "sku": "ASH-ATTA"
+  },
+  {
+    "query": "AASHIRVAAD-ATTA",
+    "sku": "ASH-ATTA"
+  },
+  {
+    "query": "Fortune Atta",
+    "sku": "FORT-ATTA"
+  },
+  {
+    "query": "फॉर्च्यून आटा",
+    "sku": "FORT-ATTA"
+  },
+  {
+    "query": "Fortune atta",
+    "sku": "FORT-ATTA"
+  },
+  {
+    "query": "fortune wheat",
+    "sku": "FORT-ATTA"
+  },
+  {
+    "query": "fortun atta",
+    "sku": "FORT-ATTA"
+  },
+  {
+    "query": "FORTUNE ATTA",
+    "sku": "FORT-ATTA"
+  },
+  {
+    "query": "White Sugar",
+    "sku": "SUGAR"
+  },
+  {
+    "query": "सफेद चीनी",
+    "sku": "SUGAR"
+  },
+  {
+    "query": "Safed cheeni",
+    "sku": "SUGAR"
+  },
+  {
+    "query": "chini packet",
+    "sku": "SUGAR"
+  },
+  {
+    "query": "white sugarr",
+    "sku": "SUGAR"
+  },
+  {
+    "query": "WHITE-SUGAR",
+    "sku": "SUGAR"
+  },
+  {
+    "query": "Tata Tea Gold",
+    "sku": "TATA-TEA"
+  },
+  {
+    "query": "टाटा चाय गोल्ड",
+    "sku": "TATA-TEA"
+  },
+  {
+    "query": "Tata chai gold",
+    "sku": "TATA-TEA"
+  },
+  {
+    "query": "tata gold chai",
+    "sku": "TATA-TEA"
+  },
+  {
+    "query": "tata tea goldd",
+    "sku": "TATA-TEA"
+  },
+  {
+    "query": "TATA TEA GOLD",
+    "sku": "TATA-TEA"
+  },
+  {
+    "query": "Brooke Bond Red Label",
+    "sku": "BROOKE-TEA"
+  },
+  {
+    "query": "ब्रुक बॉन्ड रेड लेबल",
+    "sku": "BROOKE-TEA"
+  },
+  {
+    "query": "Brooke bond lal chai",
+    "sku": "BROOKE-TEA"
+  },
+  {
+    "query": "red label tea",
+    "sku": "BROOKE-TEA"
+  },
+  {
+    "query": "brooke bond red lable",
+    "sku": "BROOKE-TEA"
+  },
+  {
+    "query": "BROOKE BOND RED LABEL",
+    "sku": "BROOKE-TEA"
+  },
+  {
+    "query": "Amul Taaza Milk",
+    "sku": "AMUL-MILK"
+  },
+  {
+    "query": "अमूल ताजा दूध",
+    "sku": "AMUL-MILK"
+  },
+  {
+    "query": "Amul taaza doodh",
+    "sku": "AMUL-MILK"
+  },
+  {
+    "query": "amul milk packet",
+    "sku": "AMUL-MILK"
+  },
+  {
+    "query": "amul taza milk",
+    "sku": "AMUL-MILK"
+  },
+  {
+    "query": "AMUL TAAZA MILK",
+    "sku": "AMUL-MILK"
+  },
+  {
+    "query": "Mother Dairy Milk",
+    "sku": "MOTHER-MILK"
+  },
+  {
+    "query": "मदर डेयरी दूध",
+    "sku": "MOTHER-MILK"
+  },
+  {
+    "query": "Mother dairy doodh",
+    "sku": "MOTHER-MILK"
+  },
+  {
+    "query": "mother dairy packet",
+    "sku": "MOTHER-MILK"
+  },
+  {
+    "query": "mother diary milk",
+    "sku": "MOTHER-MILK"
+  },
+  {
+    "query": "MOTHER DAIRY MILK",
+    "sku": "MOTHER-MILK"
+  },
+  {
+    "query": "Parle G Biscuit",
+    "sku": "PARLE"
+  },
+  {
+    "query": "पारले जी बिस्कुट",
+    "sku": "PARLE"
+  },
+  {
+    "query": "Parle ji biscuit",
+    "sku": "PARLE"
+  },
+  {
+    "query": "parleg packet",
+    "sku": "PARLE"
+  },
+  {
+    "query": "parle g biscut",
+    "sku": "PARLE"
+  },
+  {
+    "query": "PARLE-G BISCUIT",
+    "sku": "PARLE"
+  },
+  {
+    "query": "Maggi Noodles",
+    "sku": "MAGGI"
+  },
+  {
+    "query": "मैगी नूडल्स",
+    "sku": "MAGGI"
+  },
+  {
+    "query": "Maggi noodles",
+    "sku": "MAGGI"
+  },
+  {
+    "query": "maggi packet",
+    "sku": "MAGGI"
+  },
+  {
+    "query": "maggi noodls",
+    "sku": "MAGGI"
+  },
+  {
+    "query": "MAGGI NOODLES",
+    "sku": "MAGGI"
+  },
+  {
+    "query": "Britannia Bread",
+    "sku": "BRIT-BREAD"
+  },
+  {
+    "query": "ब्रिटानिया ब्रेड",
+    "sku": "BRIT-BREAD"
+  },
+  {
+    "query": "Britannia bread",
+    "sku": "BRIT-BREAD"
+  },
+  {
+    "query": "britannia loaf",
+    "sku": "BRIT-BREAD"
+  },
+  {
+    "query": "britania bread",
+    "sku": "BRIT-BREAD"
+  },
+  {
+    "query": "BRITANNIA BREAD",
+    "sku": "BRIT-BREAD"
+  },
+  {
+    "query": "Fortune Sunflower Oil",
+    "sku": "FORT-OIL"
+  },
+  {
+    "query": "फॉर्च्यून सूरजमुखी तेल",
+    "sku": "FORT-OIL"
+  },
+  {
+    "query": "Fortune surajmukhi tel",
+    "sku": "FORT-OIL"
+  },
+  {
+    "query": "fortune sunflower",
+    "sku": "FORT-OIL"
+  },
+  {
+    "query": "fortune sunflwer oil",
+    "sku": "FORT-OIL"
+  },
+  {
+    "query": "FORTUNE SUNFLOWER OIL",
+    "sku": "FORT-OIL"
+  },
+  {
+    "query": "Dalda Vanaspati",
+    "sku": "DALDA"
+  },
+  {
+    "query": "डालडा वनस्पति",
+    "sku": "DALDA"
+  },
+  {
+    "query": "Dalda vanaspati",
+    "sku": "DALDA"
+  },
+  {
+    "query": "dalda ghee",
+    "sku": "DALDA"
+  },
+  {
+    "query": "dalda vanaspti",
+    "sku": "DALDA"
+  },
+  {
+    "query": "DALDA VANASPATI",
+    "sku": "DALDA"
+  },
+  {
+    "query": "India Gate Basmati Rice",
+    "sku": "INDIA-RICE"
+  },
+  {
+    "query": "इंडिया गेट बासमती चावल",
+    "sku": "INDIA-RICE"
+  },
+  {
+    "query": "India gate basmati chawal",
+    "sku": "INDIA-RICE"
+  },
+  {
+    "query": "india gate rice",
+    "sku": "INDIA-RICE"
+  },
+  {
+    "query": "india gate basmati rce",
+    "sku": "INDIA-RICE"
+  },
+  {
+    "query": "INDIA GATE BASMATI RICE",
+    "sku": "INDIA-RICE"
+  },
+  {
+    "query": "Daawat Basmati Rice",
+    "sku": "DAAWAT"
+  },
+  {
+    "query": "दावत बासमती चावल",
+    "sku": "DAAWAT"
+  },
+  {
+    "query": "Daawat basmati chawal",
+    "sku": "DAAWAT"
+  },
+  {
+    "query": "daawat rice",
+    "sku": "DAAWAT"
+  },
+  {
+    "query": "dawat basmati rice",
+    "sku": "DAAWAT"
+  },
+  {
+    "query": "DAAWAT BASMATI RICE",
+    "sku": "DAAWAT"
+  },
+  {
+    "query": "Toor Dal",
+    "sku": "TOOR"
+  },
+  {
+    "query": "तूर दाल",
+    "sku": "TOOR"
+  },
+  {
+    "query": "Toor dal",
+    "sku": "TOOR"
+  },
+  {
+    "query": "arhar dal",
+    "sku": "TOOR"
+  },
+  {
+    "query": "toor daal",
+    "sku": "TOOR"
+  },
+  {
+    "query": "TOOR-DAL",
+    "sku": "TOOR"
+  },
+  {
+    "query": "Moong Dal",
+    "sku": "MOONG"
+  },
+  {
+    "query": "मूंग दाल",
+    "sku": "MOONG"
+  },
+  {
+    "query": "Moong dal",
+    "sku": "MOONG"
+  },
+  {
+    "query": "mung lentils",
+    "sku": "MOONG"
+  },
+  {
+    "query": "moong daal",
+    "sku": "MOONG"
+  },
+  {
+    "query": "MOONG-DAL",
+    "sku": "MOONG"
+  },
+  {
+    "query": "Masoor Dal",
+    "sku": "MASOOR"
+  },
+  {
+    "query": "मसूर दाल",
+    "sku": "MASOOR"
+  },
+  {
+    "query": "Masoor dal",
+    "sku": "MASOOR"
+  },
+  {
+    "query": "masur lentils",
+    "sku": "MASOOR"
+  },
+  {
+    "query": "masoor daal",
+    "sku": "MASOOR"
+  },
+  {
+    "query": "MASOOR-DAL",
+    "sku": "MASOOR"
+  },
+  {
+    "query": "Surf Excel Detergent",
+    "sku": "SURF"
+  },
+  {
+    "query": "सर्फ एक्सेल डिटर्जेंट",
+    "sku": "SURF"
+  },
+  {
+    "query": "Surf excel detergent",
+    "sku": "SURF"
+  },
+  {
+    "query": "surf powder",
+    "sku": "SURF"
+  },
+  {
+    "query": "surf excel detergnt",
+    "sku": "SURF"
+  },
+  {
+    "query": "SURF EXCEL DETERGENT",
+    "sku": "SURF"
+  },
+  {
+    "query": "Rin Detergent Bar",
+    "sku": "RIN"
+  },
+  {
+    "query": "रिन डिटर्जेंट बार",
+    "sku": "RIN"
+  },
+  {
+    "query": "Rin sabun",
+    "sku": "RIN"
+  },
+  {
+    "query": "rin washing bar",
+    "sku": "RIN"
+  },
+  {
+    "query": "rin detergent barr",
+    "sku": "RIN"
+  },
+  {
+    "query": "RIN DETERGENT BAR",
+    "sku": "RIN"
+  },
+  {
+    "query": "Lux Soap",
+    "sku": "LUX"
+  },
+  {
+    "query": "लक्स साबुन",
+    "sku": "LUX"
+  },
+  {
+    "query": "Lux sabun",
+    "sku": "LUX"
+  },
+  {
+    "query": "lux bath soap",
+    "sku": "LUX"
+  },
+  {
+    "query": "lux soapp",
+    "sku": "LUX"
+  },
+  {
+    "query": "LUX-SOAP",
+    "sku": "LUX"
+  },
+  {
+    "query": "Colgate Toothpaste",
+    "sku": "COLGATE"
+  },
+  {
+    "query": "कोलगेट टूथपेस्ट",
+    "sku": "COLGATE"
+  },
+  {
+    "query": "Colgate toothpaste",
+    "sku": "COLGATE"
+  },
+  {
+    "query": "colgate paste",
+    "sku": "COLGATE"
+  },
+  {
+    "query": "colgate toothpste",
+    "sku": "COLGATE"
+  },
+  {
+    "query": "COLGATE TOOTHPASTE",
+    "sku": "COLGATE"
+  },
+  {
+    "query": "Clinic Plus Shampoo",
+    "sku": "CLINIC"
+  },
+  {
+    "query": "क्लिनिक प्लस शैम्पू",
+    "sku": "CLINIC"
+  },
+  {
+    "query": "Clinic plus shampoo",
+    "sku": "CLINIC"
+  },
+  {
+    "query": "clinic shampoo",
+    "sku": "CLINIC"
+  },
+  {
+    "query": "clinic plus shampo",
+    "sku": "CLINIC"
+  },
+  {
+    "query": "CLINIC PLUS SHAMPOO",
+    "sku": "CLINIC"
+  },
+  {
+    "query": "Haldiram Aloo Bhujia",
+    "sku": "HALDIRAM"
+  },
+  {
+    "query": "हल्दीराम आलू भुजिया",
+    "sku": "HALDIRAM"
+  },
+  {
+    "query": "Haldiram aloo bhujia",
+    "sku": "HALDIRAM"
+  },
+  {
+    "query": "haldiram namkeen",
+    "sku": "HALDIRAM"
+  },
+  {
+    "query": "haldiram aloo bhujiya",
+    "sku": "HALDIRAM"
+  },
+  {
+    "query": "HALDIRAM ALOO BHUJIA",
+    "sku": "HALDIRAM"
+  }
+]

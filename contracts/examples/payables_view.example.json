@@ -1,0 +1,6 @@
+{
+  "payables": [],
+  "invalidate_on": [
+    "credit.payable_changed"
+  ]
+}

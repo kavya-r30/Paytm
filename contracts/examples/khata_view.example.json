@@ -1,0 +1,8 @@
+{
+  "accounts": [],
+  "balance_paise": 0,
+  "advance_paise": 0,
+  "invalidate_on": [
+    "credit.changed"
+  ]
+}

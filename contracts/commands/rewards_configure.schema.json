@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/rewards_configure.schema.json",
+  "title": "RewardsConfigure",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "threshold": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "value_paise": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "budget_paise": {
+      "type": "integer",
+      "minimum": 0
+    }
+  },
+  "required": [
+    "threshold",
+    "value_paise",
+    "budget_paise"
+  ]
+}

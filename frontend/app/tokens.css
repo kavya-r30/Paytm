@@ -1,0 +1,46 @@
+/* Generated from contracts/tokens.json. Do not edit; run `python dev.py gen`. */
+@theme {
+  --color-midnight: #002E6E;
+  --color-paytm-blue: #00BAF2;
+  --color-sky: #E8F8FE;
+  --color-ground: #F5F7FA;
+  --color-line: #EDEFF0;
+  --color-ink: #0B1B33;
+  --color-ink-2: #475467;
+  --color-ink-3: #5B6475;
+  --color-cyan-text: #0077B6;
+  --color-red: #D0103F;
+  --color-red-tint: #FDECEF;
+  --color-green: #067647;
+  --color-green-fill: #12B76A;
+  --color-green-tint: #E7F8EF;
+  --color-amber: #F5A524;
+  --color-amber-text: #8A5300;
+  --color-amber-tint: #FFF6E0;
+  --shadow-1: 0 1px 2px rgba(16,24,40,0.04), 0 6px 20px rgba(16,24,40,0.05);
+  --shadow-2: 0 2px 6px rgba(16,24,40,0.06), 0 16px 40px rgba(16,24,40,0.10);
+  --radius-card: 24px;
+  --radius-dock: 999px;
+  --radius-ground: 20px;
+  --radius-button: 16px;
+  --radius-chip: 999px;
+  --radius-nav: 16px;
+  --font-sans: 'Inter', 'Noto Sans Devanagari', 'Noto Sans Tamil', 'Noto Sans Bengali', 'Noto Sans Gujarati', 'Noto Sans Telugu', system-ui, sans-serif;
+  --text-amount: 56px;
+  --text-amount--font-weight: 800;
+  --text-title: 24px;
+  --text-title--font-weight: 700;
+  --text-arth: 21px;
+  --text-arth--font-weight: 500;
+  --text-body: 15px;
+  --text-body--font-weight: 500;
+  --text-meta: 12.5px;
+  --text-meta--font-weight: 500;
+}
+
+:root {
+  --device-width: 960px;
+  --device-height: 720px;
+  --device-rail: 80px;
+  --device-header: 76px;
+}

@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Arth billing components</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Noto+Sans+Devanagari:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1040px; box-sizing: border-box; padding: 48px 64px; background: #F3F5F9; font-family: 'Inter', 'Noto Sans Devanagari', system-ui, sans-serif; color: #0B1B33; display: flex; flex-direction: column; gap: 24px">
+  <div style="display: flex; align-items: baseline; justify-content: space-between">
+    <h1 style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.015em">Billing components</h1>
+    <p style="margin: 0; font-size: 15px; color: #5E6B7F">Scan, tap or say. Every amount is computed by the counter, never by the model.</p>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px">
+    <div style="display: flex; flex-direction: column; gap: 20px">
+      <section style="background: #FFFFFF; border: 1px solid #E6EBF2; border-radius: 20px; padding: 8px 0; display: flex; flex-direction: column">
+        <h2 style="margin: 0; padding: 14px 24px 8px; font-size: 18px; font-weight: 600">Bill lines</h2>
+
+        <div style="display: flex; align-items: center; gap: 14px; padding: 14px 24px; border-bottom: 1px solid #EEF2F6">
+          <div style="width: 48px; height: 48px; border-radius: 14px; background: #FFF1E6; display: flex; align-items: center; justify-content: center; color: #B45309; font-size: 13px; font-weight: 700">MG</div>
+          <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 3px">
+            <span style="font-size: 17px; font-weight: 500">Maggi 2-Minute Noodles</span>
+            <span style="font-size: 13px; color: #5E6B7F">70 g · ₹14 each · scanned</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 4px; background: #F3F5F9; border-radius: 12px; padding: 2px">
+            <button aria-label="One less" style="width: 40px; height: 40px; border: none; border-radius: 10px; background: transparent; color: #0B1B33; font-size: 20px">−</button>
+            <span style="min-width: 22px; text-align: center; font-size: 16px; font-weight: 600; font-variant-numeric: tabular-nums">2</span>
+            <button aria-label="One more" style="width: 40px; height: 40px; border: none; border-radius: 10px; background: transparent; color: #0B1B33; font-size: 20px">+</button>
+          </div>
+          <span style="width: 72px; text-align: right; font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums">₹28</span>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 14px; padding: 14px 24px; border-bottom: 1px solid #EEF2F6">
+          <div style="width: 48px; height: 48px; border-radius: 14px; background: #EEF2F6; display: flex; align-items: center; justify-content: center; color: #475569; font-size: 13px; font-weight: 700">SU</div>
+          <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 3px">
+            <span style="font-size: 17px; font-weight: 500">Sugar, loose</span>
+            <span style="font-size: 13px; color: #5E6B7F; display: flex; align-items: center; gap: 6px">0.5 kg · ₹48/kg <span style="font-size: 12px; font-weight: 600; color: #00729E; background: #E0F7FE; padding: 1px 8px; border-radius: 999px">by voice</span></span>
+          </div>
+          <span style="font-size: 15px; color: #475569; font-variant-numeric: tabular-nums">0.5 kg</span>
+          <span style="width: 72px; text-align: right; font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums">₹24</span>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 14px; padding: 14px 24px; border-bottom: 1px solid #EEF2F6; background: #F0FAFE">
+          <div style="width: 48px; height: 48px; border-radius: 14px; background: #E8F1FF; display: flex; align-items: center; justify-content: center; color: #002E6E; font-size: 13px; font-weight: 700">AM</div>
+          <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 3px">
+            <span style="font-size: 17px; font-weight: 500">Amul Taaza 500 ml</span>
+            <span style="font-size: 13px; color: #00729E; font-weight: 500">Just added · from hint</span>
+          </div>
+          <span style="font-size: 15px; color: #475569; font-variant-numeric: tabular-nums">× 1</span>
+          <span style="width: 72px; text-align: right; font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums">₹28</span>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 14px; padding: 14px 24px">
+          <div style="width: 48px; height: 48px; border-radius: 14px; background: #E3F6EC; display: flex; align-items: center; justify-content: center; color: #0A7A45"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 5 5 19"/><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="17" r="2.5"/></svg></div>
+          <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 3px">
+            <span style="font-size: 17px; font-weight: 500">Welcome coupon</span>
+            <span style="font-size: 13px; color: #5E6B7F">WELC-7Q2 · ₹200+ bill · valid till 12 Nov</span>
+          </div>
+          <span style="width: 72px; text-align: right; font-size: 18px; font-weight: 600; color: #0A7A45; font-variant-numeric: tabular-nums">−₹20</span>
+        </div>
+      </section>
+
+      <section style="background: #FFFFFF; border: 1px solid #E6EBF2; border-radius: 20px; padding: 20px 24px; display: flex; flex-direction: column; gap: 12px">
+        <h2 style="margin: 0; font-size: 18px; font-weight: 600">Counter hint (owner only)</h2>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px 10px 10px 14px; border-radius: 16px; background: #EAF2FF">
+          <span style="width: 32px; height: 32px; border-radius: 999px; background: #002E6E; display: flex; align-items: center; justify-content: center"><span style="width: 10px; height: 10px; border-radius: 999px; background: #6EE7FF"></span></span>
+          <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1">
+            <span style="font-size: 16px; font-weight: 600; color: #002E6E">Priya: doodh?</span>
+            <span style="font-size: 13px; color: #475569">Har guruvaar leti hain · 8 of last 10</span>
+          </div>
+          <button style="height: 44px; padding: 0 16px; border-radius: 12px; border: none; background: #002E6E; color: #FFFFFF; font: inherit; font-size: 15px; font-weight: 600">Jodo ₹28</button>
+          <button aria-label="Dismiss hint" style="width: 44px; height: 44px; border-radius: 12px; border: none; background: transparent; color: #475569; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+        </div>
+        <p style="margin: 0; font-size: 13px; color: #5E6B7F">Never shown on the customer display. One per bill.</p>
+      </section>
+
+      <section style="background: #FFFFFF; border: 1px solid #E6EBF2; border-radius: 20px; padding: 20px 24px; display: flex; flex-direction: column; gap: 10px">
+        <h2 style="margin: 0 0 4px; font-size: 18px; font-weight: 600">Totals</h2>
+        <div style="display: flex; justify-content: space-between; font-size: 16px; color: #475569"><span>4 items</span><span style="font-variant-numeric: tabular-nums">₹110</span></div>
+        <div style="display: flex; justify-content: space-between; font-size: 16px; color: #0A7A45"><span>Coupon</span><span style="font-variant-numeric: tabular-nums">−₹20</span></div>
+        <div style="height: 2px; background: #0B1B33; border-radius: 1px; margin: 4px 0"></div>
+        <div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-size: 18px; font-weight: 600">Total</span><span style="font-size: 44px; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums">₹90</span></div>
+      </section>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 20px">
+      <section style="background: #FFFFFF; border: 1px solid #E6EBF2; border-radius: 20px; padding: 20px 24px; display: flex; flex-direction: column; gap: 14px">
+        <h2 style="margin: 0; font-size: 18px; font-weight: 600">Pay mode and action</h2>
+        <div role="radiogroup" aria-label="Payment mode" style="height: 52px; padding: 4px; background: #E7ECF3; border-radius: 14px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; box-sizing: border-box">
+          <button role="radio" aria-checked="true" style="border-radius: 10px; border: none; background: #FFFFFF; font: inherit; font-size: 15px; font-weight: 600; color: #002E6E; box-shadow: 0 1px 3px rgba(11,27,51,0.12)">UPI QR</button>
+          <button role="radio" aria-checked="false" style="border-radius: 10px; border: none; background: transparent; font: inherit; font-size: 15px; font-weight: 500; color: #475569">Cash</button>
+          <button role="radio" aria-checked="false" style="border-radius: 10px; border: none; background: transparent; font: inherit; font-size: 15px; font-weight: 500; color: #475569">Split</button>
+          <button role="radio" aria-checked="false" style="border-radius: 10px; border: none; background: transparent; font: inherit; font-size: 15px; font-weight: 500; color: #C4262E">Khata</button>
+        </div>
+        <button style="height: 64px; border-radius: 16px; border: none; background: #002E6E; color: #FFFFFF; font: inherit; font-size: 19px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 10px 22px rgba(0,46,110,0.25)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M14 14h2v2M20 14v6h-6M17 17v3"/></svg>Customer ko QR dikhao · ₹90</button>
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+          <button style="height: 52px; border-radius: 14px; border: 1px solid #D5DCE6; background: #FFFFFF; font: inherit; font-size: 16px; font-weight: 500; color: #0B1B33">Bill rok do</button>
+          <button style="height: 52px; border-radius: 14px; border: 1px solid #F3C2C4; background: #FDECEC; font: inherit; font-size: 16px; font-weight: 600; color: #C4262E">Khate mein · ₹90</button>
+        </div>
+      </section>
+
+      <section style="background: #FFFFFF; border: 1px solid #E6EBF2; border-radius: 20px; padding: 20px 24px; display: flex; gap: 20px">
+        <div style="display: flex; flex-direction: column; gap: 12px; width: 220px">
+          <h2 style="margin: 0; font-size: 18px; font-weight: 600">Cash</h2>
+          <div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 13px; color: #5E6B7F">Received</span><span style="font-size: 36px; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums">₹100</span></div>
+          <div style="display: flex; flex-direction: column; gap: 4px; padding: 12px; border-radius: 14px; background: #E3F6EC"><span style="font-size: 13px; color: #0A7A45; font-weight: 500">Wapas dena hai</span><span style="font-size: 28px; font-weight: 700; color: #0A7A45; font-variant-numeric: tabular-nums">₹10</span></div>
+          <div style="display: flex; gap: 6px">
+            <button style="flex-grow: 1; height: 44px; border-radius: 12px; border: 1px solid #DCE3EC; background: #FFFFFF; font: inherit; font-size: 15px; font-weight: 600; color: #0B1B33">₹100</button>
+            <button style="flex-grow: 1; height: 44px; border-radius: 12px; border: 1px solid #DCE3EC; background: #FFFFFF; font: inherit; font-size: 15px; font-weight: 600; color: #0B1B33">₹200</button>
+            <button style="flex-grow: 1; height: 44px; border-radius: 12px; border: 1px solid #DCE3EC; background: #FFFFFF; font: inherit; font-size: 15px; font-weight: 600; color: #0B1B33">₹500</button>
+          </div>
+        </div>
+        <div style="flex-grow: 1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+          <button style="height: 56px; border-radius: 14px; border: none; background: #F3F5F9; font: inherit; font-size: 22px; font-weight: 500; color: #0B1B33">1</button>
+          <button style="height: 56px; border-radius: 14px; border: none; background: #F3F5F9; font: inherit; font-size: 22px; font-weight: 500; color: #0B1B33">2</button>
+          <button style="height: 56px; border-radius: 14px; border: none; background: #F3F5F9; font: inherit; font-size: 22px; font-weight: 500; color: #0B1B33">3</button>
+          <button style="height: 56px; border-radius: 14px; border: none; background: #F3F5F9; font: inherit; font-size: 22px; font-weight: 500; color: #0B1B33">4</button>
+          <button style="height: 56px; border-radius: 14px; border: none; background: #F3F5F9; font: inherit; font-size: 22px; font-weight: 500; color: #0B1B33">5</button>
+          <button style="height: 56px; border-radius: 14px; border: none; background: #F3F5F9; font: inherit; font-size: 22px; font-weight: 500; color: #0B1B33">6</button>
+          <button style="height: 56px; border-radius: 14px; border: none; background: #F3F5F9; font: inherit; font-size: 22px; font-weight: 500; color: #0B1B33">7</button>
+          <button style="height: 56px; border-radius: 14px; border: none; background: #F3F5F9; font: inherit; font-size: 22px; font-weight: 500; color: #0B1B33">8</button>
+          <button style="height: 56px; border-radius: 14px; border: none; background: #F3F5F9; font: inherit; font-size: 22px; font-weight: 500; color: #0B1B33">9</button>
+          <button style="height: 56px; border-radius: 14px; border: none; background: #F3F5F9; font: inherit; font-size: 22px; font-weight: 500; color: #0B1B33">00</button>
+          <button style="height: 56px; border-radius: 14px; border: none; background: #F3F5F9; font: inherit; font-size: 22px; font-weight: 500; color: #0B1B33">0</button>
+          <button aria-label="Delete digit" style="height: 56px; border-radius: 14px; border: none; background: #F3F5F9; font: inherit; font-size: 20px; color: #0B1B33">⌫</button>
+        </div>
+      </section>
+
+      <section style="background: #FFFFFF; border: 1px solid #E6EBF2; border-radius: 20px; padding: 20px 24px; display: flex; flex-direction: column; gap: 12px">
+        <h2 style="margin: 0; font-size: 18px; font-weight: 600">Quick items</h2>
+        <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px">
+          <button style="height: 84px; border-radius: 16px; border: 1px solid #E6EBF2; background: #FFFFFF; font: inherit; text-align: left; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; color: #0B1B33"><span style="font-size: 15px; font-weight: 600">Parle-G</span><span style="font-size: 14px; color: #475569; font-variant-numeric: tabular-nums">₹10</span></button>
+          <button style="height: 84px; border-radius: 16px; border: 1px solid #E6EBF2; background: #FFFFFF; font: inherit; text-align: left; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; color: #0B1B33"><span style="font-size: 15px; font-weight: 600">Amul Taaza</span><span style="font-size: 14px; color: #475569; font-variant-numeric: tabular-nums">₹28</span></button>
+          <button style="height: 84px; border-radius: 16px; border: 1px solid #E6EBF2; background: #FFFFFF; font: inherit; text-align: left; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; color: #0B1B33"><span style="font-size: 15px; font-weight: 600">Tata Salt</span><span style="font-size: 14px; color: #475569; font-variant-numeric: tabular-nums">₹28</span></button>
+          <button style="height: 84px; border-radius: 16px; border: 1px dashed #B8C4D4; background: #F7F9FC; font: inherit; text-align: left; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; color: #002E6E"><span style="font-size: 22px; font-weight: 500">+</span><span style="font-size: 14px; font-weight: 600">Naya item</span></button>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1040}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

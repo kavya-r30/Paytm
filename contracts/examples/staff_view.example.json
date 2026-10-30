@@ -1,0 +1,12 @@
+{
+  "staff": [
+    {
+      "id": "staff_example",
+      "name": "Owner",
+      "role": "owner"
+    }
+  ],
+  "invalidate_on": [
+    "staff.added"
+  ]
+}

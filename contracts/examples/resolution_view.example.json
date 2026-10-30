@@ -1,0 +1,10 @@
+{
+  "stage": "none",
+  "candidates": [],
+  "selected": null,
+  "needs_clarification": false,
+  "invalidate_on": [
+    "catalog.item_added",
+    "catalog.price_changed"
+  ]
+}

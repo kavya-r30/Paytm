@@ -1,0 +1,180 @@
+# 2025 festive season: history for "same festival last year" comparisons (GRW-1) and for the world generator.
+# Field meanings: see events-2026.yaml. Past dates, as observed.
+events:
+  - id: raksha_bandhan_2025
+    kind: raksha_bandhan
+    type: festival
+    names: { en: Raksha Bandhan, hi: रक्षा बंधन, hi-Latn: Rakhi }
+    start: 2025-08-09
+    scope: { national: true }
+    confidence: published
+    lead_days: 7
+    priors: { kirana: { rakhi: 10.0, sweets: 2.5, dry_fruits: 1.8, chocolates: 2.0 } }
+    source: observed 2025
+
+  - id: independence_day_2025
+    kind: independence_day
+    type: public_holiday
+    names: { en: Independence Day, hi: स्वतंत्रता दिवस, hi-Latn: Independence Day }
+    start: 2025-08-15
+    scope: { national: true }
+    confidence: published
+    closure: partial
+    source: fixed date
+
+  - id: janmashtami_2025
+    kind: janmashtami
+    type: festival
+    names: { en: Janmashtami, hi: जन्माष्टमी, hi-Latn: Janmashtami }
+    start: 2025-08-16
+    scope: { national: true }
+    confidence: published
+    lead_days: 3
+    priors: { kirana: { milk: 1.8, butter: 2.0, fasting_foods: 2.0, puja_items: 2.0 } }
+    source: observed 2025
+
+  - id: ganesh_chaturthi_2025
+    kind: ganesh_chaturthi
+    type: festival
+    names: { en: Ganesh Chaturthi, mr: गणेश चतुर्थी, hi: गणेश चतुर्थी, hi-Latn: Ganesh Chaturthi }
+    start: 2025-08-27
+    end: 2025-09-06
+    scope: { states: [IN-MH, IN-GA, IN-KA, IN-TG, IN-AP, IN-GJ], cities: [chennai, kolkata] }
+    confidence: published
+    lead_days: 7
+    priors: { kirana: { modak_ingredients: 4.0, puja_items: 3.0, sweets: 2.5, coconut: 2.5, flowers: 3.0 } }
+    source: observed 2025
+
+  - id: onam_2025
+    kind: onam
+    type: festival
+    names: { en: Onam, hi: ओणम, hi-Latn: Onam }
+    start: 2025-09-05
+    scope: { states: [IN-KL] }
+    confidence: published
+    lead_days: 10
+    priors: { kirana: { rice: 1.8, coconut_oil: 2.0, banana_chips: 3.0, jaggery: 2.0, vegetables: 2.0 } }
+    source: observed 2025
+
+  - id: navratri_2025
+    kind: navratri
+    type: festival
+    names: { en: Navratri, hi: नवरात्रि, hi-Latn: Navratri, gu: નવરાત્રી }
+    start: 2025-09-22
+    end: 2025-10-01
+    scope: { national: true }
+    confidence: published
+    lead_days: 3
+    priors: { kirana: { fasting_foods: 3.0, kuttu_flour: 5.0, sabudana: 4.0, rock_salt: 3.0, fruits: 1.8, puja_items: 2.0 } }
+    source: observed 2025
+
+  - id: durga_puja_2025
+    kind: durga_puja
+    type: festival
+    names: { en: Durga Puja, bn: দুর্গা পূজা, hi: दुर्गा पूजा, hi-Latn: Durga Puja }
+    start: 2025-09-28
+    end: 2025-10-02
+    scope: { states: [IN-WB, IN-AS, IN-OD, IN-BR, IN-JH] }
+    confidence: published
+    lead_days: 10
+    priors: { kirana: { sweets: 3.0, puja_items: 2.5, snacks: 2.0, cold_drinks: 2.0 } }
+    source: observed 2025
+
+  - id: dussehra_2025
+    kind: dussehra
+    type: festival
+    names: { en: Dussehra, hi: दशहरा, hi-Latn: Dussehra }
+    start: 2025-10-02
+    scope: { national: true }
+    confidence: published
+    lead_days: 2
+    priors: { kirana: { sweets: 2.0, puja_items: 1.8 } }
+    source: observed 2025 (same day as Gandhi Jayanti)
+
+  - id: karva_chauth_2025
+    kind: karva_chauth
+    type: festival
+    names: { en: Karva Chauth, hi: करवा चौथ, hi-Latn: Karva Chauth }
+    start: 2025-10-10
+    scope: { states: [IN-UP, IN-DL, IN-HR, IN-PB, IN-CH, IN-RJ, IN-MP, IN-UK, IN-BR] }
+    confidence: published
+    lead_days: 3
+    priors: { kirana: { puja_items: 3.0, dry_fruits: 1.6, sweets: 1.8, karva_pots: 8.0 } }
+    source: observed 2025
+
+  - id: dhanteras_2025
+    kind: dhanteras
+    type: festival
+    names: { en: Dhanteras, hi: धनतेरस, hi-Latn: Dhanteras }
+    start: 2025-10-18
+    scope: { national: true }
+    confidence: published
+    lead_days: 2
+    priors: { kirana: { steel_utensils: 4.0, dry_fruits: 2.0, puja_items: 2.5, sweets: 2.0 } }
+    source: observed 2025
+
+  - id: diwali_2025
+    kind: diwali
+    type: festival
+    names: { en: Diwali, hi: दिवाली, hi-Latn: Diwali, ta: தீபாவளி }
+    start: 2025-10-20
+    scope: { national: true }
+    confidence: published
+    lead_days: 14
+    tail_days: 1
+    closure: partial
+    priors: { kirana: { dry_fruits: 3.1, diyas: 5.0, sweets: 2.2, ghee: 1.8, puja_items: 3.0, gift_packs: 4.0, cleaning: 2.0 } }
+    source: observed 2025 (Lakshmi Puja 20 Oct)
+
+  - id: govardhan_puja_2025
+    kind: govardhan_puja
+    type: festival
+    names: { en: Govardhan Puja, hi: गोवर्धन पूजा, hi-Latn: Govardhan Puja }
+    start: 2025-10-22
+    scope: { states: [IN-UP, IN-MP, IN-RJ, IN-HR, IN-DL, IN-BR, IN-UK] }
+    confidence: published
+    source: observed 2025
+
+  - id: bhai_dooj_2025
+    kind: bhai_dooj
+    type: festival
+    names: { en: Bhai Dooj, hi: भाई दूज, hi-Latn: Bhai Dooj }
+    start: 2025-10-23
+    scope: { national: true }
+    confidence: published
+    lead_days: 1
+    priors: { kirana: { sweets: 2.0, dry_fruits: 1.5, chocolates: 1.8 } }
+    source: observed 2025
+
+  - id: chhath_2025
+    kind: chhath
+    type: festival
+    names: { en: Chhath Puja, hi: छठ पूजा, hi-Latn: Chhath }
+    start: 2025-10-27
+    end: 2025-10-28
+    scope: { states: [IN-BR, IN-JH, IN-DL], cities: [varanasi, gorakhpur, lucknow, prayagraj, noida, kolkata, mumbai] }
+    confidence: published
+    lead_days: 4
+    priors: { kirana: { fruits: 3.0, sugarcane: 5.0, jaggery: 2.5, wheat_flour: 1.6, puja_items: 3.0, soop_baskets: 8.0 } }
+    source: observed 2025
+
+  - id: guru_nanak_jayanti_2025
+    kind: guru_nanak_jayanti
+    type: festival
+    names: { en: Guru Nanak Jayanti, hi: गुरु नानक जयंती, hi-Latn: Gurpurab }
+    start: 2025-11-05
+    scope: { national: true }
+    confidence: published
+    lead_days: 2
+    source: observed 2025
+
+  - id: christmas_2025
+    kind: christmas
+    type: festival
+    names: { en: Christmas, hi: क्रिसमस, hi-Latn: Christmas }
+    start: 2025-12-25
+    scope: { national: true }
+    confidence: published
+    lead_days: 7
+    priors: { cafe: { cakes: 2.5, plum_cake: 4.0 }, kirana: { baking: 2.0, chocolates: 1.8 } }
+    source: fixed date

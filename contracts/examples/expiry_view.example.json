@@ -1,0 +1,8 @@
+{
+  "batches": [],
+  "invalidate_on": [
+    "stock.changed",
+    "batch.recalled",
+    "clock.day"
+  ]
+}

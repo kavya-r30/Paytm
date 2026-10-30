@@ -1,0 +1,6 @@
+{
+  "promises": [],
+  "invalidate_on": [
+    "credit.changed"
+  ]
+}

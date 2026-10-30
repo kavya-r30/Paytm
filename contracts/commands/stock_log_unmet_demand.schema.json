@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/stock_log_unmet_demand.schema.json",
+  "title": "StockLogUnmetDemand",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "text": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "item_id": {
+      "anyOf": [
+        {
+          "$ref": "../common.schema.json#/definitions/PrefixedId"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "text"
+  ]
+}

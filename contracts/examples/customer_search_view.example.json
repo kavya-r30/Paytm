@@ -1,0 +1,8 @@
+{
+  "customers": [],
+  "needs_clarification": false,
+  "invalidate_on": [
+    "patron.changed",
+    "patron.merged"
+  ]
+}

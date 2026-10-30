@@ -1,0 +1,537 @@
+# Indian festivals and holidays, 2026. Spec Part D3 (calendar engine).
+#
+# scope:          national, or the states (ISO 3166-2:IN) / cities (regions.yaml) where the event drives demand.
+# date_overrides: a different date in a given state (regional calendars).
+# confidence:     published (government/bank list) · panchang (Hindu calendar sources agree) ·
+#                 regional_variant (differs by region; override given or expected) · moon_sighting (Islamic; ±1 day) · tentative
+# lead_days:      how many days before the event demand starts to build; tail_days: after.
+# closure:        typical shop-hours effect (a hint the owner confirms; never applied automatically).
+# priors:         per-pack category demand multipliers. Weak starting priors only: forecasts learn each shop's own
+#                 festival effect from its history and shrink toward these when history is thin (cold start).
+# Rule (spec CAL-5): applicability is by PLACE only. Arth never infers a customer's religion or community.
+#
+# Sources (checked 30 Oct 2026): hindu-blog.com Hindu festivals 2026 list; central/state government and bank 2026
+# holiday lists (CAG Punjab, Maharashtra, Madhya Pradesh, Karnataka, Ladakh lists via search); RBI monthly holiday
+# reports in news (Outlook Business, Angel One). Re-verify moon_sighting and tentative rows against official notices.
+
+events:
+  - id: republic_day_2026
+    kind: republic_day
+    type: public_holiday
+    names: { en: Republic Day, hi: गणतंत्र दिवस, hi-Latn: Republic Day }
+    start: 2026-01-26
+    scope: { national: true }
+    confidence: published
+    closure: partial
+    source: govt holiday lists 2026
+
+  - id: lohri_2026
+    kind: lohri
+    type: festival
+    names: { en: Lohri, hi: लोहड़ी, hi-Latn: Lohri }
+    start: 2026-01-13
+    scope: { states: [IN-PB, IN-HR, IN-DL, IN-CH] }
+    confidence: panchang
+    lead_days: 3
+    priors: { kirana: { peanuts_rewari: 3.0, jaggery: 1.8, popcorn: 2.5 } }
+    source: hindu-blog 2026
+
+  - id: makar_sankranti_2026
+    kind: makar_sankranti
+    type: festival
+    names: { en: Makar Sankranti, hi: मकर संक्रांति, hi-Latn: Makar Sankranti, gu: ઉત્તરાયણ, te: సంక్రాంతి }
+    start: 2026-01-14
+    scope: { national: true }
+    confidence: panchang
+    lead_days: 4
+    priors: { kirana: { sesame: 3.0, jaggery: 2.5, rice: 1.3, kites: 6.0 } }
+    source: hindu-blog 2026
+    note: Most rituals on 15 Jan. Called Uttarayan in Gujarat (kites), Khichdi in UP/Bihar.
+
+  - id: pongal_2026
+    kind: pongal
+    type: festival
+    names: { en: Pongal, ta: பொங்கல், hi: पोंगल, hi-Latn: Pongal }
+    start: 2026-01-15
+    end: 2026-01-17
+    scope: { states: [IN-TN] }
+    confidence: regional_variant
+    lead_days: 5
+    closure: partial
+    priors: { kirana: { rice: 1.8, jaggery: 2.5, ghee: 2.0, cashew: 1.8, sugarcane: 4.0 } }
+    source: hindu-blog 2026 (other lists give 13–14 Jan for Bhogi)
+
+  - id: magh_bihu_2026
+    kind: magh_bihu
+    type: festival
+    names: { en: Magh Bihu, hi: माघ बिहू, hi-Latn: Magh Bihu }
+    start: 2026-01-15
+    scope: { states: [IN-AS] }
+    confidence: panchang
+    lead_days: 3
+    priors: { kirana: { rice: 1.5, jaggery: 2.0, sesame: 2.0 } }
+    source: hindu-blog 2026
+
+  - id: vasant_panchami_2026
+    kind: vasant_panchami
+    type: festival
+    names: { en: Vasant Panchami / Saraswati Puja, hi: वसंत पंचमी, hi-Latn: Vasant Panchami, bn: সরস্বতী পূজা }
+    start: 2026-01-23
+    scope: { states: [IN-WB, IN-BR, IN-JH, IN-OD, IN-UP, IN-AS] }
+    confidence: panchang
+    lead_days: 2
+    priors: { kirana: { puja_items: 2.0, sweets: 1.5 }, cafe: { sweets: 1.3 } }
+    source: hindu-blog 2026
+
+  - id: maha_shivratri_2026
+    kind: maha_shivratri
+    type: festival
+    names: { en: Maha Shivratri, hi: महाशिवरात्रि, hi-Latn: Mahashivratri }
+    start: 2026-02-15
+    scope: { national: true }
+    confidence: panchang
+    lead_days: 2
+    priors: { kirana: { fasting_foods: 2.5, milk: 1.5, fruits: 1.8 } }
+    source: hindu-blog 2026
+
+  - id: holika_dahan_2026
+    kind: holika_dahan
+    type: festival
+    names: { en: Holika Dahan, hi: होलिका दहन, hi-Latn: Holika Dahan }
+    start: 2026-03-02
+    scope: { states: [IN-UP, IN-BR, IN-JH, IN-DL, IN-HR, IN-PB, IN-RJ, IN-MP, IN-UK, IN-GJ, IN-MH, IN-CH] }
+    confidence: regional_variant
+    source: hindu-blog 2026 (a lunar eclipse on 3 Mar shifts local observance; some calendars differ)
+
+  - id: holi_2026
+    kind: holi
+    type: festival
+    names: { en: Holi, hi: होली, hi-Latn: Holi, bn: দোল যাত্রা }
+    start: 2026-03-04
+    scope: { national: true }
+    date_overrides: { IN-WB: 2026-03-03, IN-OD: 2026-03-03 }
+    confidence: regional_variant
+    lead_days: 6
+    tail_days: 1
+    closure: partial
+    priors:
+      kirana: { colours: 8.0, sweets: 2.5, milk: 1.8, snacks: 2.0, gujiya_ingredients: 3.0, cold_drinks: 2.0 }
+      cafe: { thandai: 4.0, sweets: 1.8 }
+      pharmacy: { skin_care: 1.5, eye_drops: 1.4 }
+      salon: { hair_care: 1.3 }
+    source: govt 2026 lists (4 Mar); hindu-blog gives Dhulandi 3 Mar; Dol Jatra in Bengal/Odisha a day earlier
+    note: Many shops shut on Holi morning in North India; the owner confirms hours.
+
+  - id: gudi_padwa_2026
+    kind: gudi_padwa
+    type: festival
+    names: { en: Gudi Padwa, mr: गुढीपाडवा, hi: गुड़ी पड़वा, hi-Latn: Gudi Padwa }
+    start: 2026-03-19
+    scope: { states: [IN-MH, IN-GA] }
+    confidence: panchang
+    lead_days: 3
+    priors: { kirana: { sweets: 2.0, puja_items: 2.5 }, salon: { grooming: 1.3 } }
+    source: hindu-blog 2026
+
+  - id: ugadi_2026
+    kind: ugadi
+    type: festival
+    names: { en: Ugadi, te: ఉగాది, hi: उगादि, hi-Latn: Ugadi }
+    start: 2026-03-19
+    scope: { states: [IN-KA, IN-AP, IN-TG] }
+    confidence: panchang
+    lead_days: 3
+    priors: { kirana: { jaggery: 2.0, tamarind: 1.8, mango: 2.0, neem_flowers: 3.0 } }
+    source: hindu-blog 2026
+
+  - id: eid_ul_fitr_2026
+    kind: eid_ul_fitr
+    type: festival
+    names: { en: Eid ul-Fitr, hi: ईद-उल-फ़ित्र, hi-Latn: Eid ul-Fitr }
+    start: 2026-03-21
+    scope: { national: true }
+    confidence: moon_sighting
+    lead_days: 7
+    closure: partial
+    priors:
+      kirana: { vermicelli: 4.0, dry_fruits: 2.0, milk: 1.8, sugar: 1.5, dates: 3.0 }
+      cafe: { sweets: 1.6 }
+      salon: { grooming: 1.6, mehendi: 2.5 }
+    source: CAG Punjab and Ladakh 2026 lists (other lists 20 Mar); depends on moon sighting
+
+  - id: ram_navami_2026
+    kind: ram_navami
+    type: festival
+    names: { en: Ram Navami, hi: राम नवमी, hi-Latn: Ram Navami }
+    start: 2026-03-27
+    scope: { national: true }
+    confidence: panchang
+    lead_days: 2
+    priors: { kirana: { puja_items: 1.8, fasting_foods: 1.5 } }
+    source: hindu-blog 2026
+
+  - id: good_friday_2026
+    kind: good_friday
+    type: public_holiday
+    names: { en: Good Friday, hi: गुड फ्राइडे, hi-Latn: Good Friday }
+    start: 2026-04-03
+    scope: { national: true }
+    confidence: published
+    source: Easter Sunday is 5 Apr 2026
+
+  - id: baisakhi_2026
+    kind: baisakhi
+    type: festival
+    names: { en: Baisakhi, hi: बैसाखी, hi-Latn: Baisakhi }
+    start: 2026-04-14
+    scope: { states: [IN-PB, IN-HR, IN-CH, IN-DL] }
+    confidence: published
+    lead_days: 3
+    priors: { kirana: { sweets: 1.8, snacks: 1.5 } }
+    source: CAG Punjab 2026 list
+
+  - id: ambedkar_jayanti_2026
+    kind: ambedkar_jayanti
+    type: public_holiday
+    names: { en: Ambedkar Jayanti, hi: आंबेडकर जयंती, hi-Latn: Ambedkar Jayanti }
+    start: 2026-04-14
+    scope: { national: true }
+    confidence: published
+    source: govt holiday lists 2026
+
+  - id: puthandu_2026
+    kind: puthandu
+    type: festival
+    names: { en: Tamil New Year, ta: தமிழ் புத்தாண்டு, hi-Latn: Puthandu }
+    start: 2026-04-14
+    scope: { states: [IN-TN] }
+    confidence: published
+    lead_days: 2
+    priors: { kirana: { mango: 2.0, jaggery: 1.5 } }
+    source: hindu-blog 2026
+
+  - id: vishu_2026
+    kind: vishu
+    type: festival
+    names: { en: Vishu, hi-Latn: Vishu, hi: विषु }
+    start: 2026-04-14
+    scope: { states: [IN-KL] }
+    confidence: regional_variant
+    lead_days: 3
+    priors: { kirana: { fruits: 2.0, rice: 1.3, jaggery: 1.5 } }
+    source: hindu-blog 2026 (some Kerala lists give 15 Apr)
+
+  - id: poila_boishakh_2026
+    kind: poila_boishakh
+    type: festival
+    names: { en: Bengali New Year, bn: পয়লা বৈশাখ, hi-Latn: Poila Boishakh }
+    start: 2026-04-14
+    scope: { states: [IN-WB] }
+    confidence: regional_variant
+    lead_days: 3
+    priors: { kirana: { sweets: 2.5 }, salon: { grooming: 1.4 }, cafe: { sweets: 1.8 } }
+    source: hindu-blog 2026 (West Bengal often observes 15 Apr; verify against WB list)
+
+  - id: rongali_bihu_2026
+    kind: rongali_bihu
+    type: festival
+    names: { en: Rongali Bihu, hi-Latn: Bohag Bihu }
+    start: 2026-04-14
+    end: 2026-04-15
+    scope: { states: [IN-AS] }
+    confidence: tentative
+    lead_days: 3
+    priors: { kirana: { rice: 1.4, jaggery: 1.5 } }
+    source: regional pattern (14–15 Apr); verify against Assam list
+
+  - id: akshaya_tritiya_2026
+    kind: akshaya_tritiya
+    type: observance
+    names: { en: Akshaya Tritiya, hi: अक्षय तृतीया, hi-Latn: Akshaya Tritiya }
+    start: 2026-04-19
+    scope: { national: true }
+    confidence: panchang
+    source: hindu-blog 2026 (20 Apr in some southern calendars)
+
+  - id: buddha_purnima_2026
+    kind: buddha_purnima
+    type: public_holiday
+    names: { en: Buddha Purnima, hi: बुद्ध पूर्णिमा, hi-Latn: Buddha Purnima }
+    start: 2026-05-01
+    scope: { national: true }
+    confidence: published
+    source: RBI May 2026 holidays (news)
+
+  - id: eid_al_adha_2026
+    kind: eid_al_adha
+    type: festival
+    names: { en: Eid al-Adha (Bakrid), hi: ईद-उल-अज़हा, hi-Latn: Bakrid }
+    start: 2026-05-27
+    date_overrides: { IN-KA: 2026-05-28 }
+    scope: { national: true }
+    confidence: moon_sighting
+    lead_days: 5
+    priors: { kirana: { spices: 1.8, rice: 1.5, dry_fruits: 1.5 } }
+    source: most govt lists 27 May; Karnataka list 28 May
+
+  - id: muharram_2026
+    kind: muharram
+    type: public_holiday
+    names: { en: Muharram, hi: मुहर्रम, hi-Latn: Muharram }
+    start: 2026-06-26
+    scope: { national: true }
+    confidence: moon_sighting
+    source: most 2026 lists (Andhra Pradesh lists 25 Jun)
+
+  - id: rath_yatra_2026
+    kind: rath_yatra
+    type: festival
+    names: { en: Rath Yatra, hi: रथ यात्रा, hi-Latn: Rath Yatra }
+    start: 2026-07-16
+    scope: { states: [IN-OD], cities: [ahmedabad, kolkata] }
+    confidence: panchang
+    lead_days: 2
+    source: hindu-blog 2026
+
+  - id: independence_day_2026
+    kind: independence_day
+    type: public_holiday
+    names: { en: Independence Day, hi: स्वतंत्रता दिवस, hi-Latn: Independence Day }
+    start: 2026-08-15
+    scope: { national: true }
+    confidence: published
+    closure: partial
+    priors: { kirana: { flags_sweets: 2.0 } }
+    source: fixed date
+
+  - id: onam_2026
+    kind: onam
+    type: festival
+    names: { en: Onam, hi: ओणम, hi-Latn: Onam }
+    start: 2026-08-26
+    scope: { states: [IN-KL] }
+    confidence: regional_variant
+    lead_days: 10
+    closure: partial
+    priors: { kirana: { rice: 1.8, coconut_oil: 2.0, banana_chips: 3.0, jaggery: 2.0, vegetables: 2.0 }, salon: { grooming: 1.5 } }
+    source: hindu-blog 2026 (Thiruvonam 26 Aug; some lists 25 Aug); the season starts at Atham about 10 days earlier
+
+  - id: milad_un_nabi_2026
+    kind: milad_un_nabi
+    type: public_holiday
+    names: { en: Milad-un-Nabi, hi: ईद-ए-मिलाद, hi-Latn: Eid-e-Milad }
+    start: 2026-08-26
+    scope: { national: true }
+    confidence: moon_sighting
+    source: most 2026 lists
+
+  - id: raksha_bandhan_2026
+    kind: raksha_bandhan
+    type: festival
+    names: { en: Raksha Bandhan, hi: रक्षा बंधन, hi-Latn: Rakhi }
+    start: 2026-08-28
+    scope: { national: true }
+    confidence: panchang
+    lead_days: 7
+    priors: { kirana: { rakhi: 10.0, sweets: 2.5, dry_fruits: 1.8, chocolates: 2.0 }, cafe: { sweets: 1.6 } }
+    source: hindu-blog 2026
+
+  - id: janmashtami_2026
+    kind: janmashtami
+    type: festival
+    names: { en: Janmashtami, hi: जन्माष्टमी, hi-Latn: Janmashtami }
+    start: 2026-09-04
+    scope: { national: true }
+    confidence: regional_variant
+    lead_days: 3
+    priors: { kirana: { milk: 1.8, butter: 2.0, fasting_foods: 2.0, puja_items: 2.0 } }
+    source: hindu-blog 2026 (some RBI-based lists show other dates; verify per state)
+
+  - id: ganesh_chaturthi_2026
+    kind: ganesh_chaturthi
+    type: festival
+    names: { en: Ganesh Chaturthi, mr: गणेश चतुर्थी, hi: गणेश चतुर्थी, hi-Latn: Ganesh Chaturthi, te: వినాయక చవితి }
+    start: 2026-09-14
+    end: 2026-09-24
+    scope: { states: [IN-MH, IN-GA, IN-KA, IN-TG, IN-AP, IN-GJ], cities: [chennai, kolkata] }
+    confidence: panchang
+    lead_days: 7
+    closure: none
+    priors: { kirana: { modak_ingredients: 4.0, puja_items: 3.0, sweets: 2.5, coconut: 2.5, flowers: 3.0 }, cafe: { sweets: 1.8 } }
+    source: hindu-blog 2026 (Chaturthi 14 Sep); 10-day Ganeshotsav to Anant Chaturdashi is strongest in Mumbai and Pune
+
+  - id: gandhi_jayanti_2026
+    kind: gandhi_jayanti
+    type: public_holiday
+    names: { en: Gandhi Jayanti, hi: गांधी जयंती, hi-Latn: Gandhi Jayanti }
+    start: 2026-10-02
+    scope: { national: true }
+    confidence: published
+    source: fixed date
+
+  - id: navratri_2026
+    kind: navratri
+    type: festival
+    names: { en: Navratri, hi: नवरात्रि, hi-Latn: Navratri, gu: નવરાત્રી }
+    start: 2026-10-11
+    end: 2026-10-19
+    scope: { national: true }
+    confidence: panchang
+    lead_days: 3
+    priors:
+      kirana: { fasting_foods: 3.0, kuttu_flour: 5.0, sabudana: 4.0, rock_salt: 3.0, fruits: 1.8, puja_items: 2.0 }
+      salon: { grooming: 1.5, mehendi: 1.8 }
+      cafe: { fasting_menu: 3.0 }
+    source: hindu-blog 2026
+    note: Garba nights in Gujarat (strongest in Ahmedabad, Surat, Vadodara).
+
+  - id: durga_puja_2026
+    kind: durga_puja
+    type: festival
+    names: { en: Durga Puja, bn: দুর্গা পূজা, hi: दुर्गा पूजा, hi-Latn: Durga Puja }
+    start: 2026-10-17
+    end: 2026-10-20
+    scope: { states: [IN-WB, IN-AS, IN-OD, IN-BR, IN-JH] }
+    confidence: panchang
+    lead_days: 10
+    closure: partial
+    priors:
+      kirana: { sweets: 3.0, puja_items: 2.5, snacks: 2.0, cold_drinks: 2.0 }
+      cafe: { snacks: 2.5, sweets: 2.5 }
+      salon: { grooming: 2.0, styling: 2.0 }
+    source: hindu-blog 2026 (Ashtami 19 Oct, Navami/Dashami 20 Oct); Shashthi start is derived
+
+  - id: dussehra_2026
+    kind: dussehra
+    type: festival
+    names: { en: Dussehra, hi: दशहरा, hi-Latn: Dussehra, bn: বিজয়া দশমী }
+    start: 2026-10-20
+    scope: { national: true }
+    confidence: panchang
+    lead_days: 2
+    closure: partial
+    priors: { kirana: { sweets: 2.0, puja_items: 1.8 } }
+    source: hindu-blog 2026; govt lists
+
+  - id: karva_chauth_2026
+    kind: karva_chauth
+    type: festival
+    names: { en: Karva Chauth, hi: करवा चौथ, hi-Latn: Karva Chauth }
+    start: 2026-10-29
+    scope: { states: [IN-UP, IN-DL, IN-HR, IN-PB, IN-CH, IN-RJ, IN-MP, IN-UK, IN-BR] }
+    confidence: panchang
+    lead_days: 3
+    priors:
+      kirana: { puja_items: 3.0, dry_fruits: 1.6, sweets: 1.8, karva_pots: 8.0 }
+      salon: { mehendi: 4.0, threading: 2.5, grooming: 2.0 }
+    source: hindu-blog 2026
+    note: Same day as the Gupta Diwali demo start (Thu 29 Oct 2026, Lucknow).
+
+  - id: dhanteras_2026
+    kind: dhanteras
+    type: festival
+    names: { en: Dhanteras, hi: धनतेरस, hi-Latn: Dhanteras }
+    start: 2026-11-06
+    scope: { national: true }
+    confidence: panchang
+    lead_days: 2
+    priors: { kirana: { steel_utensils: 4.0, dry_fruits: 2.0, puja_items: 2.5, sweets: 2.0 } }
+    source: hindu-blog 2026
+
+  - id: diwali_2026
+    kind: diwali
+    type: festival
+    names: { en: Diwali, hi: दिवाली, hi-Latn: Diwali, ta: தீபாவளி, bn: দীপাবলি, mr: दिवाळी, gu: દિવાળી, te: దీపావళి }
+    start: 2026-11-08
+    scope: { national: true }
+    date_overrides: { IN-TN: 2026-11-07 }
+    confidence: regional_variant
+    lead_days: 14
+    tail_days: 1
+    closure: partial
+    priors:
+      kirana: { dry_fruits: 3.1, diyas: 5.0, sweets: 2.2, ghee: 1.8, puja_items: 3.0, gift_packs: 4.0, cleaning: 2.0 }
+      cafe: { sweets: 1.8, gift_boxes: 3.0 }
+      pharmacy: { gift_wellness: 1.2 }
+      salon: { grooming: 1.6, bridal: 1.5 }
+    source: hindu-blog 2026 and govt lists (Lakshmi Puja 8 Nov); Tamil Nadu marks Deepavali on Naraka Chaturdashi (7 Nov, regional_variant; verify against the TN list)
+
+  - id: govardhan_puja_2026
+    kind: govardhan_puja
+    type: festival
+    names: { en: Govardhan Puja, hi: गोवर्धन पूजा, hi-Latn: Govardhan Puja }
+    start: 2026-11-09
+    scope: { states: [IN-UP, IN-MP, IN-RJ, IN-HR, IN-DL, IN-BR, IN-UK] }
+    confidence: published
+    priors: { kirana: { annakut_ingredients: 2.0 } }
+    source: Madhya Pradesh 2026 list
+
+  - id: gujarati_new_year_2026
+    kind: gujarati_new_year
+    type: festival
+    names: { en: Gujarati New Year, gu: બેસતું વર્ષ, hi-Latn: Bestu Varas }
+    start: 2026-11-09
+    scope: { states: [IN-GJ] }
+    confidence: panchang
+    closure: full
+    priors: { kirana: { sweets: 2.0, snacks: 2.0 } }
+    source: day after Lakshmi Puja (8 Nov)
+
+  - id: bhai_dooj_2026
+    kind: bhai_dooj
+    type: festival
+    names: { en: Bhai Dooj, hi: भाई दूज, hi-Latn: Bhai Dooj, mr: भाऊबीज, bn: ভাইফোঁটা }
+    start: 2026-11-11
+    scope: { national: true }
+    confidence: regional_variant
+    lead_days: 1
+    priors: { kirana: { sweets: 2.0, dry_fruits: 1.5, chocolates: 1.8 } }
+    source: hindu-blog 2026 (Bhau Beej) and Calendarific both give 11 Nov
+
+  - id: chhath_2026
+    kind: chhath
+    type: festival
+    names: { en: Chhath Puja, hi: छठ पूजा, hi-Latn: Chhath }
+    start: 2026-11-15
+    end: 2026-11-16
+    scope: { states: [IN-BR, IN-JH, IN-DL], cities: [varanasi, gorakhpur, lucknow, prayagraj, noida, kolkata, mumbai] }
+    confidence: panchang
+    lead_days: 4
+    closure: partial
+    priors: { kirana: { fruits: 3.0, sugarcane: 5.0, jaggery: 2.5, wheat_flour: 1.6, puja_items: 3.0, soop_baskets: 8.0 } }
+    source: hindu-blog 2026 (Chhath Puja 15 Nov); the 4-day observance starts with Nahay Khay about 2 days earlier
+
+  - id: guru_nanak_jayanti_2026
+    kind: guru_nanak_jayanti
+    type: festival
+    names: { en: Guru Nanak Jayanti, hi: गुरु नानक जयंती, hi-Latn: Gurpurab }
+    start: 2026-11-24
+    scope: { national: true }
+    confidence: published
+    lead_days: 2
+    priors: { kirana: { langar_staples: 1.8, sweets: 1.5 } }
+    source: Maharashtra, Madhya Pradesh and bank 2026 lists
+
+  - id: dev_deepawali_2026
+    kind: dev_deepawali
+    type: festival
+    names: { en: Dev Deepawali, hi: देव दीपावली, hi-Latn: Dev Deepawali }
+    start: 2026-11-24
+    scope: { cities: [varanasi] }
+    confidence: panchang
+    lead_days: 2
+    priors: { kirana: { diyas: 6.0, ghee: 2.0 } }
+    source: Kartik Purnima 24 Nov 2026 (hindu-blog full-moon listing)
+
+  - id: christmas_2026
+    kind: christmas
+    type: festival
+    names: { en: Christmas, hi: क्रिसमस, hi-Latn: Christmas }
+    start: 2026-12-25
+    scope: { national: true }
+    confidence: published
+    lead_days: 7
+    closure: partial
+    priors: { cafe: { cakes: 2.5, plum_cake: 4.0 }, kirana: { baking: 2.0, chocolates: 1.8 } }
+    source: fixed date
+    note: Strongest in Kerala, Goa, Mumbai, Kolkata, Chennai, Bengaluru and the North-East.

@@ -1,0 +1,7 @@
+{
+  "items": [],
+  "invalidate_on": [
+    "catalog.item_added",
+    "catalog.price_changed"
+  ]
+}

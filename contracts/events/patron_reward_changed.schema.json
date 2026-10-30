@@ -1,0 +1,92 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/events/patron_reward_changed.schema.json",
+  "title": "PatronRewardChanged",
+  "description": "Base shape of every Event Spine event (spec Part C5). Per-topic payload schemas arrive with their layer (see contracts/README.md).",
+  "type": "object",
+  "required": [
+    "event_id",
+    "type",
+    "merchant_id",
+    "occurred_at",
+    "actor",
+    "causation_id",
+    "payload"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "event_id": {
+      "type": "string",
+      "pattern": "^evt_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "type": {
+      "const": "patron.reward_changed"
+    },
+    "merchant_id": {
+      "$ref": "../common.schema.json#/definitions/NonEmptyString"
+    },
+    "occurred_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "actor": {
+      "$ref": "#/definitions/Actor"
+    },
+    "causation_id": {
+      "anyOf": [
+        {
+          "$ref": "../common.schema.json#/definitions/PrefixedId"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Id of the command or event that caused this event; null means a root event with no cause (e.g. a clock tick)."
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "patron_id"
+      ],
+      "properties": {
+        "patron_id": {
+          "$ref": "../common.schema.json#/definitions/PrefixedId"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Actor": {
+      "type": "object",
+      "required": [
+        "kind"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "owner",
+            "staff",
+            "customer",
+            "supplier",
+            "agent",
+            "system",
+            "simulator"
+          ]
+        },
+        "id": {
+          "anyOf": [
+            {
+              "$ref": "../common.schema.json#/definitions/NonEmptyString"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

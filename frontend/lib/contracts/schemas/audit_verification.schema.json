@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/audit_verification.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "AuditVerification",
+  "required": [
+    "valid",
+    "checked",
+    "bad_seq"
+  ],
+  "properties": {
+    "valid": {
+      "type": "boolean"
+    },
+    "checked": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "bad_seq": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 1
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  }
+}

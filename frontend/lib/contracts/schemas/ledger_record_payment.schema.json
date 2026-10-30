@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/ledger_record_payment.schema.json",
+  "title": "LedgerRecordPayment",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "account_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "amount_paise": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "payment_ref": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "mode": {
+      "enum": [
+        "cash",
+        "upi_unmatched"
+      ]
+    }
+  },
+  "required": [
+    "account_id",
+    "amount_paise",
+    "payment_ref",
+    "mode"
+  ]
+}

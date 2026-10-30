@@ -1,0 +1,112 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/catalog_search_view.schema.json",
+  "title": "CatalogSearchView",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "items": {
+      "type": "array",
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sku": {
+            "type": "string"
+          },
+          "names": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minProperties": 1
+          },
+          "unit": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "mrp_paise": {
+            "type": "integer"
+          },
+          "price_paise": {
+            "type": "integer"
+          },
+          "cost_paise": {
+            "type": "integer"
+          },
+          "details": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "salt": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "strength": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "form": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "pack_size": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "schedule": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "rx_required": {
+                "type": "boolean"
+              },
+              "duration_minutes": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "required_skill": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              }
+            },
+            "required": []
+          },
+          "frequency": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "sku",
+          "names",
+          "price_paise"
+        ]
+      }
+    },
+    "invalidate_on": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "items",
+    "invalidate_on"
+  ]
+}

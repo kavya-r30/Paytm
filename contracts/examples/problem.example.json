@@ -1,0 +1,9 @@
+{
+  "type": "https://arth.local/problems/ledger.over_limit",
+  "title": "Credit limit exceeded",
+  "status": 422,
+  "code": "ledger.over_limit",
+  "message_key": "error.ledger.over_limit",
+  "detail": "This entry would take the patron past their khata limit.",
+  "params": { "limit_paise": 200000, "balance_paise": 195000, "patron": "Sunita ji" }
+}

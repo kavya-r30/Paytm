@@ -1,0 +1,7 @@
+{
+  "items": [],
+  "invalidate_on": [
+    "stock.changed",
+    "batch.recalled"
+  ]
+}

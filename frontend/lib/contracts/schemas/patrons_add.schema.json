@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/patrons_add.schema.json",
+  "title": "PatronsAdd",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "display_name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "lang": {
+      "$ref": "../common.schema.json#/definitions/Locale"
+    },
+    "identities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "enum": [
+              "vpa",
+              "phone",
+              "spoken_name",
+              "payer_name"
+            ]
+          },
+          "value": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "kind",
+          "value"
+        ]
+      }
+    }
+  },
+  "required": [
+    "display_name",
+    "lang"
+  ]
+}

@@ -1,0 +1,31 @@
+pack: kirana
+version: 1
+names: { en: Kirana / general store, hi: किराना / जनरल स्टोर, hi-Latn: Kirana / general store }
+catalog:
+  schema: sku
+  fields: [mrp, price, cost, pack_size, unit, hsn, gst_rate, barcodes, category]
+  units: [pcs, g, kg, ml, l, pack]
+  loose_sale: true
+  starter_catalog: catalog_starter.csv
+stock: { batches: optional, expiry: optional, bom: false }
+counter: { modes: [scan, tap, voice, search], tickets: false, appointments: false }
+khata: { enabled: true }
+levers:
+  counter_hint: { min_habit_share: 0.6 }
+  winback: { lapsing_rule: default }
+  replenish: { categories: [atta, rice, oil, sugar, dal, milk, tea, detergent], cv_max: 0.4 }
+  repeat_order: {}
+  demand_capture: {}
+  bundle_preorder: { margin_floor: 0.15 }
+  credit_advisor: {}
+  welcome: { coupon_paise: 2000, min_bill_paise: 20000, valid_days: 14 }
+  offers: { types: [next_txn_cashback, instant_cashback, first_time_coupon, payment_count, item_coupon] }
+  storefront: {}
+  feedback: {}
+calendar: [diwali, holi, eid_ul_fitr, raksha_bandhan, chhath, pongal, onam, durga_puja, christmas, wedding_season, salary_days]
+charts: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+policies: { margin_floor: 0.15 }
+templates: templates/
+generator: generator.yaml
+peer_cohort: kirana_by_city_tier_and_size
+scenarios: [gupta_diwali, kirana_cold_start, kirana_monsoon_week, kirana_month_end]

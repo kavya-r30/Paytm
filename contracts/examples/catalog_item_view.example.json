@@ -1,0 +1,12 @@
+{
+  "invalidate_on": ["catalog.item_added", "catalog.price_changed"],
+  "id": "item_example",
+  "sku": "SALT",
+  "names": {
+    "en": "Salt"
+  },
+  "unit": "pcs",
+  "price_paise": 2700,
+  "modifier_groups": [],
+  "recipe": []
+}

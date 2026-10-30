@@ -1,0 +1,81 @@
+# Seasons and recurring demand patterns (spec Part D3). Field meanings: see events-2026.yaml.
+# Windows here are approximate by nature; the forecaster treats them as soft covariates.
+events:
+  - id: wedding_season_north_2026_h2
+    kind: wedding_season
+    type: season
+    names: { en: Wedding season, hi: शादियों का मौसम, hi-Latn: Shaadi season }
+    start: 2026-11-20
+    end: 2026-12-15
+    scope: { states: [IN-UP, IN-BR, IN-JH, IN-DL, IN-HR, IN-PB, IN-CH, IN-RJ, IN-MP, IN-UK, IN-GJ, IN-MH] }
+    confidence: tentative
+    priors:
+      salon: { bridal: 4.0, grooming: 2.0, mehendi: 3.0 }
+      kirana: { bulk_staples: 1.6, dry_fruits: 1.8, sweets: 1.8 }
+      cafe: { catering_orders: 2.0 }
+    source: North Indian season opens after Dev Uthani Ekadashi (around 20 Nov 2026); exact muhurat dates come from a panchang in T2.10
+
+  - id: wedding_season_north_2027_h1
+    kind: wedding_season
+    type: season
+    names: { en: Wedding season, hi: शादियों का मौसम, hi-Latn: Shaadi season }
+    start: 2027-01-16
+    end: 2027-03-10
+    scope: { states: [IN-UP, IN-BR, IN-JH, IN-DL, IN-HR, IN-PB, IN-CH, IN-RJ, IN-MP, IN-UK, IN-GJ, IN-MH] }
+    confidence: tentative
+    priors: { salon: { bridal: 4.0, grooming: 2.0, mehendi: 3.0 }, kirana: { bulk_staples: 1.6, dry_fruits: 1.8 } }
+    source: typical post-Sankranti season; replace with muhurat dates in T2.10
+
+  - id: monsoon_kerala_2026
+    kind: monsoon
+    type: season
+    names: { en: Monsoon, hi: मानसून, hi-Latn: Monsoon }
+    start: 2026-06-01
+    end: 2026-09-30
+    scope: { states: [IN-KL, IN-KA, IN-TN, IN-GA] }
+    confidence: tentative
+    priors: { pharmacy: { cold_flu: 1.6, mosquito_repellent: 2.5 }, kirana: { umbrellas: 4.0, tea: 1.2, snacks: 1.3 }, cafe: { hot_beverages: 1.4, pakoras: 1.8 } }
+    source: normal onset dates (IMD climatology); actual onset varies by 1–2 weeks
+
+  - id: monsoon_north_2026
+    kind: monsoon
+    type: season
+    names: { en: Monsoon, hi: मानसून, hi-Latn: Monsoon }
+    start: 2026-06-25
+    end: 2026-09-20
+    scope: { states: [IN-UP, IN-BR, IN-JH, IN-DL, IN-HR, IN-PB, IN-CH, IN-RJ, IN-MP, IN-UK, IN-GJ, IN-MH, IN-WB, IN-OD, IN-AS, IN-TG, IN-AP] }
+    confidence: tentative
+    priors: { pharmacy: { cold_flu: 1.6, mosquito_repellent: 2.5, ors: 1.8 }, kirana: { umbrellas: 4.0, tea: 1.2, snacks: 1.3 }, cafe: { hot_beverages: 1.4, pakoras: 1.8 } }
+    source: normal onset by region (IMD climatology); actual onset varies
+
+  - id: board_exams_2027
+    kind: exams
+    type: season
+    names: { en: Board exams, hi: बोर्ड परीक्षा, hi-Latn: Board exams }
+    start: 2027-02-15
+    end: 2027-03-31
+    scope: { national: true }
+    confidence: tentative
+    priors: { kirana: { stationery: 2.5, snacks: 1.2 }, cafe: { late_evening: 1.3 } }
+    source: typical CBSE/state board window; verify against board schedules
+
+  - id: school_reopen_south_2026
+    kind: school_reopen
+    type: season
+    names: { en: Schools reopen, hi: स्कूल खुलने का समय, hi-Latn: School reopening }
+    start: 2026-06-01
+    end: 2026-06-15
+    scope: { states: [IN-TN, IN-KL, IN-KA, IN-AP, IN-TG, IN-MH, IN-GA] }
+    confidence: tentative
+    priors: { kirana: { stationery: 4.0, tiffin_snacks: 1.5 } }
+    source: typical June reopening in southern and western states
+
+recurring:
+  - id: salary_days
+    kind: salary_days
+    names: { en: Salary week, hi: वेतन का हफ़्ता, hi-Latn: Salary week }
+    rule: monthly_days
+    days: [1, 2, 3, 4, 5, 6, 7]
+    scope: { national: true }
+    priors: { kirana: { bulk_staples: 1.4, khata_repayments: 1.8 }, salon: { grooming: 1.2 }, pharmacy: { monthly_refills: 1.5 } }
+    source: common pattern for salaried households; each shop's own effect is learned
