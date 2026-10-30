@@ -73,3 +73,15 @@ L2 and announce it.
   {text, surface}` → envelope); the ask dock routes locally via an intent table until then.
 - Lane A (30 Oct): L3 done (CP-3). `/v1/views/forecast` now returns `forecast_view` (was `layer_pending_view`); new `/v1/views/insights`, `/v1/charts/{1..12}`, `/v1/analytics/{tool}`. See issue #2.
 - Lane A (30 Oct): L4 done offline. Request 7 shipped: `POST /v1/turns {text|audio_b64, surface, bill_id?}` → envelope v2; `GET /v1/views/ask` now real (`ask_view`); `GET /v1/tts`. **Ask for Lane B:** run `python dev.py ai-smoke` locally (providers are blocked in Lane A's cloud session) and commit `backend/cassettes/`. See issue #2.
+- Lane B (31 Oct): **L7 batch 2 pushed** (T7.10–T7.16): `/device-voice` (light bar, hold/tap/double/long, Space
+  key), `/customer-display` (6 states from bill/payment/offer events), `/phone/<persona>` (sim threads, inbound
+  replies), `/console/*` (10 screens, CAP-4 offer fields, OTP + KFS, R4 actions), `/pay/<token>` (backed by
+  `/sim/pay`), `/s/<slug>`, `/stage` (1920×1080, 7 evidence tabs, auto-focus) and `/director` (world, presenter
+  sessions, beats with expectations, replies, clock, faults). Gate: lint ok, typecheck ok, 409 Vitest, build ok.
+  **Request 8 (blocks live R4):** R4 needs `session.step_up`, but no route sets it. Proposal: `POST
+  /v1/auth/step-up {otp}` on the console session (simulated OTP), marking `step_up` for ~10 min. Until then the
+  Console shows the OTP/KFS flow and surfaces the server's `policy.console_required` refusal.
+  **Request 9:** storefront orders: `POST /v1/public/storefront/{slug}/orders {lines, phone?}` → `orders.create_draft`
+  (channel storefront). The page builds the cart and confirms locally until then.
+  **Request 10 (nice to have):** an `envelope` SSE event (or `turn.completed` payload carrying it) so the customer
+  display and orb follow turns; the stream reader already handles `event: envelope`.
