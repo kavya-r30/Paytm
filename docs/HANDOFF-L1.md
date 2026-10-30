@@ -1,6 +1,11 @@
 # Arth: Handoff for L1 (continue in a fresh Claude Code / Codex session)
 
-## Current checkpoint (30 Oct 2026, CP-4 offline) — L4 DONE (live evals pending)
+## Current checkpoint (30 Oct 2026, CP-5) — L5 DONE
+
+L5 agents are in `backend/arth/agents/` (plan: `docs/superpowers/plans/2026-10-30-arth-L5-agents.md`). The dispatch
+loop ticks the runtime; Night Shift runs at 22:00 IST. Migration 0009 is frozen. Next: L6 growth.
+
+## Checkpoint CP-4 (offline) — L4 DONE (live evals pending)
 
 L4 is in `backend/arth/ai/` (plan: `docs/superpowers/plans/2026-10-30-arth-L4-ai-platform.md`). `POST /v1/turns`
 works on device/console/WhatsApp; providers fall back to cassettes/templates when unreachable (they are blocked in

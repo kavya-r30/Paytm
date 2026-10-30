@@ -11,7 +11,23 @@ from arth.governance.tables import merchants
 
 # Governance bookkeeping may be written outside a command's execution (gates, audit, outbox, offsets).
 # Every other table is domain state and can only change while the Command Bus executes a command.
-BUS_INFRASTRUCTURE = frozenset({"commands", "approvals", "audit_log", "outbox", "consumer_offsets", "turns"})
+BUS_INFRASTRUCTURE = frozenset(
+    {
+        "commands",
+        "approvals",
+        "audit_log",
+        "outbox",
+        "consumer_offsets",
+        "turns",
+        # agent runtime bookkeeping (what agents did and wait for); their effects still go through the bus
+        "playbook_runs",
+        "playbook_steps",
+        "work_items",
+        "contact_locks",
+        "agent_controls",
+        "briefs",
+    }
+)
 
 
 class Repository:

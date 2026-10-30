@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/messages_reply.schema.json",
+  "title": "MessagesReply",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "message_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "template": {
+      "$ref": "../common.schema.json#/definitions/MessageKey"
+    },
+    "params": {
+      "type": "object",
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ]
+      }
+    }
+  },
+  "required": [
+    "message_id",
+    "template",
+    "params"
+  ]
+}

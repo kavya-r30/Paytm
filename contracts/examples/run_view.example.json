@@ -1,0 +1,20 @@
+{
+  "run": {
+    "id": "run_01JBQ0Z7Y8K3M4N5P6Q7R8S9T0",
+    "playbook": "reorder",
+    "agent": "procurement",
+    "subject": "item_01JBQ0Z7Y8K3M4N5P6Q7R8S9T0",
+    "status": "waiting",
+    "step": "await_sent",
+    "created_at": "2026-10-29T16:30:00Z",
+    "updated_at": "2026-10-29T16:30:00Z",
+    "context": {},
+    "wait": {
+      "topic": "po.changed"
+    }
+  },
+  "steps": [],
+  "invalidate_on": [
+    "x.changed"
+  ]
+}
