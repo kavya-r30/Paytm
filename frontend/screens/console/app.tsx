@@ -183,6 +183,14 @@ function WorkScreen() {
               <Button size="sm" variant="text" onClick={() => void decide(g.thread_id, 'snooze')}>
                 {t('gate.snooze')}
               </Button>
+              <Button
+                size="sm"
+                variant="text"
+                className="text-red"
+                onClick={() => void decide(g.thread_id, 'decline')}
+              >
+                {t('gate.decline')}
+              </Button>
             </div>
           </Card>
         );

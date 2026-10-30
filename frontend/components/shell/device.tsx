@@ -4,10 +4,12 @@
 import { Boxes, Home, LayoutGrid, Mic, NotebookPen, ReceiptText, Square, TrendingUp, X } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useState, type ReactNode } from 'react';
+import { apiPost, dataMode, newIdempotencyKey } from '@/lib/api/client';
 import { useCommand } from '@/lib/api/commands';
 import { useDataMode } from '@/lib/api/hooks';
-import type { LayerPendingView } from '@/lib/contracts';
+import type { Envelope, LayerPendingView } from '@/lib/contracts';
 import { SHORT_NAME } from '@/lib/i18n/core';
 import { useI18n } from '@/lib/i18n/react';
 import { useTurn } from '@/lib/store/turn';
@@ -170,11 +172,13 @@ export function useTurnSubmit() {
   const nav = useDeviceNav();
   const toast = useTurn((s) => s.toast);
   const setPresence = useTurn((s) => s.setPresence);
-  return useCallback(
+  const { locale } = useI18n();
+  const client = useQueryClient();
+
+  const local = useCallback(
     (text: string) => {
       const intent = resolveIntent(text);
-      setPresence('thinking');
-      window.setTimeout(() => setPresence(intent ? 'done' : 'idle'), 600);
+      setPresence(intent ? 'done' : 'idle');
       if (!intent) {
         toast({ textKey: 'ask.not_understood', params: { text }, until: null, tone: 'info' });
         return;
@@ -183,6 +187,40 @@ export function useTurnSubmit() {
       if (intent.action) emitAction(intent.action);
     },
     [nav, setPresence, toast],
+  );
+
+  return useCallback(
+    async (text: string) => {
+      setPresence('thinking');
+      // In-screen actions ("QR dikhao", "Teeno haan") act on what is on screen; they never need a round trip.
+      const intent = resolveIntent(text);
+      if (dataMode() === 'fixture' || (intent?.action && !intent.screen)) {
+        window.setTimeout(() => local(text), 400);
+        return;
+      }
+      try {
+        const env = (await apiPost(
+          '/v1/turns',
+          { text, surface: 'device', lang: locale === 'xx-LONG' ? 'en' : locale },
+          newIdempotencyKey(),
+        )) as Envelope;
+        useTurn.getState().applyEnvelope(env);
+        void client.invalidateQueries({ queryKey: ['view', 'ask'] });
+        if (env.nav) {
+          const param = Object.values(env.nav.params ?? {})[0];
+          nav(param ? `${env.nav.screen}/${param}` : env.nav.screen);
+        } else if (intent?.screen) nav(intent.screen);
+        if (env.speech?.text && 'speechSynthesis' in window) {
+          const u = new SpeechSynthesisUtterance(env.speech.text);
+          u.lang = env.lang.speech;
+          u.onend = () => setPresence('idle');
+          window.speechSynthesis.speak(u);
+        }
+      } catch {
+        local(text);
+      }
+    },
+    [client, local, locale, nav, setPresence],
   );
 }
 
