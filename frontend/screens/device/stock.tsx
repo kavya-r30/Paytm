@@ -436,6 +436,13 @@ export function GateScreen({ param }: ScreenProps) {
                 >
                   {t('gate.snooze')}
                 </Button>
+                <Button
+                  variant="text"
+                  className="text-red"
+                  onClick={() => void decide(v.gate.thread_id, 'decline').then(() => nav('home'))}
+                >
+                  {t('gate.decline')}
+                </Button>
               </Card>
             </div>
           );

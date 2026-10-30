@@ -1,6 +1,8 @@
 // Gupta General Store fixture shop (demo scenario 1), shaped exactly like the live views so every screen
 // renders before the seeded shop exists. tests/fixtures.test.ts validates each entry against its contract.
 import type {
+  AskView,
+  ForecastView,
   AppointmentsView,
   BillPaidView,
   BillPayView,
@@ -1415,6 +1417,46 @@ export const onboarding: OnboardingView = {
   completed: ['language', 'pack'],
   next_step: 'details',
   invalidate_on: INV('onboarding.updated'),
+};
+
+const SALES = [612000, 548000, 590000, 702000, 655000, 731000];
+export const forecast: ForecastView = {
+  metric: 'sales',
+  status: 'ready',
+  actuals: SALES.map((s, i) => ({ date: `2026-10-${String(23 + i).padStart(2, '0')}`, sales_paise: s })),
+  days: [780000, 820000, 860000, 910000, 1150000, 1420000].map((p50, i) => ({
+    date: ['2026-10-29', '2026-10-30', '2026-10-31', '2026-11-01', '2026-11-02', '2026-11-03'][i]!,
+    p10_paise: Math.round(p50 * 0.82),
+    p50_paise: p50,
+    p90_paise: Math.round(p50 * 1.2),
+    festive: i >= 3,
+  })),
+  accuracy: { wape_bp: 1600, coverage_bp: 7900, window_days: 14, within_band: 11 },
+  drivers: [
+    { key: 'driver.festival', contribution_paise: 210000 },
+    { key: 'driver.weekday', contribution_paise: 65000 },
+    { key: 'driver.weather', contribution_paise: -18000 },
+  ],
+  items: [
+    { item_id: ITEMS.kaju.id, name: ITEMS.kaju.name, daily_qty_milli: 1400, horizon_qty_milli: 9800 },
+    { item_id: ITEMS.ghee.id, name: ITEMS.ghee.name, daily_qty_milli: 2600, horizon_qty_milli: 18000 },
+  ],
+  invalidate_on: INV('forecast.updated'),
+};
+
+export const ask: AskView = {
+  session: null,
+  turns: [
+    {
+      id: fid('turn', 1),
+      surface: 'device',
+      heard: 'Aaj kitna aaya?',
+      intent: 'read:today_sales',
+      said: 'Dopahar tak ₹4,180 aaya, 31 bill. Aam guruvaar se 13% aage, zyadatar Mehta ji ke Diwali order ki wajah se.',
+      created_at: minutesAgo(4),
+    },
+  ],
+  invalidate_on: INV('turn.completed'),
 };
 
 export const IDS = { BILL_ID, PAID_BILL_ID, PO_ID, CLAIM_ID, GATES };

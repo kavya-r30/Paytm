@@ -942,5 +942,22 @@
   "cue.stock": "Open Stock → Rates dekho · approve Balaji with one haan.",
   "cue.khata": "Owner: \"Sharma ji ka hisaab\" · send the reminder (R3).",
   "cue.voice": "Switch to the voice edition · tap for pending, double tap to approve.",
-  "cue.close": "Clock jumps to evening · Hisaab shows the close; audit verifies."
+  "cue.close": "Clock jumps to evening · Hisaab shows the close; audit verifies.",
+  "gate.decline": "Decline",
+  "toast.decision_decline": "Declined",
+  "ask.empty": "Ask anything about your shop: tap the mic or type below.",
+  "ask.also_noticed": "Arth also noticed",
+  "ask.nudge_example": "Kaju sold 2.4x last Thursday. Stock may run out by Saturday.",
+  "forecast.headline": "Most likely today",
+  "forecast.range": "8 times in 10 between {low} and {high}",
+  "forecast.poor_accuracy": "Forecast is less sure this week: the band is wider",
+  "forecast.accuracy": "In the last {n} days, sales landed inside the range {k} times.",
+  "forecast.why": "Arth: why?",
+  "forecast.items": "Expected to sell",
+  "forecast.cta": "{festival} stock plan",
+  "driver.festival": "Festival",
+  "driver.weekday": "Weekday",
+  "driver.weather": "Weather",
+  "driver.payday": "Payday",
+  "driver.trend": "Trend"
 }

@@ -47,9 +47,12 @@ const enc = encodeURIComponent;
 export const views = {
   home: () => spec(['home'], '/v1/views/home', 'home_view', () => F.home),
   ask: (session = 'current') =>
-    later(['ask', session], `/v1/views/ask?session=${enc(session)}`, 'L4', 'sufficiency.ask_pending'),
+    spec(['ask', session], `/v1/views/ask?session=${enc(session)}`, 'ask_view', () => F.ask),
   forecast: (metric: 'sales' | 'items' = 'sales') =>
-    later(['forecast', metric], `/v1/views/forecast?metric=${metric}`, 'L3', 'sufficiency.forecast_pending'),
+    spec(['forecast', metric], `/v1/views/forecast?metric=${metric}`, 'forecast_view', () => ({
+      ...F.forecast,
+      metric,
+    })),
   notifications: () =>
     spec(['notifications'], '/v1/views/notifications', 'notifications_view', () => F.notifications),
   gate: (id: string) =>

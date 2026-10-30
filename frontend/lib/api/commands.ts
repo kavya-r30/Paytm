@@ -136,9 +136,9 @@ export function useDecide() {
   return useCallback(
     async (
       threadId: string,
-      decision: 'approve' | 'snooze' | 'edit',
+      decision: 'approve' | 'snooze' | 'edit' | 'decline',
       edits?: Record<string, unknown>,
-      decisions?: Record<string, 'approve' | 'snooze'>,
+      decisions?: Record<string, 'approve' | 'snooze' | 'decline'>,
     ) => {
       if (dataMode() === 'fixture') {
         toast({ textKey: `toast.decision_${decision}`, until: null, tone: 'done' });
