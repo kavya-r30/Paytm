@@ -12,11 +12,13 @@ class Decision(Enum):
     approve = 'approve'
     snooze = 'snooze'
     edit = 'edit'
+    decline = 'decline'
 
 
 class Decisions(Enum):
     approve = 'approve'
     snooze = 'snooze'
+    decline = 'decline'
 
 
 class ApprovalRequest(BaseModel):
