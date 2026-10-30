@@ -93,6 +93,8 @@ tiers:
   device.report_health: R1
   capital.record_offer: R1
   sentinel.check: R1
+  messages.receive: R1
+  calendar.add_local_event: R1
   outreach.send_campaign: R3
   offers.create_program: R3
   offers.pause_program: R1

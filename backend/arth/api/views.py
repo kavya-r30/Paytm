@@ -84,6 +84,7 @@ VIEW_TOPICS: dict[str, set[str]] = {
     "appointments": {"order.appointment_changed", "bill.changed"},
     "rx": {"bill.paid", "batch.recalled"},
     "verdict": {"sentinel.verdict", "payment.received"},
+    "calendar": {"calendar.local_event_added", "clock.day"},
     "trust": {"command.executed", "approval.decided", "privacy.erased", "privacy.sharing_changed"},
 }
 PENDING = {
