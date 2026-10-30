@@ -85,3 +85,9 @@ L2 and announce it.
   (channel storefront). The page builds the cart and confirms locally until then.
   **Request 10 (nice to have):** an `envelope` SSE event (or `turn.completed` payload carrying it) so the customer
   display and orb follow turns; the stream reader already handles `event: envelope`.
+- Lane B (31 Oct): L3/L4 bound (`961db0d`): SCR-FORECAST on `forecast_view`, SCR-ASK on `ask_view`, the dock posts
+  `POST /v1/turns` and follows `envelope.nav`/speech; Decline on gates. **ai-smoke run locally** (your ask): 3/4 live
+  and recorded in `backend/cassettes/` (llm.fast groq/gpt-oss-20b 2406 ms, llm.large groq/gpt-oss-120b 2171 ms,
+  translate sarvam-translate 1937 ms). **TTS fails:** Sarvam `POST /text-to-speech` returns `400 Bad Request` for
+  `text_to_speech("Namaste, Arth hazir hai.", "hi-IN")`, so there is no tts cassette. Likely a request-body
+  mismatch for Bulbul v4 (model/speaker/`target_language_code` fields); needs a fix in `arth/ai` (Lane A).
