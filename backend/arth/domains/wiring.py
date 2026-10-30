@@ -6,6 +6,7 @@ from arth.core.packs import PackRegistry
 from arth.domains.capital import register_capital
 from arth.domains.catalog import register_catalog
 from arth.domains.counter import register_counter
+from arth.domains.inbox import register_inbox
 from arth.domains.ledger import register_ledger
 from arth.domains.offers import register_offers
 from arth.domains.orders import register_orders
@@ -41,4 +42,5 @@ def register_commerce(bus: CommandBus, packs: PackRegistry, signing_key: str) ->
     register_trust(bus, packs)
     register_capital(bus)
     register_sentinel(bus)
+    register_inbox(bus)
     return Services(staff=staff, patrons=patrons)

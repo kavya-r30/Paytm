@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/messages_receive.schema.json",
+  "title": "MessagesReceive",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "thread_ref": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "persona_ref": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "patron_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "supplier_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "kind": {
+      "enum": [
+        "text",
+        "voice_note",
+        "image",
+        "document",
+        "button"
+      ]
+    },
+    "text": {
+      "type": "string",
+      "maxLength": 2000
+    }
+  },
+  "required": [
+    "thread_ref",
+    "persona_ref",
+    "kind",
+    "text"
+  ]
+}

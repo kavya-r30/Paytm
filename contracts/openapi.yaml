@@ -637,6 +637,300 @@ paths:
             application/json:
               schema: {$ref: './public_storefront.schema.json'}
         '404': {$ref: '#/components/responses/Problem'}
+  /webhooks/rails:
+    post:
+      operationId: railsWebhook
+      security: []
+      parameters:
+        - {in: header, name: x-sim-signature, required: true, schema: {type: string}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {type: object}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /webhooks/messages:
+    post:
+      operationId: messagesWebhook
+      security: []
+      parameters:
+        - {in: header, name: x-sim-signature, required: true, schema: {type: string}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {type: object}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /sim/rails/qr:
+    post:
+      operationId: simRailsQr
+      security: [{director: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {type: object}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /sim/pay/{token}:
+    get:
+      operationId: simPayPage
+      security: []
+      parameters:
+        - {in: path, name: token, required: true, schema: {type: string}}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {type: object}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+    post:
+      operationId: simPay
+      security: []
+      parameters:
+        - {in: path, name: token, required: true, schema: {type: string}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {type: object}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /sim/rails/static-pay:
+    post:
+      operationId: simStaticPay
+      security: [{director: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {type: object}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /sim/rails/complete:
+    post:
+      operationId: simCompletePayment
+      security: [{director: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {type: object}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /sim/rails/faults:
+    post:
+      operationId: simRailsFaults
+      security: [{director: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {type: object}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /sim/rails/settle:
+    post:
+      operationId: simSettle
+      security: [{director: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {type: object}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /sim/messages/threads:
+    get:
+      operationId: simThreads
+      security: [{director: []}]
+      parameters:
+        - {in: query, name: merchant_id, required: true, schema: {type: string}}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {type: object}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /sim/messages/inbound:
+    post:
+      operationId: simInbound
+      security: [{director: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {type: object}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /sim/lender/offers:
+    post:
+      operationId: simLenderOffers
+      security: [{director: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {type: object}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /sim/tools/screenshot:
+    post:
+      operationId: simScreenshot
+      security: [{director: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {type: object}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /sim/personas:
+    get:
+      operationId: simPersonas
+      security: [{director: []}]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {type: object}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/director/clock:
+    post:
+      operationId: directorClock
+      security: [{director: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {type: object}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/director/world:
+    post:
+      operationId: directorWorld
+      security: [{director: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {type: object}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/peers/{pack}:
+    get:
+      operationId: getPeers
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: path, name: pack, required: true, schema: {type: string}}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: './peers_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/calendar:
+    get:
+      operationId: getCalendarView
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: query, name: city, required: false, schema: {type: string}}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: './calendar_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
   /v1/patrons:
     post:
       operationId: patronsadd

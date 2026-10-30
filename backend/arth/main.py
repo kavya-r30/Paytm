@@ -15,7 +15,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from arth.api import commerce, commerce_core, director, governance, health, stream, views
+from arth.api import commerce, commerce_core, director, governance, health, sim, stream, views
 from arth.api.problems import install_problem_handlers
 from arth.core.calendar import CalendarIndex, load_calendar
 from arth.core.clock import SimClock
@@ -38,6 +38,9 @@ from arth.governance.commands import CommandBus
 from arth.governance.events import Dispatcher
 from arth.governance.policy import PolicyEngine
 from arth.governance.repository import Repository
+from arth.sim import peers
+from arth.sim.hub import Simulators
+from arth.sim.personas import PersonaEngine
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -75,6 +78,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         async with db.read() as conn:
             app.state.commands.merchant_ids = await Repository.merchant_directory(conn)
         app.state.events = Dispatcher(db, clock)
+        app.state.sim = Simulators(app.state.commands, app.state.events, signing_key.get_secret_value())
+        app.state.personas = PersonaEngine()
+        async with db.write() as conn:
+            await peers.generate(conn)
         app.state.events.declare_view("trust", {"command.executed", "approval.decided"})
         app.state.events.declare_view("gates", {"approval.requested", "approval.decided"})
         for name, topics in {
@@ -138,6 +145,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(commerce.router)
     app.include_router(commerce_core.router)
     app.include_router(views.router)
+    app.include_router(sim.router)
     return app
 
 

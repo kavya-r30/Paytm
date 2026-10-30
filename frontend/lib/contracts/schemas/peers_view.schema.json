@@ -1,0 +1,76 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/peers_view.schema.json",
+  "title": "PeersView",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "pack": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "status": {
+      "enum": [
+        "ready",
+        "insufficient_peers"
+      ]
+    },
+    "n": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "metrics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "metric": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "p10": {
+            "type": "integer"
+          },
+          "p25": {
+            "type": "integer"
+          },
+          "p50": {
+            "type": "integer"
+          },
+          "p75": {
+            "type": "integer"
+          },
+          "p90": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "metric",
+          "p10",
+          "p25",
+          "p50",
+          "p75",
+          "p90"
+        ]
+      }
+    },
+    "invalidate_on": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    }
+  },
+  "required": [
+    "pack",
+    "status",
+    "n",
+    "metrics",
+    "invalidate_on"
+  ]
+}

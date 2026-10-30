@@ -2,7 +2,7 @@
 """Arth task runner: a cross-platform replacement for make.
 
 Usage: python dev.py <target> [<target> ...]
-Targets: setup, gen, gen-check, lint, typecheck, test, check, build-web, api, web
+Targets: setup, gen, gen-check, lint, typecheck, test, check, build-web, api, web, seed, scenario
 (check = gen-check, lint, typecheck, test; gen-check fails when generated contract code is stale)
 """
 from __future__ import annotations
@@ -91,6 +91,19 @@ def api() -> None:
     run("uv", "run", "uvicorn", "arth.main:app", "--reload", "--port", "8000", cwd=BACKEND)
 
 
+def seed() -> None:
+    """Generate a demo world: python dev.py seed [-- --pack cafe --days 30]."""
+    extra = sys.argv[sys.argv.index("--") + 1 :] if "--" in sys.argv else []
+    run("uv", "run", "python", "-m", "arth.sim.seed", *extra, cwd=BACKEND)
+
+
+def scenario() -> None:
+    """Run headless scenarios: python dev.py scenario [-- path.yaml]."""
+    extra = sys.argv[sys.argv.index("--") + 1 :] if "--" in sys.argv else ["scenarios/billing_smoke.yaml"]
+    for path in extra:
+        run("uv", "run", "python", "-m", "arth.sim.scenario", path, cwd=BACKEND)
+
+
 def web() -> None:
     run("pnpm", "--filter", "frontend", "run", "dev")
 
@@ -106,10 +119,12 @@ TARGETS: dict[str, Callable[[], None]] = {
     "build-web": build_web,
     "api": api,
     "web": web,
+    "seed": seed,
+    "scenario": scenario,
 }
 
 if __name__ == "__main__":
-    names = sys.argv[1:] or ["check"]
+    names = (sys.argv[1 : sys.argv.index("--")] if "--" in sys.argv else sys.argv[1:]) or ["check"]
     unknown = [n for n in names if n not in TARGETS]
     if unknown:
         sys.exit(f"unknown target(s): {', '.join(unknown)}; choose from {', '.join(TARGETS)}")
