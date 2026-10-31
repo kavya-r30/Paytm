@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { deriveState } from '../lib/customer-display';
 import { merchantId } from '../lib/api/sim';
-import { SCENARIOS, at, holds } from '../lib/scenarios';
+import { SCENARIOS, at, fromLibrary, fromLocal, holds } from '../lib/scenarios';
 import { CATALOGUES } from '../lib/i18n/core';
 
 const BILL = 'bill_01JBQ0Z7Y8K3M4N5P6Q7R8S9T0';
@@ -44,6 +44,41 @@ describe('director (T7.16)', () => {
     expect(holds(body, { view: 'hisaab', path: 'today.sales_paise', gte: 9000 })).toBe(true);
     expect(holds(body, { view: 'trust', path: 'audit.ok', equals: true })).toBe(true);
     expect(holds(body, { view: 'trust', path: 'audit.missing', equals: true })).toBe(false);
+  });
+  it('maps a library scenario (L8) to playable beats with stage focus', () => {
+    const play = fromLibrary({
+      scenario: 'gupta_diwali',
+      title: 'Gupta General Store',
+      pack: 'kirana',
+      world: {},
+      scenes: [
+        {
+          id: '6b',
+          title: 'Khata by voice',
+          edition: 'voice',
+          beats: [
+            {
+              id: '6b.1',
+              who: 'P1',
+              cue: 'Priya ne 50 jama kiye',
+              focus: { device_screen: 'gate', phone: 'priya', playbook: 'concierge' },
+            },
+          ],
+        },
+      ],
+    });
+    expect(play.library).toBe(true);
+    expect(play.beats[0]).toMatchObject({
+      id: '6b.1',
+      scene: '6b',
+      title: 'Khata by voice',
+      cue: 'Priya ne 50 jama kiye',
+      who: 'P1',
+      focus: { device_screen: 'gate', phone_persona: 'priya', evidence_tab: 'playbooks', edition: 'voice' },
+    });
+    const local = fromLocal(SCENARIOS[0]!, (k) => CATALOGUES.en[k] ?? k);
+    expect(local.library).toBe(false);
+    expect(local.beats[0]!.cue).toBe(CATALOGUES.en['cue.morning']);
   });
   it('every beat has a title and cue in English', () => {
     for (const s of SCENARIOS) {

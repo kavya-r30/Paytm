@@ -5,7 +5,9 @@
 L8 is in `backend/arth/sim/scenario.py` and `backend/scenarios/` (plan:
 `docs/superpowers/plans/2026-10-30-arth-L8-scenarios-demo.md`). 16 scenarios run headless; `python dev.py demo-check
 -- --runs 10` is green and writes `cues.md` per scenario. Director: `POST /v1/director/snapshot|restore {name}`, `GET
-/v1/director/scenarios`. Remaining: Lane B binds the stage/Director to the library (L7) and re-runs `ai-smoke` live.
+/v1/director/scenarios`. Since then (31 Oct), Lane A has bound the Director and Stage to the library and added live play with per-beat pass/fail and
+Restore. It also added T7.18 (`python dev.py e2e`, CI workflow). The only step left needs a machine with provider
+access: `python dev.py ai-smoke` (live LLM/translate/TTS check and cassettes).
 
 ## Checkpoint CP-6 — L6 DONE
 
