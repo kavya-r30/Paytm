@@ -1,0 +1,46 @@
+scenario: cafe_morning_rush
+title: Café morning rush - tap-fast billing, KOT tokens, peak hours
+pack: cafe
+world: {days: 3, seed: 5, size: micro, patrons: 8}
+scenes:
+  - id: "1"
+    title: Two coffees to the kitchen
+    beats:
+      - id: "1.1"
+        who: P2
+        cue: "\"Do filter coffee\""
+        input:
+          - say_for_me: "do filter coffee"
+        save: {bill: nav.params.bill_id}
+        expect_turn: {intent: add_lines, nav: bill}
+        expect:
+          - {view: "bill/${bill}", path: bill.total_paise, equals: 6000}
+        focus: {device_screen: bill, customer_display: bill}
+      - id: "1.2"
+        who: P2
+        cue: Send to kitchen → token on the KOT board
+        input:
+          - command: {type: counter.send_to_kitchen, payload: {bill_id: "${bill}"}}
+        save: {ticket: data.ticket_id}
+        expect:
+          - {view: kot, path: tickets, present: true}
+          - {result: data.status, equals: new}
+        focus: {device_screen: kot}
+      - id: "1.3"
+        who: P2
+        cue: Kitchen marks it preparing → ready → served; customer pays cash
+        input:
+          - command: {type: counter.advance_ticket, payload: {ticket_id: "${ticket}", to: preparing}}
+          - command: {type: counter.advance_ticket, payload: {ticket_id: "${ticket}", to: ready}}
+          - command: {type: counter.advance_ticket, payload: {ticket_id: "${ticket}", to: served}}
+          - command: {type: counter.checkout, payload: {bill_id: "${bill}", payments: [{mode: cash, amount_paise: 6000}]}}
+        expect:
+          - {view: "bill/${bill}", path: bill.status, equals: closed}
+          - {view: "bill/${bill}", path: bill.ticket.status, equals: served}
+      - id: "1.4"
+        who: P1
+        cue: "\"Subah ki bheed kab sabse zyada?\" → heatmap and the kirana levers stay out"
+        expect:
+          - {view: grow, path: levers.0.name, present: true}
+          - {invariants: true}
+        focus: {device_screen: ask}

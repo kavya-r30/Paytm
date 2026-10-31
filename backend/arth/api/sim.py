@@ -305,6 +305,63 @@ async def presenter_session(request: Request, body: SessionBody) -> dict[str, An
         raise refused(exc) from exc
 
 
+class SnapshotBody(BaseModel):
+    name: str = Field(pattern=r"^[a-z0-9_.-]{1,80}$")
+
+
+def _snapshot_path(request: Request, name: str) -> Any:
+    from pathlib import Path
+
+    return Path(request.app.state.settings.data_dir) / "snapshots" / f"{name}.db"
+
+
+@router.post("/v1/director/snapshot", dependencies=director)
+async def snapshot(request: Request, body: SnapshotBody) -> dict[str, Any]:
+    """T8.2: save the whole world (DB + sim clock) under a name, e.g. one per scene."""
+    import json
+
+    path = _snapshot_path(request, body.name)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.unlink(missing_ok=True)
+    await request.app.state.db.snapshot(path)
+    path.with_suffix(".json").write_text(json.dumps({"clock": iso_utc(request.app.state.clock.now())}))
+    return {"name": body.name, "clock": iso_utc(request.app.state.clock.now())}
+
+
+@router.post("/v1/director/restore", dependencies=director)
+async def restore(request: Request, body: SnapshotBody) -> dict[str, Any]:
+    """T8.2 recovery button: restore a named snapshot and its clock (< 3 s)."""
+    import json
+    import time
+
+    from arth.governance.repository import Repository as Repo
+
+    state = request.app.state
+    path = _snapshot_path(request, body.name)
+    if not path.exists():
+        raise refused(CommandError("director.snapshot_not_found"), 404)
+    started = time.monotonic()
+    await state.db.restore(path)
+    clock_file = path.with_suffix(".json")
+    if clock_file.exists():
+        state.clock.reset(parse_iso(json.loads(clock_file.read_text())["clock"]))
+    async with state.db.read() as conn:
+        state.commands.merchant_ids = await Repo.merchant_directory(conn)
+    return {
+        "name": body.name,
+        "clock": iso_utc(state.clock.now()),
+        "ms": int((time.monotonic() - started) * 1000),
+    }
+
+
+@router.get("/v1/director/scenarios", dependencies=director)
+async def scenarios() -> dict[str, Any]:
+    """The scenario library (validated YAML) for the Director and the stage's auto-focus."""
+    from arth.sim.scenario import SCENARIOS_DIR, load
+
+    return {"scenarios": [load(path) for path in sorted(SCENARIOS_DIR.glob("*/scenario.yaml"))]}
+
+
 @router.get("/v1/peers/{pack}")
 async def peers(request: Request, pack: str, session: Actor) -> dict[str, Any]:
     async with request.app.state.db.read() as conn:

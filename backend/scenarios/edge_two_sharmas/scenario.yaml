@@ -1,0 +1,48 @@
+scenario: edge_two_sharmas
+title: Edge - two Sharmas on the khata
+pack: kirana
+world: {days: 2, seed: 31, size: micro, patrons: 6}
+scenes:
+  - id: "1"
+    title: Two khata customers share a surname
+    beats:
+      - id: "1.1"
+        cue: Ramesh Sharma and Sunil Sharma both run a khata
+        input:
+          - command: {type: patrons.add, payload: {display_name: Ramesh Sharma, lang: hi, identities: [{kind: spoken_name, value: Ramesh Sharma}]}}
+        save: {ramesh: data.patron_id}
+      - id: "1.2"
+        cue: Sunil Sharma joins
+        input:
+          - command: {type: patrons.add, payload: {display_name: Sunil Sharma, lang: hi, identities: [{kind: spoken_name, value: Sunil Sharma}]}}
+        save: {sunil: data.patron_id}
+      - id: "1.3"
+        cue: Both get a ₹5,000 khata
+        input:
+          - command: {type: ledger.open_account, payload: {patron_id: "${ramesh}", limit_paise: 500000}}
+          - command: {type: ledger.open_account, payload: {patron_id: "${sunil}", limit_paise: 500000}}
+        expect:
+          - {invariants: true}
+  - id: "2"
+    title: Arth asks which Sharma instead of guessing
+    beats:
+      - id: "2.1"
+        cue: "\"Sharma ji ne 200 jama kiye\" → \"Kaun se Sharma ji?\" (nothing posted)"
+        input:
+          - say_for_me: "Sharma ji ne 200 jama kiye"
+        expect_turn: {intent: clarify_patron}
+        expect:
+          - {view: notifications, path: needs_you, len: 0}
+      - id: "2.2"
+        cue: "\"Ramesh Sharma ne 200 jama kiye\" → read-back for Ramesh only (R2)"
+        input:
+          - say_for_me: "Ramesh Sharma ne 200 jama kiye"
+        expect_turn: {intent: khata_payment, tier: R2}
+      - id: "2.3"
+        cue: "\"Haan\" posts it; books and audit hold"
+        input:
+          - say_for_me: "haan"
+        expect:
+          - {view: notifications, path: needs_you, len: 0}
+          - {view: trust, path: audit.ok, equals: true}
+          - {invariants: true}

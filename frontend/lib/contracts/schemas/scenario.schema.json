@@ -1,0 +1,411 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/scenario.schema.json",
+  "title": "Scenario",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "scenario",
+    "title",
+    "pack",
+    "world",
+    "scenes"
+  ],
+  "properties": {
+    "scenario": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "pack": {
+      "enum": [
+        "kirana",
+        "cafe",
+        "pharmacy",
+        "salon"
+      ]
+    },
+    "world": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "days": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 120
+        },
+        "seed": {
+          "type": "integer"
+        },
+        "size": {
+          "enum": [
+            "micro",
+            "small",
+            "medium"
+          ]
+        },
+        "patrons": {
+          "type": "integer",
+          "minimum": 4
+        },
+        "cold_start": {
+          "type": "boolean"
+        }
+      }
+    },
+    "locale": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "screen": {
+          "type": "string",
+          "minLength": 1
+        },
+        "speech": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "edition": {
+      "enum": [
+        "display",
+        "voice"
+      ]
+    },
+    "cut": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "scenes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "title",
+          "beats"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[0-9a-z]+$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "edition": {
+            "enum": [
+              "display",
+              "voice"
+            ]
+          },
+          "beats": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "cue"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[0-9a-z.]+$"
+                },
+                "who": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "cue": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "input": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "say_for_me": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "surface": {
+                        "enum": [
+                          "device",
+                          "console",
+                          "whatsapp",
+                          "voice"
+                        ]
+                      },
+                      "command": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "type"
+                        ],
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "payload": {
+                            "type": "object"
+                          },
+                          "approve": {
+                            "type": "boolean"
+                          },
+                          "key": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 200,
+                            "description": "Fixed Idempotency-Key, to replay a queued (offline) command; default is a fresh key per command."
+                          }
+                        }
+                      },
+                      "approve_all": {
+                        "type": "boolean"
+                      },
+                      "persona_action": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "persona",
+                          "action"
+                        ],
+                        "properties": {
+                          "persona": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "action": {
+                            "enum": [
+                              "pay_qr",
+                              "pay_static",
+                              "message",
+                              "stop",
+                              "pay_pending",
+                              "complete"
+                            ]
+                          },
+                          "bill": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "text": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "amount_paise": {
+                            "type": "integer"
+                          },
+                          "outcome": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "utr": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "clock": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "advance_minutes": {
+                            "type": "integer",
+                            "minimum": 0
+                          },
+                          "jump_days": {
+                            "type": "integer",
+                            "minimum": 0
+                          }
+                        }
+                      },
+                      "fault": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "rails": {
+                            "enum": [
+                              "duplicate",
+                              "drop",
+                              "delay",
+                              "wrong_amount"
+                            ]
+                          },
+                          "providers_down": {
+                            "type": "boolean"
+                          }
+                        }
+                      },
+                      "locale": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "screen": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "speech": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "settle": {
+                        "type": "boolean"
+                      },
+                      "tick": {
+                        "type": "boolean"
+                      },
+                      "read": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    }
+                  }
+                },
+                "save": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                },
+                "expect_turn": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "intent": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "speech_contains": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "presence": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "nav": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "tier": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                },
+                "expect": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "view": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "path": {
+                        "type": "string"
+                      },
+                      "equals": {},
+                      "gte": {
+                        "type": "number"
+                      },
+                      "lte": {
+                        "type": "number"
+                      },
+                      "len": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "contains": {},
+                      "absent": {
+                        "type": "boolean"
+                      },
+                      "invariants": {
+                        "type": "boolean"
+                      },
+                      "sim_thread": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "outbound_template": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "present": {
+                        "type": "boolean"
+                      },
+                      "result": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "within_ms": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "focus": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "device_screen": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "phone": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "customer_display": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "evidence": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "table": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "playbook": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "invariants": {
+      "enum": [
+        "default",
+        "none"
+      ]
+    }
+  }
+}

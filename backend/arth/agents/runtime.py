@@ -9,6 +9,7 @@ event; deadlines wake them through `tick`. Agents propose with the owner's autho
 `CommandBus.decide` refuses any agent session (AIQ-1).
 """
 
+import asyncio
 import json
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
@@ -81,6 +82,9 @@ class Runtime:
     def __init__(self, bus: CommandBus, dispatcher: Dispatcher | None) -> None:
         self.bus, self.db, self.clock = bus, bus.db, bus.clock
         self.playbooks: dict[str, Playbook] = {}
+        self._locks: dict[
+            str, asyncio.Lock
+        ] = {}  # one tick at a time per merchant (loop and runner may race)
         if dispatcher is not None:
             dispatcher.on("playbooks.matcher", self._match)
 
@@ -233,6 +237,11 @@ class Runtime:
                 )
 
     async def tick(self, merchant_id: str) -> int:
+        lock = self._locks.setdefault(merchant_id, asyncio.Lock())
+        async with lock:
+            return await self._tick(merchant_id)
+
+    async def _tick(self, merchant_id: str) -> int:
         """Run every ready run (and waits past their deadline) until each waits, ends or hits a ceiling."""
         now = iso_utc(self.clock.now())
         async with self.db.write() as conn:

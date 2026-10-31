@@ -356,6 +356,22 @@ class WorldBuilder:
         self.advance(target)
         await self.plant_final()
         self.manifest["items"] = dict(self.items)
+        self.manifest["patrons"] = {
+            p["name"].split()[0].lower(): {
+                "id": p["id"],
+                "vpa": p["vpa"],
+                "persona": "p-" + p["id"],
+                "account": p["account"],
+            }
+            for p in self.patrons
+        }
+        self.manifest["staff"] = {
+            name.lower(): staff_id
+            for name, staff_id in zip(("Asha", "Ravi"), getattr(self, "stylists", []), strict=False)
+        }
+        self.manifest["suppliers"] = {
+            f"s{i + 1}": {"id": s, "persona": "s-" + s} for i, s in enumerate(self.suppliers)
+        }
         self.manifest["counts"] = await self.counts()
         self.manifest["hash"] = hashlib.sha256(
             json.dumps(self.manifest["counts"], sort_keys=True).encode()
