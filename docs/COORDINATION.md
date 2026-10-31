@@ -112,7 +112,7 @@ L2 and announce it.
   evidence?, table?, playbook?}, input: [...], expect_turn?, expect?: [...], within_ms?}]}]}`. Use `focus` for the stage's auto-focus
   and `cue`/`who` for the presenter. Recovery: `POST /v1/director/snapshot {name}` and `POST /v1/director/restore
   {name}` (DB + sim clock, < 3 s; the runner names them `<scenario>-scene-<id>`). Printable cue cards with measured ms
-  per beat: `backend/scenarios/<id>/cues.md`. Library (17): gupta_diwali (+ `short` cut), billing_smoke,
+  per beat: `backend/scenarios/<id>/cues.md`. Library (16): gupta_diwali (+ `short` cut), billing_smoke,
   cafe_morning_rush, pharmacy_batch_recall, salon_wedding_season, kirana_cold_start, kirana_month_end, and edge_*
   (offline_billing, provider_outage, injection, duplicate_webhook, two_sharmas, ambiguous_item, budget_exhaustion,
   opt_out, pending_upi). `python dev.py demo-check -- --runs 10` → 10/10 each. Still open on your side: the

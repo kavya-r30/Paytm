@@ -33,5 +33,5 @@ Deviations (prototype): "live" `demo-check` runs only where provider hosts are r
 `ai-smoke`); in the cloud session every run is replay. The stage's timing per beat comes from the headless run, not
 a live rehearsal. Timing budgets (`within_ms`) get a 5× headless margin.
 
-CP-8 (30 Oct 2026): 17 scenarios, each 10/10 green under `demo-check`; gen-check, lint and typecheck clean; full
+CP-8 (30 Oct 2026): 16 scenarios, each 10/10 green under `demo-check`; gen-check, lint and typecheck clean; full
 pytest and Vitest green (counts in the index).

@@ -23,7 +23,7 @@
 | L5 Agentic layer | `2026-10-30-arth-L5-agents.md` | T5.1–T5.14 | CP-5 | **Done: CP-5 green (30 Oct 2026); Arena pass^4** |
 | L6 Growth layer | `2026-10-30-arth-L6-growth.md` | T6.1–T6.12 | CP-6 | **Done: CP-6 green (30 Oct 2026)** |
 | L7 Frontend | `…-arth-L7-frontend.md` (likely split: 7a shell + design system, 7b existing screens, 7c new screens, 7d other surfaces, 7e stage) | T7.1–T7.18 | CP-7 | **Parallel lane (second Claude account), started after CP-1 against the L1 contracts; coordinated in GitHub issues** |
-| L8 Scenario library and demo | `2026-10-30-arth-L8-scenarios-demo.md` | T8.1–T8.7 | CP-8 | **Done: CP-8 green (30 Oct 2026): 17 scenarios × 10 runs green under `demo-check`; 1350+ pytest. Screens bound by Lane B (L7)** |
+| L8 Scenario library and demo | `2026-10-30-arth-L8-scenarios-demo.md` | T8.1–T8.7 | CP-8 | **Done: CP-8 green (30 Oct 2026): 16 scenarios × 10 runs green under `demo-check`; 1350+ pytest. Screens bound by Lane B (L7)** |
 
 **Deviations from the spec, adopted in the L0 plan.** The spec has been updated to match:
 1. `make` → `python dev.py` (make isn't installed on the team's Windows machines).
