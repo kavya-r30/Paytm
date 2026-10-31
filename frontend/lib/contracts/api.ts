@@ -3074,10 +3074,10 @@ export interface components {
         /** ApprovalRequest */
         "approval.schema": {
             /** @enum {unknown} */
-            decision: "approve" | "snooze" | "edit";
+            decision: "approve" | "snooze" | "edit" | "decline";
             edits?: Record<string, never>;
             decisions?: {
-                [key: string]: "approve" | "snooze";
+                [key: string]: "approve" | "snooze" | "decline";
             };
         };
         /** AuditVerification */

@@ -248,7 +248,7 @@ class CommandBus:
         decisions: dict[str, str] | None = None,
         edits: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
-        if decision not in {"approve", "snooze", "edit"} or not key:
+        if decision not in {"approve", "snooze", "edit", "decline"} or not key:
             raise CommandError("approval.invalid_decision")
         async with self.db.write() as conn:
             repo = Repository(conn, session.merchant_id)
@@ -292,7 +292,7 @@ class CommandBus:
         if gate["expires_at"] <= iso_utc(self.clock.now()):
             raise CommandError("approval.expired")
         if gate["status"] not in {"pending", "snoozed"} and not (
-            gate["status"] == "queued" and decision == "snooze"
+            gate["status"] == "queued" and decision in {"snooze", "decline"}
         ):
             raise CommandError("approval.already_decided")
         conditions = json.loads(gate["conditions"])
@@ -318,6 +318,9 @@ class CommandBus:
         elif decision == "snooze":
             result = {"command_id": gate["command_id"], "status": "snoozed"}
             status = "snoozed"
+        elif decision == "decline":
+            result = {"command_id": gate["command_id"], "status": "declined"}  # the gated command never runs
+            status = "declined"
         elif decision == "approve":
             if gate["tier"] == "R3":
                 result = {"command_id": gate["command_id"], "status": "queued", "due_at": due}
