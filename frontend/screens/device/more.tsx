@@ -88,56 +88,6 @@ export function MenuScreen(_: ScreenProps) {
   );
 }
 
-export function TeamScreen(_: ScreenProps) {
-  const { t } = useI18n();
-  const nav = useDeviceNav();
-  const run = useCommand();
-  const state = useView(views.team());
-  return (
-    <Screen
-      title={t('team.title')}
-      sub={t('team.sub')}
-      right={
-        <div className="flex gap-2">
-          <Button variant="ghost" size="sm" onClick={() => nav('trust')}>
-            {t('team.activity_log')}
-          </Button>
-          <Button variant="dark" size="sm" onClick={() => void run('agents.pause_all', {})}>
-            {t('team.pause_all')}
-          </Button>
-        </div>
-      }
-      chips={[{ label: t('team.chip_night'), text: 'Kya kya kiya raat ko?' }]}
-    >
-      <ViewGate state={state} pendingIcon={<Orb state="thinking" size={96} />}>
-        {() => null}
-      </ViewGate>
-    </Screen>
-  );
-}
-
-export function RunScreen({ param }: ScreenProps) {
-  const { t } = useI18n();
-  const state = useView(views.run(param ?? 'current'));
-  return (
-    <Screen title={t('run.title')} sub={t('run.sub')}>
-      <ViewGate state={state}>{() => null}</ViewGate>
-    </Screen>
-  );
-}
-
-export function MemoryScreen(_: ScreenProps) {
-  const { t } = useI18n();
-  const state = useView(views.memory());
-  return (
-    <Screen title={t('memory.title')} sub={t('memory.sub')}>
-      <ViewGate state={state} pendingIcon={<Orb state="thinking" size={96} />}>
-        {() => null}
-      </ViewGate>
-    </Screen>
-  );
-}
-
 export function HisaabScreen(_: ScreenProps) {
   const { t, time } = useI18n();
   const run = useCommand();
@@ -521,7 +471,11 @@ export function TrustScreen(_: ScreenProps) {
             <div className="flex flex-col gap-4">
               <Card className="p-5">
                 <SectionTitle>{t('trust.kill_switch')}</SectionTitle>
-                <Button variant="danger" className="w-full" onClick={() => void run('agents.pause_all', {})}>
+                <Button
+                  variant="danger"
+                  className="w-full"
+                  onClick={() => void run('agents.pause', { agent: '*', paused: true })}
+                >
                   {t('team.pause_all')}
                 </Button>
               </Card>

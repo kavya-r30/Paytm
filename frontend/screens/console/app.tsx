@@ -21,7 +21,7 @@ import { ArthNote, Orb } from '@/components/arth/orb';
 import { Toasts } from '@/components/shell/device';
 import { Button, Card, Money, Pill, SectionTitle, TierChip, Toggle, cx } from '@/components/ui/kit';
 import { ApiProblem, apiPost, newIdempotencyKey } from '@/lib/api/client';
-import { useDecide } from '@/lib/api/commands';
+import { useCommand, useDecide } from '@/lib/api/commands';
 import { useDataMode, useView } from '@/lib/api/hooks';
 import { views } from '@/lib/api/views';
 import type { CapitalView } from '@/lib/contracts';
@@ -152,16 +152,14 @@ function HomeScreen() {
 
 function WorkScreen() {
   const { t } = useI18n();
+  const run = useCommand();
   const decide = useDecide();
   const text = useGateText();
   const n = useView(views.notifications());
   const toast = useTurn((s) => s.toast);
   return (
     <Shell title={t('con.work')}>
-      <Button
-        variant="danger"
-        onClick={() => toast({ textKey: 'toast.decision_snooze', until: null, tone: 'info' })}
-      >
+      <Button variant="danger" onClick={() => void run('agents.pause', { agent: '*', paused: true })}>
         {t('team.pause_all')}
       </Button>
       {(n.data?.needs_you ?? []).map((g) => {
@@ -205,21 +203,87 @@ function AskScreen() {
   const state = useView(views.ask());
   return (
     <Shell title={t('ask.title')}>
-      <ArthNote>{t(state.pending?.reason_key ?? 'sufficiency.ask_pending')}</ArthNote>
+      {(state.data?.turns ?? []).map((turn) => (
+        <Card key={turn.id} className="flex flex-col gap-1 p-3">
+          <p className="text-meta text-ink-3">“{turn.heard}”</p>
+          <p className="text-body">{turn.said}</p>
+        </Card>
+      ))}
       <p className="text-meta text-ink-3">{t('con.ask_same_session')}</p>
     </Shell>
   );
 }
 
-function PendingScreen({ title, spec }: { title: string; spec: ReturnType<typeof views.grow> }) {
+function PlansScreen() {
   const { t } = useI18n();
-  const state = useView(spec);
+  const run = useCommand();
+  const state = useView(views.grow());
+  const g = state.data;
   return (
-    <Shell title={title} back>
-      <ArthNote>{t(state.pending?.reason_key ?? 'sufficiency.growth_pending')}</ArthNote>
-      <p className="text-meta text-ink-3">
-        {t('state.pending_body', { layer: state.pending?.layer ?? 'L6' })}
-      </p>
+    <Shell title={t('con.plans')} back>
+      {(g?.plans ?? []).map((p) => (
+        <Row
+          key={p.id}
+          href={`/device/plan/${p.id}`}
+          icon={<TrendingUp size={20} />}
+          title={t(p.goal_key)}
+          sub={p.levers.map((l) => t(`lever.${l}`)).join(' · ')}
+          right={<Pill tone="green">{t(`plan.status_${p.status}`)}</Pill>}
+        />
+      ))}
+      {g && g.plans.length === 0 && (
+        <Card attention className="flex flex-col gap-2 p-4">
+          <SectionTitle action={<TierChip tier="R3" compact />}>{t('grow.no_plan')}</SectionTitle>
+          <Button
+            onClick={() =>
+              void run('growth.create_plan', {
+                goal_key: 'goal.more_visits',
+                levers: g.levers
+                  .filter((l) => l.enabled)
+                  .map((l) => l.name)
+                  .slice(0, 3),
+                budget_paise: 50000,
+                holdout_bp: 2000,
+              })
+            }
+          >
+            {t('grow.make_plan')}
+          </Button>
+        </Card>
+      )}
+      {(g?.levers ?? []).map((l) => (
+        <Card key={l.name} className="flex items-center justify-between p-3">
+          <span className="text-body">{t(`lever.${l.name}`)}</span>
+          <span className="text-meta text-ink-3">
+            ~<Money paise={l.estimate_paise} /> · {t('grow.estimate')}
+          </span>
+        </Card>
+      ))}
+    </Shell>
+  );
+}
+
+function LedgerScreen() {
+  const { t } = useI18n();
+  const state = useView(views.ledger());
+  const v = state.data;
+  return (
+    <Shell title={t('con.ledger')} back>
+      {v &&
+        (['measured', 'direct', 'estimated'] as const).map((k) => (
+          <Card key={k} className="flex items-center justify-between p-4">
+            <Pill tone={k === 'measured' ? 'green' : k === 'direct' ? 'sky' : 'amber'}>
+              {t(`ledger.label_${k}`)}
+            </Pill>
+            <Money paise={v.impact[`${k}_paise`]} className="text-arth font-bold" />
+          </Card>
+        ))}
+      {(v?.entries ?? []).map((e) => (
+        <Card key={e.campaign_id} className="flex items-center justify-between p-3 text-body">
+          <span>{t(`lever.${e.lever}`)}</span>
+          <span className="text-meta text-ink-3">{t(`ledger.label_${e.label}`)}</span>
+        </Card>
+      ))}
     </Shell>
   );
 }
@@ -229,7 +293,7 @@ function OtpEntry({ onVerified, kfs }: { onVerified: (otp: string) => void; kfs?
   const { t } = useI18n();
   const [otp, setOtp] = useState('');
   const [agreed, setAgreed] = useState(!kfs);
-  const demo = '482617';
+  const demo = '123456';
   return (
     <Card className="flex flex-col gap-3 p-4">
       <SectionTitle action={<TierChip tier="R4" />}>{t('con.otp_title')}</SectionTitle>
@@ -260,16 +324,20 @@ function OtpEntry({ onVerified, kfs }: { onVerified: (otp: string) => void; kfs?
   );
 }
 
-/** Submits an R4 command from the console session; the server enforces channel + step-up (policy). */
+/**
+ * R4 from the console session: POST /v1/auth/step-up with the OTP (unlocks R4 for 10 minutes), then the
+ * command. The server enforces channel + step-up; a wrong OTP is refused with auth.invalid_otp.
+ */
 function useR4() {
   const mode = useDataMode();
   const toast = useTurn((s) => s.toast);
-  return async (type: string, payload: Record<string, unknown>) => {
+  return async (type: string, payload: Record<string, unknown>, otp: string) => {
     if (mode === 'fixture') {
       toast({ textKey: 'con.r4_done_fixture', params: { what: type }, until: null, tone: 'done' });
       return true;
     }
     try {
+      await apiPost('/v1/auth/step-up', { otp });
       await apiPost('/v1/commands', { type, payload }, newIdempotencyKey());
       toast({ textKey: 'toast.done', params: { what: type }, until: null, tone: 'done' });
       return true;
@@ -317,8 +385,8 @@ function OfferCard({ offer, recommended }: { offer: CapitalView['offers'][number
       {step === 'otp' && (
         <OtpEntry
           kfs={offer.kfs_url}
-          onVerified={async () => {
-            if (await submit('capital.apply', { offer_id: offer.id })) setStep('done');
+          onVerified={async (otp) => {
+            if (await submit('capital.apply', { offer_id: offer.id }, otp)) setStep('done');
           }}
         />
       )}
@@ -392,7 +460,7 @@ function R4Screen() {
           </div>
           <p className="text-meta text-ink-3">{t(`con.r4_${a.id}_sub`)}</p>
           {open === a.id ? (
-            <OtpEntry onVerified={async () => (await submit(a.type, a.payload)) && setOpen(null)} />
+            <OtpEntry onVerified={async (otp) => (await submit(a.type, a.payload, otp)) && setOpen(null)} />
           ) : (
             <Button variant="ghost" size="sm" onClick={() => setOpen(a.id)}>
               {t('con.continue')}
@@ -467,9 +535,9 @@ export function ConsoleApp({ screen }: { screen: string; param?: string }) {
     case 'ask':
       return <AskScreen />;
     case 'plans':
-      return <PendingScreen title={t('con.plans')} spec={views.grow()} />;
+      return <PlansScreen />;
     case 'ledger':
-      return <PendingScreen title={t('con.ledger')} spec={views.ledger()} />;
+      return <LedgerScreen />;
     case 'capital':
       return <CapitalScreen />;
     case 'r4':

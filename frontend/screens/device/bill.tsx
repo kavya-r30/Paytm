@@ -255,7 +255,8 @@ function BillPanel({ view }: { view: BillView }) {
   const [picker, setPicker] = useState(false);
   const [mode, setMode] = useState<'upi' | 'cash' | 'khata'>('upi');
   const bill = view.bill;
-  const hint = bill.patron_id === PATRONS.priya.id && !bill.lines.some((l) => l.item_id === ITEMS.amul.id);
+  // GRW-4: the counter hint is owner-only and absent for holdout bills; never shown on the customer display.
+  const hint = view.hint && !bill.lines.some((l) => l.item_id === view.hint!.item_id) ? view.hint : null;
 
   const pay = useCallback(
     async (m: typeof mode) => {
@@ -320,20 +321,21 @@ function BillPanel({ view }: { view: BillView }) {
         <div className="mx-4 mb-2 flex items-center gap-3 rounded-ground border-2 border-paytm-blue p-3">
           <p className="flex-1 text-body leading-snug">
             <span className="font-bold text-midnight">{t('arth.name')}: </span>
-            {t('bill.hint_habit', { name: 'Priya', item: t('item.doodh') })}
+            {t(hint.reason_key, { name: bill.patron?.display_name ?? '', item: hint.name })}
           </p>
           <Button
             variant="tint"
             size="sm"
-            onClick={() =>
-              void run(
+            onClick={async () => {
+              await run(
                 'counter.add_lines',
-                { bill_id: bill.id, lines: [{ item_id: ITEMS.amul.id, qty_milli: 1000, added_via: 'hint' }] },
+                { bill_id: bill.id, lines: [{ item_id: hint.item_id, qty_milli: 1000, added_via: 'hint' }] },
                 { undo: { type: 'counter.undo', payload: { bill_id: bill.id } } },
-              )
-            }
+              );
+              void run('hints.accept', { hint_id: hint.hint_id });
+            }}
           >
-            + {money(ITEMS.amul.price)}
+            + {money(hint.price_paise)}
           </Button>
         </div>
       )}

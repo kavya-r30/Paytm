@@ -20,28 +20,6 @@ function spec<N extends SchemaName>(
   return { key, path, schema, fixture };
 }
 
-/** A view whose data arrives with a later layer: the API returns layer_pending_view until then. */
-function later(
-  key: readonly [string, ...string[]],
-  path: string,
-  layer: LayerPendingView['layer'],
-  reason: string,
-): ViewSpec<LayerPendingView> {
-  return {
-    key,
-    path,
-    schema: 'layer_pending_view',
-    fixture: () => ({
-      screen: key[0],
-      status: 'not_built_yet',
-      layer,
-      reason_key: reason,
-      items: [],
-      invalidate_on: [],
-    }),
-  };
-}
-
 const enc = encodeURIComponent;
 
 export const views = {
@@ -120,21 +98,21 @@ export const views = {
   po: (id: string) => spec(['po', id], `/v1/views/po/${enc(id)}`, 'po_view', () => F.po),
   grn: (poId: string) => spec(['grn', poId], `/v1/views/grn/${enc(poId)}`, 'grn_view', () => F.grn),
   claim: (id: string) => spec(['claims', id], `/v1/views/claims/${enc(id)}`, 'claim_view', () => F.claim),
-  grow: () => later(['grow'], '/v1/views/grow', 'L6', 'sufficiency.growth_pending'),
+  grow: () => spec(['grow'], '/v1/views/grow', 'grow_view', () => F.grow),
   plan: (id: string) =>
-    later(['grow/plans', id], `/v1/views/grow/plans/${enc(id)}`, 'L6', 'sufficiency.plan_pending'),
+    spec(['grow/plans', id], `/v1/views/grow/plans/${enc(id)}`, 'plan_view', () => F.plan),
   demand: () => spec(['grow/demand'], '/v1/views/grow/demand', 'demand_view', () => F.demand),
-  bundles: () => later(['grow/bundles'], '/v1/views/grow/bundles', 'L6', 'sufficiency.bundles_pending'),
-  ledger: () => later(['grow/ledger'], '/v1/views/grow/ledger', 'L6', 'sufficiency.ledger_pending'),
+  bundles: () => spec(['grow/bundles'], '/v1/views/grow/bundles', 'bundles_view', () => F.bundles),
+  ledger: () => spec(['grow/ledger'], '/v1/views/grow/ledger', 'growth_ledger_view', () => F.growthLedger),
   campaign: (id: string) =>
-    later(['campaigns', id], `/v1/views/campaigns/${enc(id)}`, 'L6', 'sufficiency.campaign_pending'),
+    spec(['campaigns', id], `/v1/views/campaigns/${enc(id)}`, 'campaign_view', () => F.campaign),
   offers: () => spec(['offers'], '/v1/views/offers', 'offers_view', () => F.offers),
   offer: (id: string) =>
     spec(['offers', id], `/v1/views/offers/${enc(id)}`, 'offer_detail_view', () => F.offerDetail),
   storefront: () => spec(['storefront'], '/v1/views/storefront', 'storefront_view', () => F.storefront),
-  team: () => later(['team'], '/v1/views/team', 'L5', 'sufficiency.team_pending'),
-  run: (id: string) => later(['runs', id], `/v1/views/runs/${enc(id)}`, 'L5', 'sufficiency.run_pending'),
-  memory: () => later(['memory'], '/v1/views/memory', 'L5', 'sufficiency.memory_pending'),
+  team: () => spec(['team'], '/v1/views/team', 'team_view', () => F.team),
+  run: (id: string) => spec(['runs', id], `/v1/views/runs/${enc(id)}`, 'run_view', () => F.run),
+  memory: () => spec(['memory'], '/v1/views/memory', 'memory_view', () => F.memory),
   hisaab: () => spec(['hisaab'], '/v1/views/hisaab', 'hisaab_view', () => F.hisaab),
   reports: () => spec(['reports'], '/v1/views/reports', 'reports_view', () => F.reports),
   feedback: () => spec(['feedback'], '/v1/views/feedback', 'feedback_view', () => F.feedback),
