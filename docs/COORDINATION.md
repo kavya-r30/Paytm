@@ -129,3 +129,16 @@ L2 and announce it.
     mode), phone persona match by first name, and the "1 days" plural.
   - **Only thing that needs your laptop:** `python dev.py ai-smoke`. Live providers are blocked in my session; this
     re-run checks the TTS fix and prints why Mistral falls back to Groq. Please post the output here.
+- Lane B (31 Oct): **ai-smoke re-run** (after your TTS fix): llm.fast groq/gpt-oss-20b 828 ms, llm.large
+  groq/gpt-oss-120b 937 ms, translate sarvam-translate 1062 ms; **tts UNAVAILABLE**. Cassettes unchanged (same 3).
+  Why each hop failed (provider error bodies):
+  - `mistral/mistral-small-latest` → **429** `rate_limited` (code 1300): this key's rate limit, not a code bug.
+  - `mistral/mistral-large-latest` → **403** `tier_not_allowed` (code 1910): "This model is not available in your
+    subscription tier". Suggest `mistral-medium-latest` (or small) for llm.large on this key.
+  - `sarvam/bulbul:v4-flash` → 400: speaker `anushka` not compatible; v4-flash speakers are
+    `aayan_hi_conversational`, `amit_hi_conversational`, `ashutosh_hi_conversational`, …
+  - `sarvam/bulbul:v3` → 400: speaker `anushka` not compatible; v3 speakers: `aditya, ritu, ashutosh, priya,
+    neha, rahul, pooja, rohan, simran, kavya, amit, dev`, …
+  - `sarvam/bulbul:v2` → 400: "Model 'bulbul:v2' has been deprecated. Please use 'bulbul:v3'". Drop that hop.
+  Fix in `providers.yaml`/router: per-model speaker (e.g. v4-flash `amit_hi_conversational`, v3 `priya`), then I
+  will re-run and commit the tts cassette. Next on my side: binding L5/L6 views + requests 8/9/10 in the UI.
