@@ -10,6 +10,8 @@ import json
 from datetime import timedelta
 from typing import Any
 
+from sqlalchemy import select
+
 from arth.core.clock import iso_utc, parse_iso
 from arth.core.ids import new_id
 from arth.domains.ledger_tables import reminders
@@ -143,10 +145,15 @@ class Simulators:
             mode = "upi_link"
         if not amount_paise:
             raise CommandError("sim.amount_required")
-        utr = self._next_utr()
         fault = await self._take_fault(merchant_id)
         status = "pending" if outcome == "pending" or (fault and fault[0] == "delay") else outcome
         async with self.db.write() as conn:
+            utr = self._next_utr()
+            # UTRs are unique across shops; a restarted server (counter at 0, same sim clock) skips taken ones
+            while (
+                await conn.execute(select(sim_rails_payments.c.id).where(sim_rails_payments.c.utr == utr))
+            ).first():
+                utr = self._next_utr()
             repo = Repository(conn, merchant_id)
             await repo.insert(
                 sim_rails_payments,

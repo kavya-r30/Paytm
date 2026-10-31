@@ -1,6 +1,7 @@
 // Demo scenarios for the director (STG-DIRECTOR) and stage auto-focus (I2). Each beat sets the stage focus,
 // optionally drives the simulator, and states what must hold afterwards (same shape as backend scenarios/*.yaml).
 import type { StageFocus } from './api/sim';
+import type { Scenario as LibraryScenario } from './contracts/scenario';
 
 export type BeatAction =
   | { kind: 'static_pay'; amount_paise: number }
@@ -107,4 +108,66 @@ export function holds(body: unknown, e: Expect): boolean {
   const v = at(body, e.path);
   if (e.gte !== undefined) return typeof v === 'number' && v >= e.gte;
   return v === e.equals;
+}
+
+/** A beat as the director plays it, from either the backend library or the local fallback above. */
+export type PlayBeat = {
+  id: string;
+  scene: string;
+  title: string;
+  cue: string;
+  who?: string;
+  focus: Omit<StageFocus, 'beat' | 'scene'>;
+  local?: Beat;
+};
+
+export type PlayScenario = { id: string; title: string; pack: string; library: boolean; beats: PlayBeat[] };
+
+/** Backend library (`GET /v1/director/scenarios`) → playable beats; scenario `focus` → stage auto-focus. */
+export function fromLibrary(s: LibraryScenario): PlayScenario {
+  return {
+    id: s.scenario,
+    title: s.title,
+    pack: s.pack,
+    library: true,
+    beats: s.scenes.flatMap((scene) =>
+      scene.beats.map((b) => {
+        const f = b.focus ?? {};
+        const evidence = f.evidence ?? (f.playbook ? 'playbooks' : f.table ? 'tables' : undefined);
+        const edition = scene.edition ?? s.edition;
+        return {
+          id: b.id,
+          scene: scene.id,
+          title: scene.title,
+          cue: b.cue,
+          ...(b.who ? { who: b.who } : {}),
+          focus: {
+            ...(f.device_screen ? { device_screen: f.device_screen } : {}),
+            ...(f.phone ? { phone_persona: f.phone } : {}),
+            ...(evidence ? { evidence_tab: evidence } : {}),
+            ...(f.table ? { table: f.table } : {}),
+            ...(edition ? { edition } : {}),
+          },
+        };
+      }),
+    ),
+  };
+}
+
+/** The local fallback (fixture mode, no backend) in the same shape; titles and cues are i18n keys. */
+export function fromLocal(s: Scenario, t: (key: string) => string): PlayScenario {
+  return {
+    id: s.id,
+    title: t(s.title_key),
+    pack: s.pack,
+    library: false,
+    beats: s.beats.map((b) => ({
+      id: b.id,
+      scene: s.id,
+      title: t(b.title_key),
+      cue: t(b.cue_key),
+      focus: b.focus,
+      local: b,
+    })),
+  };
 }

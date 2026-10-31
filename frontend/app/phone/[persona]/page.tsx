@@ -17,7 +17,13 @@ import { useStream } from '@/lib/store/turn';
 const ROLE_ORDER = ['owner', 'customer', 'supplier', 'helper'];
 
 function pick(all: Thread[], persona: string): Thread | undefined {
-  return all.find((t) => t.persona_id === persona) ?? all.find((t) => t.role === persona) ?? all[0];
+  const name = persona.toLowerCase();
+  return (
+    all.find((t) => t.persona_id === persona) ??
+    all.find((t) => t.role === persona) ??
+    all.find((t) => t.name.toLowerCase().split(' ')[0] === name) ??
+    all[0]
+  );
 }
 
 function Bubble({ m, owner }: { m: ThreadMessage; owner: string }) {

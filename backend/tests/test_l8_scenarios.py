@@ -85,3 +85,35 @@ def test_director_snapshot_restore_under_three_seconds_and_scenario_list(tmp_pat
         assert {s["scenario"] for s in listed} >= {"gupta_diwali", "billing_smoke"}
         assert client.post("/v1/director/restore", json={"name": "nope"}, headers=director).status_code == 404
     assert Path(tmp_path).exists()
+
+
+def test_director_plays_a_scenario_live_beat_by_beat(tmp_path):
+    """T8.7: the Director plays the library in the running server; failures are reported, not raised."""
+    from arth.main import create_app
+
+    app = create_app(isolated_settings(data_dir=tmp_path))
+    director = {"Authorization": "Bearer dev-director"}
+    with TestClient(app) as client:
+        assert (
+            client.post("/v1/director/play/beat", json={"beat_id": "1.1"}, headers=director).status_code
+            == 409
+        )
+        started = client.post("/v1/director/play", json={"scenario": "billing_smoke"}, headers=director)
+        assert started.status_code == 200, started.text
+        assert started.json()["merchant_id"].startswith("merchant_")
+        for beat_id in started.json()["beats"]:
+            result = client.post("/v1/director/play/beat", json={"beat_id": beat_id}, headers=director).json()
+            assert result["ok"], result
+        assert (tmp_path / "snapshots" / "billing_smoke-scene-1.db").exists()
+        replay = client.post("/v1/director/play/beat", json={"beat_id": "1.3"}, headers=director)
+        assert replay.status_code == 200 and replay.json()["ok"] is False  # QR on a closed bill
+        beat = app.state.director_play["scenario"]["scenes"][0]["beats"][-1]
+        beat["expect"] = [{"view": "trust", "path": "audit.ok", "equals": False}]
+        again = client.post("/v1/director/play/beat", json={"beat_id": beat["id"]}, headers=director).json()
+        assert again["ok"] is False and "audit.ok" in again["error"]
+        assert again["snapshot"] == "billing_smoke-scene-1"
+        assert (
+            client.post("/v1/director/play", json={"scenario": "nope"}, headers=director).status_code == 404
+        )
+        again = client.post("/v1/director/play", json={"scenario": "billing_smoke"}, headers=director)
+        assert again.status_code == 200 and again.json()["merchant_id"] != started.json()["merchant_id"]

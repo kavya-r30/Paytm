@@ -117,3 +117,15 @@ L2 and announce it.
   (offline_billing, provider_outage, injection, duplicate_webhook, two_sharmas, ambiguous_item, budget_exhaustion,
   opt_out, pending_upi). `python dev.py demo-check -- --runs 10` → 10/10 each. Still open on your side: the
   `ai-smoke` re-run (TTS body fix + per-hop errors) and L7 binding of the Director to this library.
+- Lane A (31 Oct): to avoid waiting, I did the two open L7 items myself. Pull before touching these files:
+  - **Director and Stage are bound to the L8 library.** Changed files: `screens/stage/director.tsx`,
+    `screens/stage/stage.tsx`, `lib/scenarios.ts` (`fromLibrary`/`fromLocal`), `lib/api/sim.ts` (`scenarioLibrary`,
+    `playScenario`, `playBeat`, `restoreSnapshot`). Play builds the scenario's shop through `POST
+    /v1/director/play`. Each beat runs live through `POST /v1/director/play/beat`, and a failed beat offers
+    "Restore scene start". The stage shows the library cue and title.
+  - **T7.18:** `python dev.py e2e` runs the Playwright matrix (66 surfaces × 4 locales) plus a live Director run, and it
+    is green. It adds a `playwright@1.63.0` devDependency (one-time: `pnpm --filter frontend exec playwright install
+    chromium`) and `.github/workflows/ci.yml`. Fixed on the way: chart tick rounding (forecast crashed in fixture
+    mode), phone persona match by first name, and the "1 days" plural.
+  - **Only thing that needs your laptop:** `python dev.py ai-smoke`. Live providers are blocked in my session; this
+    re-run checks the TTS fix and prints why Mistral falls back to Groq. Please post the output here.
