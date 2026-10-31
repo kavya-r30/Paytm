@@ -1,6 +1,12 @@
 # Arth: Handoff for L1 (continue in a fresh Claude Code / Codex session)
 
-## Current checkpoint (30 Oct 2026, CP-2) — L2 DONE
+## Current checkpoint (30 Oct 2026, CP-3) — L3 DONE
+
+L3 intelligence is in `backend/arth/intel/` (plan: `docs/superpowers/plans/2026-10-30-arth-L3-intelligence.md`):
+analytics tools, 12 charts, forecasts with accuracy, cash flow, lifecycle, alerts, decisions. Migration 0007 is frozen.
+Next: L4 AI platform (provider router with real Mistral/Groq/Sarvam keys in `backend/.env`, cassettes for tests).
+
+## Checkpoint CP-2 — L2 DONE
 
 L2 simulators are in `backend/arth/sim/` (plan: `docs/superpowers/plans/2026-10-30-arth-L2-simulators.md`).
 `python dev.py seed -- --pack kirana --days 30` builds a demo shop into the data DB and prints the device credential;

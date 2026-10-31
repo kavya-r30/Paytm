@@ -1,5 +1,9 @@
 /* Generated from contracts. Do not edit; run `python dev.py gen`. */
 
+import type { ActionSnoozed } from './action_snoozed';
+import type { ActionsSnooze } from './actions_snooze';
+import type { AlertRaised } from './alert_raised';
+import type { AlertsScan } from './alerts_scan';
 import type { AppointmentsAssign } from './appointments_assign';
 import type { AppointmentsBook } from './appointments_book';
 import type { AppointmentsTransition } from './appointments_transition';
@@ -37,6 +41,7 @@ import type { CatalogItemAdded } from './catalog_item_added';
 import type { CatalogItemView } from './catalog_item_view';
 import type { CatalogPriceChanged } from './catalog_price_changed';
 import type { CatalogSearchView } from './catalog_search_view';
+import type { ChartCard } from './chart_card';
 import type { ClaimView } from './claim_view';
 import type { CommandRequest } from './command';
 import type { CommandExecuted } from './command_executed';
@@ -75,12 +80,14 @@ import type { ExpiryView } from './expiry_view';
 import type { FeedbackRecord } from './feedback_record';
 import type { FeedbackRecorded } from './feedback_recorded';
 import type { FeedbackView } from './feedback_view';
+import type { ForecastView } from './forecast_view';
 import type { GateView } from './gate_view';
 import type { GrnView } from './grn_view';
 import type { HealthView } from './health_view';
 import type { HisaabView } from './hisaab_view';
 import type { HomeView } from './home_view';
 import type { LanguageChanged } from './i18n_changed';
+import type { InsightsView } from './insights_view';
 import type { KhataAccountView } from './khata_account_view';
 import type { KhataView } from './khata_view';
 import type { KotView } from './kot_view';
@@ -232,6 +239,10 @@ import type { TreasuryResolveException } from './treasury_resolve_exception';
 import type { TrustView } from './trust_view';
 import type { VerdictView } from './verdict_view';
 import type { ViewInvalidate } from './view_invalidate';
+import action_snoozedSchema from './schemas/action_snoozed.schema.json';
+import actions_snoozeSchema from './schemas/actions_snooze.schema.json';
+import alert_raisedSchema from './schemas/alert_raised.schema.json';
+import alerts_scanSchema from './schemas/alerts_scan.schema.json';
 import appointments_assignSchema from './schemas/appointments_assign.schema.json';
 import appointments_bookSchema from './schemas/appointments_book.schema.json';
 import appointments_transitionSchema from './schemas/appointments_transition.schema.json';
@@ -269,6 +280,7 @@ import catalog_item_addedSchema from './schemas/catalog_item_added.schema.json';
 import catalog_item_viewSchema from './schemas/catalog_item_view.schema.json';
 import catalog_price_changedSchema from './schemas/catalog_price_changed.schema.json';
 import catalog_search_viewSchema from './schemas/catalog_search_view.schema.json';
+import chart_cardSchema from './schemas/chart_card.schema.json';
 import claim_viewSchema from './schemas/claim_view.schema.json';
 import commandSchema from './schemas/command.schema.json';
 import command_executedSchema from './schemas/command_executed.schema.json';
@@ -307,12 +319,14 @@ import expiry_viewSchema from './schemas/expiry_view.schema.json';
 import feedback_recordSchema from './schemas/feedback_record.schema.json';
 import feedback_recordedSchema from './schemas/feedback_recorded.schema.json';
 import feedback_viewSchema from './schemas/feedback_view.schema.json';
+import forecast_viewSchema from './schemas/forecast_view.schema.json';
 import gate_viewSchema from './schemas/gate_view.schema.json';
 import grn_viewSchema from './schemas/grn_view.schema.json';
 import health_viewSchema from './schemas/health_view.schema.json';
 import hisaab_viewSchema from './schemas/hisaab_view.schema.json';
 import home_viewSchema from './schemas/home_view.schema.json';
 import i18n_changedSchema from './schemas/i18n_changed.schema.json';
+import insights_viewSchema from './schemas/insights_view.schema.json';
 import khata_account_viewSchema from './schemas/khata_account_view.schema.json';
 import khata_viewSchema from './schemas/khata_view.schema.json';
 import kot_viewSchema from './schemas/kot_view.schema.json';
@@ -465,6 +479,10 @@ import trust_viewSchema from './schemas/trust_view.schema.json';
 import verdict_viewSchema from './schemas/verdict_view.schema.json';
 import view_invalidateSchema from './schemas/view_invalidate.schema.json';
 
+export type { ActionSnoozed } from './action_snoozed';
+export type { ActionsSnooze } from './actions_snooze';
+export type { AlertRaised } from './alert_raised';
+export type { AlertsScan } from './alerts_scan';
 export type { AppointmentsAssign } from './appointments_assign';
 export type { AppointmentsBook } from './appointments_book';
 export type { AppointmentsTransition } from './appointments_transition';
@@ -502,6 +520,7 @@ export type { CatalogItemAdded } from './catalog_item_added';
 export type { CatalogItemView } from './catalog_item_view';
 export type { CatalogPriceChanged } from './catalog_price_changed';
 export type { CatalogSearchView } from './catalog_search_view';
+export type { ChartCard } from './chart_card';
 export type { ClaimView } from './claim_view';
 export type { CommandRequest } from './command';
 export type { CommandExecuted } from './command_executed';
@@ -540,12 +559,14 @@ export type { ExpiryView } from './expiry_view';
 export type { FeedbackRecord } from './feedback_record';
 export type { FeedbackRecorded } from './feedback_recorded';
 export type { FeedbackView } from './feedback_view';
+export type { ForecastView } from './forecast_view';
 export type { GateView } from './gate_view';
 export type { GrnView } from './grn_view';
 export type { HealthView } from './health_view';
 export type { HisaabView } from './hisaab_view';
 export type { HomeView } from './home_view';
 export type { LanguageChanged } from './i18n_changed';
+export type { InsightsView } from './insights_view';
 export type { KhataAccountView } from './khata_account_view';
 export type { KhataView } from './khata_view';
 export type { KotView } from './kot_view';
@@ -701,6 +722,10 @@ export type * from './common'; // shared definitions: Locale, SpeechLocale, Audi
 
 /** Every contract: name (file stem), JSON Schema $id and the schema itself, for Ajv. */
 export const SCHEMAS = [
+  { name: 'action_snoozed', id: 'https://arth.local/contracts/events/action_snoozed.schema.json', schema: action_snoozedSchema },
+  { name: 'actions_snooze', id: 'https://arth.local/contracts/commands/actions_snooze.schema.json', schema: actions_snoozeSchema },
+  { name: 'alert_raised', id: 'https://arth.local/contracts/events/alert_raised.schema.json', schema: alert_raisedSchema },
+  { name: 'alerts_scan', id: 'https://arth.local/contracts/commands/alerts_scan.schema.json', schema: alerts_scanSchema },
   { name: 'appointments_assign', id: 'https://arth.local/contracts/commands/appointments_assign.schema.json', schema: appointments_assignSchema },
   { name: 'appointments_book', id: 'https://arth.local/contracts/commands/appointments_book.schema.json', schema: appointments_bookSchema },
   { name: 'appointments_transition', id: 'https://arth.local/contracts/commands/appointments_transition.schema.json', schema: appointments_transitionSchema },
@@ -738,6 +763,7 @@ export const SCHEMAS = [
   { name: 'catalog_item_view', id: 'https://arth.local/contracts/catalog_item_view.schema.json', schema: catalog_item_viewSchema },
   { name: 'catalog_price_changed', id: 'https://arth.local/contracts/events/catalog_price_changed.schema.json', schema: catalog_price_changedSchema },
   { name: 'catalog_search_view', id: 'https://arth.local/contracts/catalog_search_view.schema.json', schema: catalog_search_viewSchema },
+  { name: 'chart_card', id: 'https://arth.local/contracts/chart_card.schema.json', schema: chart_cardSchema },
   { name: 'claim_view', id: 'https://arth.local/contracts/claim_view.schema.json', schema: claim_viewSchema },
   { name: 'command', id: 'https://arth.local/contracts/command.schema.json', schema: commandSchema },
   { name: 'command_executed', id: 'https://arth.local/contracts/events/command_executed.schema.json', schema: command_executedSchema },
@@ -776,12 +802,14 @@ export const SCHEMAS = [
   { name: 'feedback_record', id: 'https://arth.local/contracts/commands/feedback_record.schema.json', schema: feedback_recordSchema },
   { name: 'feedback_recorded', id: 'https://arth.local/contracts/events/feedback_recorded.schema.json', schema: feedback_recordedSchema },
   { name: 'feedback_view', id: 'https://arth.local/contracts/feedback_view.schema.json', schema: feedback_viewSchema },
+  { name: 'forecast_view', id: 'https://arth.local/contracts/forecast_view.schema.json', schema: forecast_viewSchema },
   { name: 'gate_view', id: 'https://arth.local/contracts/gate_view.schema.json', schema: gate_viewSchema },
   { name: 'grn_view', id: 'https://arth.local/contracts/grn_view.schema.json', schema: grn_viewSchema },
   { name: 'health_view', id: 'https://arth.local/contracts/health_view.schema.json', schema: health_viewSchema },
   { name: 'hisaab_view', id: 'https://arth.local/contracts/hisaab_view.schema.json', schema: hisaab_viewSchema },
   { name: 'home_view', id: 'https://arth.local/contracts/home_view.schema.json', schema: home_viewSchema },
   { name: 'i18n_changed', id: 'https://arth.local/contracts/events/i18n_changed.schema.json', schema: i18n_changedSchema },
+  { name: 'insights_view', id: 'https://arth.local/contracts/insights_view.schema.json', schema: insights_viewSchema },
   { name: 'khata_account_view', id: 'https://arth.local/contracts/khata_account_view.schema.json', schema: khata_account_viewSchema },
   { name: 'khata_view', id: 'https://arth.local/contracts/khata_view.schema.json', schema: khata_viewSchema },
   { name: 'kot_view', id: 'https://arth.local/contracts/kot_view.schema.json', schema: kot_viewSchema },
@@ -939,6 +967,10 @@ export type SchemaName = (typeof SCHEMAS)[number]['name'];
 
 /** The generated type for each contract name. */
 export interface ContractTypes {
+  action_snoozed: ActionSnoozed;
+  actions_snooze: ActionsSnooze;
+  alert_raised: AlertRaised;
+  alerts_scan: AlertsScan;
   appointments_assign: AppointmentsAssign;
   appointments_book: AppointmentsBook;
   appointments_transition: AppointmentsTransition;
@@ -976,6 +1008,7 @@ export interface ContractTypes {
   catalog_item_view: CatalogItemView;
   catalog_price_changed: CatalogPriceChanged;
   catalog_search_view: CatalogSearchView;
+  chart_card: ChartCard;
   claim_view: ClaimView;
   command: CommandRequest;
   command_executed: CommandExecuted;
@@ -1014,12 +1047,14 @@ export interface ContractTypes {
   feedback_record: FeedbackRecord;
   feedback_recorded: FeedbackRecorded;
   feedback_view: FeedbackView;
+  forecast_view: ForecastView;
   gate_view: GateView;
   grn_view: GrnView;
   health_view: HealthView;
   hisaab_view: HisaabView;
   home_view: HomeView;
   i18n_changed: LanguageChanged;
+  insights_view: InsightsView;
   khata_account_view: KhataAccountView;
   khata_view: KhataView;
   kot_view: KotView;

@@ -95,6 +95,8 @@ tiers:
   sentinel.check: R1
   messages.receive: R1
   calendar.add_local_event: R1
+  alerts.scan: R1
+  actions.snooze: R1
   outreach.send_campaign: R3
   offers.create_program: R3
   offers.pause_program: R1
