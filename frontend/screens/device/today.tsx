@@ -6,12 +6,14 @@ import { useCallback, useState } from 'react';
 import { ArthNote, Orb, ProvenanceChips, Waveform } from '@/components/arth/orb';
 import { Donut, LineBand, MiniBars, SERIES, Sparkline } from '@/components/ui/charts';
 import { Button, Card, Chip, Money, Pill, SectionTitle, TierChip, cx } from '@/components/ui/kit';
+import { CardStack } from '@/components/cards/registry';
 import { Empty, Screen, StatusPill, useAction, useDeviceNav, useTurnSubmit } from '@/components/shell/device';
 import { useCommand, useDecide } from '@/lib/api/commands';
 import { useView } from '@/lib/api/hooks';
 import { views } from '@/lib/api/views';
-import type { HomeView, NotificationsView } from '@/lib/contracts';
+import type { ForecastView, HomeView, NotificationsView } from '@/lib/contracts';
 import { useI18n } from '@/lib/i18n/react';
+import { useTurn } from '@/lib/store/turn';
 import { ViewGate, field, type ScreenProps } from './common';
 
 const GATE_ICON: Record<string, typeof Truck> = { message: MessageSquare, truck: Truck, users: Users };
@@ -319,18 +321,136 @@ export function HomeScreen(_: ScreenProps) {
   );
 }
 
+/** SCR-ASK: the question, the grounded answer with its cards and provenance, earlier turns collapsed above. */
 export function AskScreen(_: ScreenProps) {
-  const { t } = useI18n();
+  const { t, time } = useI18n();
   const state = useView(views.ask());
+  const envelope = useTurn((s) => s.envelope);
+  const presence = useTurn((s) => s.presence);
   return (
     <Screen
       title={t('ask.title')}
       sub={t('ask.sub')}
       chips={[{ label: t('ask.chip_yesterday'), text: 'Aur kal ka?' }]}
     >
-      <ViewGate state={state}>{() => null}</ViewGate>
+      <ViewGate state={state}>
+        {(v) => {
+          const turns = [...v.turns].sort((a, b) => a.created_at.localeCompare(b.created_at));
+          const last = turns[turns.length - 1];
+          return (
+            <div className="grid grid-cols-[1fr_280px] gap-4">
+              <div className="flex flex-col gap-3">
+                {turns.slice(0, -1).map((turn) => (
+                  <p
+                    key={turn.id}
+                    className="truncate rounded-ground bg-white/60 px-4 py-2 text-meta text-ink-3"
+                  >
+                    “{turn.heard}” → {turn.said}
+                  </p>
+                ))}
+                {last && (
+                  <>
+                    <p className="self-end rounded-card bg-midnight px-5 py-3 text-arth text-white">
+                      🎙 {envelope?.caption?.heard ?? last.heard}
+                    </p>
+                    <Card className="flex flex-col gap-3 p-5">
+                      <div className="flex items-start gap-3">
+                        <Orb state={presence === 'thinking' ? 'thinking' : 'speaking'} size={44} />
+                        <p className="text-arth leading-snug text-ink">
+                          {envelope?.speech?.text ?? last.said}
+                        </p>
+                      </div>
+                      {envelope && <CardStack envelope={envelope} audience="owner" />}
+                      <ProvenanceChips
+                        items={envelope?.provenance ?? [{ kind: 'bills', count: 31 }, { kind: 'upi_ledger' }]}
+                      />
+                      <span className="text-meta text-ink-3">{time(last.created_at)}</span>
+                    </Card>
+                  </>
+                )}
+                {!last && <ArthNote>{t('ask.empty')}</ArthNote>}
+              </div>
+              <div className="flex flex-col gap-3">
+                <SectionTitle>{t('ask.also_noticed')}</SectionTitle>
+                <ArthNote label={false}>{t('ask.nudge_example')}</ArthNote>
+              </div>
+            </div>
+          );
+        }}
+      </ViewGate>
       <p className="mt-2 text-center text-meta text-ink-3">{t('ask.privacy')}</p>
     </Screen>
+  );
+}
+
+function ForecastBody({ f }: { f: ForecastView }) {
+  const { t, money, date } = useI18n();
+  const nav = useDeviceNav();
+  const today = f.days[0];
+  const poor = (f.accuracy.wape_bp ?? 0) > 3500;
+  const labels = [
+    ...f.actuals.map((a) => date(`${a.date}T06:00:00Z`)),
+    ...f.days.map((d) => date(`${d.date}T06:00:00Z`)),
+  ];
+  const n = f.actuals.length;
+  const pad = (k: number) => Array<number | null>(k).fill(null);
+  if (f.status === 'needs_more_data' || !today)
+    return <ArthNote>{t('sufficiency.forecast_pending')}</ArthNote>;
+  return (
+    <div className="grid grid-cols-[1fr_300px] gap-4">
+      <div className="flex flex-col gap-4">
+        <Card className="p-5">
+          <p className="text-body text-ink-3">{t('forecast.headline')}</p>
+          <Money paise={today.p50_paise} className="text-4xl font-extrabold" />
+          <p className="text-body text-ink-2">
+            {t('forecast.range', { low: money(today.p10_paise), high: money(today.p90_paise) })}
+          </p>
+          {poor && <Pill tone="amber">{t('forecast.poor_accuracy')}</Pill>}
+          <LineBand
+            labels={labels}
+            actual={[...f.actuals.map((a) => a.sales_paise), ...pad(f.days.length)]}
+            low={[...pad(n - 1), f.actuals[n - 1]?.sales_paise ?? null, ...f.days.map((d) => d.p10_paise)]}
+            high={[...pad(n - 1), f.actuals[n - 1]?.sales_paise ?? null, ...f.days.map((d) => d.p90_paise)]}
+            typical={[
+              ...pad(n - 1),
+              f.actuals[n - 1]?.sales_paise ?? null,
+              ...f.days.map((d) => d.p50_paise),
+            ]}
+            height={170}
+            yFormat={(v) => money(v, true)}
+          />
+        </Card>
+        <p className="text-meta text-ink-3">
+          {t('forecast.accuracy', { k: f.accuracy.within_band, n: f.accuracy.window_days })}
+        </p>
+      </div>
+      <div className="flex flex-col gap-3">
+        <Card className="p-5">
+          <SectionTitle>{t('forecast.why')}</SectionTitle>
+          {f.drivers.map((d) => (
+            <p key={d.key} className="flex justify-between border-b border-line py-2 text-body">
+              <span>{t(d.key)}</span>
+              <Money
+                paise={d.contribution_paise}
+                className={d.contribution_paise < 0 ? 'text-red' : 'text-green'}
+              />
+            </p>
+          ))}
+        </Card>
+        {f.items.length > 0 && (
+          <Card className="p-5">
+            <SectionTitle>{t('forecast.items')}</SectionTitle>
+            {f.items.map((i) => (
+              <p key={i.item_id} className="flex justify-between text-body">
+                <span className="truncate">{i.name}</span>
+                <span className="num">{i.horizon_qty_milli / 1000}</span>
+              </p>
+            ))}
+          </Card>
+        )}
+        <Button onClick={() => nav('stock')}>{t('forecast.cta', { festival: t('festival.diwali') })}</Button>
+      </div>
+    </div>
   );
 }
 
@@ -353,7 +473,7 @@ export function ForecastScreen(_: ScreenProps) {
       }
       chips={[{ label: t('forecast.chip_tomorrow'), text: 'Kal kitni bikri hogi?' }]}
     >
-      <ViewGate state={state}>{() => null}</ViewGate>
+      <ViewGate state={state}>{(f) => <ForecastBody f={f} />}</ViewGate>
     </Screen>
   );
 }

@@ -640,5 +640,20 @@
   "store.all": "Sab",
   "store.out": "Khatam",
   "store.order": "{n} items order karein · {total}",
-  "store.placed": "Order dukaan ko bhej diya. WhatsApp pe confirm hoga."
+  "store.placed": "Order dukaan ko bhej diya. WhatsApp pe confirm hoga.",
+  "gate.decline": "Mana karo",
+  "toast.decision_decline": "Mana kar diya",
+  "ask.empty": "Dukaan ke baare mein kuch bhi poochho: mic dabao ya neeche likho.",
+  "ask.also_noticed": "Arth ne yeh bhi dekha",
+  "ask.nudge_example": "Pichhle guruvaar kaju 2.4 guna bika. Shanivaar tak khatam ho sakta hai.",
+  "forecast.headline": "Aaj ki bikri, sabse sambhav",
+  "forecast.range": "10 mein se 8 baar {low}–{high} ke beech",
+  "forecast.poor_accuracy": "Is hafte andaaza kam pakka hai: range chaudi hai",
+  "forecast.accuracy": "Pichhle {n} din mein {k} baar bikri range ke andar rahi.",
+  "forecast.why": "Arth: kyun?",
+  "forecast.items": "Kitna bikega",
+  "forecast.cta": "{festival} stock plan",
+  "driver.festival": "Tyohaar",
+  "driver.weekday": "Din",
+  "driver.weather": "Mausam"
 }
