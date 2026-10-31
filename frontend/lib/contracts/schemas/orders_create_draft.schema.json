@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/orders_create_draft.schema.json",
+  "title": "OrdersCreateDraft",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "channel": {
+      "enum": [
+        "whatsapp",
+        "storefront",
+        "device",
+        "preorder"
+      ]
+    },
+    "patron_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "message_ref": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "lines": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "item_id": {
+            "anyOf": [
+              {
+                "$ref": "../common.schema.json#/definitions/PrefixedId"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "qty_milli": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "confidence_bp": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000
+          }
+        },
+        "required": [
+          "item_id",
+          "text",
+          "qty_milli",
+          "confidence_bp"
+        ]
+      },
+      "minItems": 1,
+      "maxItems": 50
+    }
+  },
+  "required": [
+    "channel",
+    "lines"
+  ]
+}

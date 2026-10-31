@@ -31,7 +31,7 @@ def test_health_reports_mode_clock_and_packs(tmp_path: Path) -> None:
         "status": "ok",
         "mode": "test",
         "clock": "2026-10-29T02:15:00.000000Z",
-        "packs": ["kirana"],
+        "packs": ["cafe", "kirana", "pharmacy", "salon"],
     }
     assert set(providers) == {"mistral", "groq", "sarvam"}
     assert all(isinstance(v, bool) for v in providers.values())

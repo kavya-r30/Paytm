@@ -1,0 +1,8 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/offers_expire_due.schema.json",
+  "title": "OffersExpireDue",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {}
+}

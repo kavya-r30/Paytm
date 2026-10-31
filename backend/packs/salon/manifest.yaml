@@ -1,0 +1,27 @@
+pack: salon
+version: 1
+names: { en: Salon / parlour, hi: सैलून / पार्लर, hi-Latn: Salon / parlour }
+catalog:
+  schema: service
+  fields: [price, cost, unit, hsn, gst_rate, category, duration_minutes, required_skill]
+  units: [service, pcs]
+  loose_sale: false
+stock: { batches: 'off', expiry: 'off', bom: false }
+counter: { modes: [tap, voice, search], tickets: false, appointments: true }
+khata: { enabled: true }
+levers:
+  winback: { lapsing_rule: default }
+  replenish: { categories: [haircut, facial], cv_max: 0.4, variant: rebook }
+  welcome: { coupon_paise: 5000, min_bill_paise: 30000, valid_days: 30 }
+  offers: { types: [next_txn_cashback, first_time_coupon, payment_count, slow_slot] }
+  slot_fill: {}
+  packages: {}
+  storefront: {}
+  feedback: {}
+calendar: [diwali, wedding_season, karwa_chauth, salary_days]
+charts: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+policies: { margin_floor: 0.15 }
+templates: templates/
+generator: generator.yaml
+peer_cohort: salon_by_city_tier_and_size
+scenarios: [salon_wedding_rush, salon_slow_weekdays]

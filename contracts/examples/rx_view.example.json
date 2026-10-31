@@ -1,0 +1,8 @@
+{
+  "rx_sales": [],
+  "refills_due": [],
+  "recalls": [],
+  "invalidate_on": [
+    "x.changed"
+  ]
+}

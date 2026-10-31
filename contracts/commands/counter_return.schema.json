@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/counter_return.schema.json",
+  "title": "CounterReturn",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "bill_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "lines": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "line_id": {
+            "$ref": "../common.schema.json#/definitions/PrefixedId"
+          },
+          "qty_milli": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "line_id",
+          "qty_milli"
+        ]
+      },
+      "minItems": 1,
+      "maxItems": 50
+    },
+    "reason_key": {
+      "$ref": "../common.schema.json#/definitions/MessageKey"
+    },
+    "refund_mode": {
+      "enum": [
+        "cash",
+        "store_credit",
+        "upi",
+        "khata"
+      ]
+    }
+  },
+  "required": [
+    "bill_id",
+    "lines",
+    "reason_key",
+    "refund_mode"
+  ]
+}

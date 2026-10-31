@@ -1,0 +1,219 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/reports_view.schema.json",
+  "title": "ReportsView",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "month": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$"
+    },
+    "profile": {
+      "enum": [
+        "unregistered",
+        "composition",
+        "regular"
+      ]
+    },
+    "pnl": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "month": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$"
+        },
+        "sales_paise": {
+          "type": "integer"
+        },
+        "returns_paise": {
+          "type": "integer"
+        },
+        "cogs_paise": {
+          "type": "integer"
+        },
+        "gross_profit_paise": {
+          "type": "integer"
+        },
+        "expenses": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "category": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "amount_paise": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "category",
+              "amount_paise"
+            ]
+          }
+        },
+        "expenses_paise": {
+          "type": "integer"
+        },
+        "reward_cost_paise": {
+          "type": "integer"
+        },
+        "net_paise": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "month",
+        "sales_paise",
+        "returns_paise",
+        "cogs_paise",
+        "gross_profit_paise",
+        "expenses",
+        "expenses_paise",
+        "reward_cost_paise",
+        "net_paise"
+      ]
+    },
+    "gst": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "month": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$"
+        },
+        "invoices": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "rate_bp": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "taxable_paise": {
+                "type": "integer"
+              },
+              "cgst_paise": {
+                "type": "integer"
+              },
+              "sgst_paise": {
+                "type": "integer"
+              },
+              "total_paise": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "rate_bp",
+              "taxable_paise",
+              "cgst_paise",
+              "sgst_paise",
+              "total_paise"
+            ]
+          }
+        },
+        "totals": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "taxable_paise": {
+              "type": "integer"
+            },
+            "cgst_paise": {
+              "type": "integer"
+            },
+            "sgst_paise": {
+              "type": "integer"
+            },
+            "total_paise": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "taxable_paise",
+            "cgst_paise",
+            "sgst_paise",
+            "total_paise"
+          ]
+        }
+      },
+      "required": [
+        "month",
+        "invoices",
+        "rates",
+        "totals"
+      ]
+    },
+    "closed_months": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "month": {
+            "type": "string",
+            "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$"
+          },
+          "net_paise": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "month",
+          "net_paise"
+        ]
+      }
+    },
+    "scheduled": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "cadence": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "id",
+          "cadence"
+        ]
+      }
+    },
+    "invalidate_on": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    }
+  },
+  "required": [
+    "month",
+    "profile",
+    "pnl",
+    "gst",
+    "closed_months",
+    "scheduled",
+    "invalidate_on"
+  ]
+}

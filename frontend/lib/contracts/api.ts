@@ -145,6 +145,646 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/views/home": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getHomeView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/views/ask": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getAskView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/views/forecast": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getForecastView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/views/notifications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getNotificationsView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/views/gates/{gate_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getGateView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/views/bill/{bill_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getBillView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/views/bill/{bill_id}/pay": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getBillPayView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/views/bill/{bill_id}/paid": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getBillPaidView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/views/park": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getParkView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/views/orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getOrdersView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/views/orders/{order_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getOrderView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/views/stock/expiry": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getStockExpiryView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/views/suppliers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getSuppliersView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/views/po/{po_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getPoView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/views/grn/{po_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getGrnView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/views/claims/{claim_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getClaimView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/views/grow": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getGrowView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/views/grow/plans/{plan_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getGrowPlanView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/views/grow/demand": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getGrowDemandView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/views/grow/bundles": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getGrowBundlesView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/views/grow/ledger": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getGrowLedgerView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/views/campaigns/{campaign_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getCampaignView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/views/offers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getOffersView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/views/offers/{program_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getOfferView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/views/storefront": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getStorefrontView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/views/team": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getTeamView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/views/runs/{run_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getRunView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/views/memory": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getMemoryView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/views/hisaab": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getHisaabView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/views/reports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getReportsView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/views/feedback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getFeedbackView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/views/trust": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getTrustView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/views/health": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getHealthView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/views/capital": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getCapitalView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/views/kot": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getKotView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/views/appointments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getAppointmentsView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/views/rx": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getRxView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/views/verdict/{check_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getVerdictView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/privacy/patrons/{patron_id}/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getPatronExport"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/public/storefront/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getPublicStorefront"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/patrons": {
         parameters: {
             query?: never;
@@ -650,6 +1290,887 @@ export interface components {
             invalidate_on: string[];
         };
         /**
+         * @description Risk tier of a command (spec Part C6).
+         * @enum {string}
+         */
+        Tier: "R0" | "R1" | "R2" | "R3" | "R4";
+        /** HomeView */
+        "home_view.schema": {
+            greeting: {
+                owner_name: string;
+                shop_name: string;
+                /** Format: date-time */
+                now: string;
+                /** @enum {unknown} */
+                part_of_day: "morning" | "midday" | "evening" | "night";
+            };
+            today: {
+                sales_paise: number;
+                bills: number;
+                customers: number;
+                new_customers: number;
+                by_mode: {
+                    [key: string]: number;
+                };
+            };
+            khata: {
+                outstanding_paise: number;
+                change_today_paise: number;
+            };
+            gates: {
+                gate_id: components["schemas"]["PrefixedId"];
+                thread_id: components["schemas"]["PrefixedId"];
+                tier: components["schemas"]["Tier"];
+                type: string;
+                status: string;
+                /** Format: date-time */
+                expires_at: string;
+            }[];
+            brief: Record<string, never> | null;
+            data_sufficiency: {
+                /** @enum {unknown} */
+                status: "cold_start" | "learning" | "ready";
+                days_of_history: number;
+                reason_key: components["schemas"]["MessageKey"];
+            };
+            invalidate_on: string[];
+        };
+        /** LayerPendingView */
+        "layer_pending_view.schema": {
+            screen: string;
+            /** @enum {unknown} */
+            status: "needs_more_data" | "not_built_yet";
+            /** @enum {unknown} */
+            layer: "L3" | "L4" | "L5" | "L6";
+            reason_key: components["schemas"]["MessageKey"];
+            items: Record<string, never>[];
+            invalidate_on: string[];
+        };
+        /** NotificationsView */
+        "notifications_view.schema": {
+            needs_you: {
+                gate_id: components["schemas"]["PrefixedId"];
+                thread_id: components["schemas"]["PrefixedId"];
+                tier: components["schemas"]["Tier"];
+                type: string;
+                status: string;
+                /** Format: date-time */
+                expires_at: string;
+            }[];
+            done: {
+                command_id: components["schemas"]["PrefixedId"];
+                type: string;
+                tier: components["schemas"]["Tier"];
+                /** Format: date-time */
+                occurred_at: string;
+                undo_until: string | null;
+            }[];
+            snoozed: {
+                gate_id: components["schemas"]["PrefixedId"];
+                thread_id: components["schemas"]["PrefixedId"];
+                tier: components["schemas"]["Tier"];
+                type: string;
+                status: string;
+                /** Format: date-time */
+                expires_at: string;
+            }[];
+            invalidate_on: string[];
+        };
+        /** GateView */
+        "gate_view.schema": {
+            gate: {
+                gate_id: components["schemas"]["PrefixedId"];
+                thread_id: components["schemas"]["PrefixedId"];
+                tier: components["schemas"]["Tier"];
+                type: string;
+                status: string;
+                /** Format: date-time */
+                expires_at: string;
+                scope: Record<string, never>;
+                conditions: Record<string, never>;
+            };
+            readback_key: components["schemas"]["MessageKey"] | null;
+            invalidate_on: string[];
+        };
+        /** BillView */
+        "bill_view.schema": {
+            bill: {
+                id: components["schemas"]["PrefixedId"];
+                /** @enum {unknown} */
+                status: "open" | "parked" | "closed" | "voided";
+                patron_id: components["schemas"]["PrefixedId"] | null;
+                staff_id: string;
+                /** Format: date-time */
+                opened_at: string;
+                closed_at: string | null;
+                total_paise: number;
+                paid_paise: number;
+                khata_paise: number;
+                due_paise: number;
+                lines: {
+                    id: components["schemas"]["PrefixedId"];
+                    item_id: components["schemas"]["PrefixedId"];
+                    name: string;
+                    qty_milli: number;
+                    unit_price_paise: number;
+                    amount_paise: number;
+                    added_via: string;
+                    modifier_ids: components["schemas"]["PrefixedId"][];
+                    price_override: boolean;
+                    batch_id: components["schemas"]["PrefixedId"] | null;
+                }[];
+                payments: {
+                    mode: string;
+                    amount_paise: number;
+                    change_paise: number | null;
+                    ref_id: string | null;
+                }[];
+                ticket: {
+                    id: components["schemas"]["PrefixedId"];
+                    token: number;
+                    /** @enum {unknown} */
+                    status: "new" | "preparing" | "ready" | "served";
+                } | null;
+                upi: {
+                    order_ref: string;
+                    amount_paise: number;
+                    /** @enum {unknown} */
+                    status: "waiting" | "pending" | "paid" | "failed" | "expired";
+                    /** Format: date-time */
+                    expires_at: string;
+                } | null;
+            };
+            parked_count: number;
+            invalidate_on: string[];
+        };
+        /** BillPayView */
+        "bill_pay_view.schema": {
+            bill: {
+                id: components["schemas"]["PrefixedId"];
+                /** @enum {unknown} */
+                status: "open" | "parked" | "closed" | "voided";
+                patron_id: components["schemas"]["PrefixedId"] | null;
+                staff_id: string;
+                /** Format: date-time */
+                opened_at: string;
+                closed_at: string | null;
+                total_paise: number;
+                paid_paise: number;
+                khata_paise: number;
+                due_paise: number;
+                lines: {
+                    id: components["schemas"]["PrefixedId"];
+                    item_id: components["schemas"]["PrefixedId"];
+                    name: string;
+                    qty_milli: number;
+                    unit_price_paise: number;
+                    amount_paise: number;
+                    added_via: string;
+                    modifier_ids: components["schemas"]["PrefixedId"][];
+                    price_override: boolean;
+                    batch_id: components["schemas"]["PrefixedId"] | null;
+                }[];
+                payments: {
+                    mode: string;
+                    amount_paise: number;
+                    change_paise: number | null;
+                    ref_id: string | null;
+                }[];
+                ticket: {
+                    id: components["schemas"]["PrefixedId"];
+                    token: number;
+                    /** @enum {unknown} */
+                    status: "new" | "preparing" | "ready" | "served";
+                } | null;
+                upi: {
+                    order_ref: string;
+                    amount_paise: number;
+                    /** @enum {unknown} */
+                    status: "waiting" | "pending" | "paid" | "failed" | "expired";
+                    /** Format: date-time */
+                    expires_at: string;
+                } | null;
+            };
+            payee_vpa: string | null;
+            alternatives: ("cash" | "khata" | "regenerate")[];
+            exception: string | null;
+            invalidate_on: string[];
+        };
+        /** BillPaidView */
+        "bill_paid_view.schema": {
+            bill: {
+                id: components["schemas"]["PrefixedId"];
+                /** @enum {unknown} */
+                status: "open" | "parked" | "closed" | "voided";
+                patron_id: components["schemas"]["PrefixedId"] | null;
+                staff_id: string;
+                /** Format: date-time */
+                opened_at: string;
+                closed_at: string | null;
+                total_paise: number;
+                paid_paise: number;
+                khata_paise: number;
+                due_paise: number;
+                lines: {
+                    id: components["schemas"]["PrefixedId"];
+                    item_id: components["schemas"]["PrefixedId"];
+                    name: string;
+                    qty_milli: number;
+                    unit_price_paise: number;
+                    amount_paise: number;
+                    added_via: string;
+                    modifier_ids: components["schemas"]["PrefixedId"][];
+                    price_override: boolean;
+                    batch_id: components["schemas"]["PrefixedId"] | null;
+                }[];
+                payments: {
+                    mode: string;
+                    amount_paise: number;
+                    change_paise: number | null;
+                    ref_id: string | null;
+                }[];
+                ticket: {
+                    id: components["schemas"]["PrefixedId"];
+                    token: number;
+                    /** @enum {unknown} */
+                    status: "new" | "preparing" | "ready" | "served";
+                } | null;
+                upi: {
+                    order_ref: string;
+                    amount_paise: number;
+                    /** @enum {unknown} */
+                    status: "waiting" | "pending" | "paid" | "failed" | "expired";
+                    /** Format: date-time */
+                    expires_at: string;
+                } | null;
+            };
+            invoice: Record<string, never> | null;
+            receipt: {
+                /** @enum {unknown} */
+                status: "queued" | "no_consent" | "walk_in";
+                lang: string | null;
+            };
+            offers: {
+                issuance_id: components["schemas"]["PrefixedId"];
+                kind: string;
+                amount_paise: number;
+                min_spend_paise: number;
+                /** Format: date-time */
+                expires_at: string;
+                code: string | null;
+            }[];
+            utr_tail: string | null;
+            invalidate_on: string[];
+        };
+        /** ParkView */
+        "park_view.schema": {
+            bills: {
+                id: components["schemas"]["PrefixedId"];
+                patron_id: components["schemas"]["PrefixedId"] | null;
+                total_paise: number;
+                lines: number;
+                /** Format: date-time */
+                opened_at: string;
+            }[];
+            invalidate_on: string[];
+        };
+        /** OrdersView */
+        "orders_view.schema": {
+            orders: {
+                id: components["schemas"]["PrefixedId"];
+                status: string;
+                channel: string;
+                patron_id: components["schemas"]["PrefixedId"] | null;
+                total_paise: number;
+                /** Format: date-time */
+                created_at: string;
+                lines: number;
+            }[];
+            by_status: {
+                [key: string]: number;
+            };
+            invalidate_on: string[];
+        };
+        /** OrderView */
+        "order_view.schema": {
+            order: {
+                id: components["schemas"]["PrefixedId"];
+                status: string;
+                channel: string;
+                patron_id: components["schemas"]["PrefixedId"] | null;
+                total_paise: number;
+                /** Format: date-time */
+                created_at: string;
+                lines: {
+                    id: components["schemas"]["PrefixedId"];
+                    item_id: components["schemas"]["PrefixedId"] | null;
+                    text: string;
+                    qty_milli: number;
+                    unit_price_paise: number;
+                    amount_paise: number;
+                    check: boolean;
+                }[];
+            };
+            history: {
+                from_state: string | null;
+                to_state: string;
+                actor_id: string;
+                /** Format: date-time */
+                occurred_at: string;
+            }[];
+            pick_list: {
+                item_id: components["schemas"]["PrefixedId"];
+                name: string;
+                qty_milli: number;
+            }[];
+            allowed: string[];
+            invalidate_on: string[];
+        };
+        /** SuppliersView */
+        "suppliers_view.schema": {
+            suppliers: {
+                id: components["schemas"]["PrefixedId"];
+                name: string;
+                lang: string;
+                lead_days: number;
+                open_pos: number;
+                payable_paise: number;
+            }[];
+            invalidate_on: string[];
+        };
+        /** PoView */
+        "po_view.schema": {
+            po: {
+                id: components["schemas"]["PrefixedId"];
+                supplier_id: components["schemas"]["PrefixedId"];
+                status: string;
+                total_paise: number;
+                due_on: string | null;
+                /** Format: date-time */
+                created_at: string;
+                lines: {
+                    item_id: components["schemas"]["PrefixedId"];
+                    name: string;
+                    qty_milli: number;
+                    unit_price_paise: number;
+                    amount_paise: number;
+                    last_price_paise: number | null;
+                }[];
+            };
+            price_history: {
+                item_id: components["schemas"]["PrefixedId"];
+                unit_price_paise: number;
+                source: string;
+                /** Format: date-time */
+                occurred_at: string;
+            }[];
+            invalidate_on: string[];
+        };
+        /** GrnView */
+        "grn_view.schema": {
+            po_id: components["schemas"]["PrefixedId"];
+            received: {
+                item_id: components["schemas"]["PrefixedId"];
+                qty_milli: number;
+                batch_id: components["schemas"]["PrefixedId"] | null;
+            }[];
+            billed: {
+                item_id: components["schemas"]["PrefixedId"];
+                qty_milli: number;
+                unit_price_paise: number;
+            }[];
+            variances: {
+                item_id: components["schemas"]["PrefixedId"];
+                /** @enum {unknown} */
+                kind: "price" | "qty";
+                expected: number;
+                actual: number;
+                delta_paise: number;
+            }[];
+            claim_id: components["schemas"]["PrefixedId"] | null;
+            invalidate_on: string[];
+        };
+        /** ClaimView */
+        "claim_view.schema": {
+            claim: {
+                id: components["schemas"]["PrefixedId"];
+                po_id: components["schemas"]["PrefixedId"];
+                supplier_id: components["schemas"]["PrefixedId"];
+                amount_paise: number;
+                status: string;
+                lang: string;
+                /** Format: date-time */
+                created_at: string;
+            };
+            variances: {
+                item_id: components["schemas"]["PrefixedId"];
+                /** @enum {unknown} */
+                kind: "price" | "qty";
+                expected: number;
+                actual: number;
+                delta_paise: number;
+            }[];
+            invalidate_on: string[];
+        };
+        /** DemandView */
+        "demand_view.schema": {
+            unmet: {
+                id: components["schemas"]["PrefixedId"];
+                text: string;
+                item_id: components["schemas"]["PrefixedId"] | null;
+                /** Format: date-time */
+                occurred_at: string;
+            }[];
+            clusters: {
+                label: string;
+                count: number;
+            }[];
+            /** @enum {unknown} */
+            status: "needs_more_data" | "ready";
+            invalidate_on: string[];
+        };
+        /** OffersView */
+        "offers_view.schema": {
+            programs: {
+                id: components["schemas"]["PrefixedId"];
+                type: string;
+                status: string;
+                funding: string;
+                terms: {
+                    amount_paise: number;
+                    min_spend_paise: number;
+                    expiry_days: number;
+                };
+                budget_paise: number;
+                spent_paise: number;
+                liability: {
+                    issued_paise: number;
+                    redeemed_paise: number;
+                    expired_paise: number;
+                    outstanding_paise: number;
+                };
+                treated: number;
+                holdout: number;
+                issued: number;
+                /** Format: date-time */
+                valid_until: string;
+            }[];
+            liability: {
+                issued_paise: number;
+                redeemed_paise: number;
+                expired_paise: number;
+                outstanding_paise: number;
+            };
+            invalidate_on: string[];
+        };
+        /** OfferDetailView */
+        "offer_detail_view.schema": {
+            program: {
+                id: components["schemas"]["PrefixedId"];
+                type: string;
+                status: string;
+                funding: string;
+                terms: {
+                    amount_paise: number;
+                    min_spend_paise: number;
+                    expiry_days: number;
+                };
+                budget_paise: number;
+                spent_paise: number;
+                liability: {
+                    issued_paise: number;
+                    redeemed_paise: number;
+                    expired_paise: number;
+                    outstanding_paise: number;
+                };
+                treated: number;
+                holdout: number;
+                issued: number;
+                /** Format: date-time */
+                valid_until: string;
+            };
+            issuances: {
+                id: components["schemas"]["PrefixedId"];
+                kind: string;
+                amount_paise: number;
+                state: string;
+                funding: string;
+                /** Format: date-time */
+                expires_at: string;
+                patron_id: components["schemas"]["PrefixedId"] | null;
+            }[];
+            invalidate_on: string[];
+        };
+        /** StorefrontView */
+        "storefront_view.schema": {
+            slug: string | null;
+            published: boolean;
+            show_offers: boolean;
+            items: number;
+            url: string | null;
+            invalidate_on: string[];
+        };
+        /** HisaabView */
+        "hisaab_view.schema": {
+            /** Format: date */
+            date: string;
+            close: Record<string, never> | null;
+            today: {
+                sales_paise: number;
+                by_mode: {
+                    [key: string]: number;
+                };
+                expenses_paise: number;
+                refunds_paise: number;
+                khata_given_paise: number;
+            };
+            unmatched: {
+                payment_id: components["schemas"]["PrefixedId"];
+                amount_paise: number;
+                /** Format: date-time */
+                received_at: string;
+                khata_patron_id: components["schemas"]["PrefixedId"] | null;
+                suggestions: {
+                    bill_id: components["schemas"]["PrefixedId"];
+                    total_paise: number;
+                    score_bp: number;
+                }[];
+            }[];
+            exceptions: {
+                id: components["schemas"]["PrefixedId"];
+                kind: string;
+                payment_id: components["schemas"]["PrefixedId"] | null;
+                bill_id: components["schemas"]["PrefixedId"] | null;
+                status: string;
+                /** Format: date-time */
+                opened_at: string;
+            }[];
+            settlements: {
+                id: components["schemas"]["PrefixedId"];
+                /** Format: date */
+                date: string;
+                gross_paise: number;
+                net_paise: number;
+                deductions: {
+                    kind: string;
+                    amount_paise: number;
+                }[];
+                explained: boolean;
+            }[];
+            shifts: {
+                id: components["schemas"]["PrefixedId"];
+                staff_id: string;
+                /** Format: date-time */
+                opened_at: string;
+                closed_at: string | null;
+                float_paise: number;
+                expected_paise: number;
+                counted_paise: number | null;
+                variance_paise: number | null;
+            }[];
+            expenses: {
+                id: components["schemas"]["PrefixedId"];
+                category: string;
+                amount_paise: number;
+                paid_from: string;
+                /** Format: date-time */
+                occurred_at: string;
+            }[];
+            invalidate_on: string[];
+        };
+        /** ReportsView */
+        "reports_view.schema": {
+            month: string;
+            /** @enum {unknown} */
+            profile: "unregistered" | "composition" | "regular";
+            pnl: {
+                month: string;
+                sales_paise: number;
+                returns_paise: number;
+                cogs_paise: number;
+                gross_profit_paise: number;
+                expenses: {
+                    category: string;
+                    amount_paise: number;
+                }[];
+                expenses_paise: number;
+                reward_cost_paise: number;
+                net_paise: number;
+            };
+            gst: {
+                month: string;
+                invoices: number;
+                rates: {
+                    rate_bp: number;
+                    taxable_paise: number;
+                    cgst_paise: number;
+                    sgst_paise: number;
+                    total_paise: number;
+                }[];
+                totals: {
+                    taxable_paise: number;
+                    cgst_paise: number;
+                    sgst_paise: number;
+                    total_paise: number;
+                };
+            };
+            closed_months: {
+                month: string;
+                net_paise: number;
+            }[];
+            scheduled: {
+                id: string;
+                cadence: string;
+            }[];
+            invalidate_on: string[];
+        };
+        /** FeedbackView */
+        "feedback_view.schema": {
+            average_bp: number | null;
+            count: number;
+            ratings: {
+                id: components["schemas"]["PrefixedId"];
+                target_kind: string;
+                target_id: components["schemas"]["PrefixedId"];
+                rating: number;
+                complaint_key: components["schemas"]["MessageKey"] | null;
+                /** Format: date-time */
+                occurred_at: string;
+            }[];
+            complaints: number;
+            invalidate_on: string[];
+        };
+        /** TrustView */
+        "trust_view.schema": {
+            tiers: {
+                tier: components["schemas"]["Tier"];
+                commands: string[];
+                confirm_key: components["schemas"]["MessageKey"];
+            }[];
+            roles: {
+                role: string;
+                max_tier: components["schemas"]["Tier"];
+                approve: components["schemas"]["Tier"][];
+            }[];
+            activity: {
+                command_id: components["schemas"]["PrefixedId"];
+                type: string;
+                tier: components["schemas"]["Tier"];
+                status: string;
+                actor_id: string | null;
+                /** Format: date-time */
+                occurred_at: string;
+            }[];
+            audit: {
+                ok: boolean;
+                rows: number;
+            };
+            undo: {
+                command_id: components["schemas"]["PrefixedId"];
+                type: string;
+                /** Format: date-time */
+                until: string;
+            }[];
+            data_sharing: {
+                peer_benchmarks: boolean;
+            };
+            data_requests: {
+                kind: string;
+                patron_id: components["schemas"]["PrefixedId"];
+                /** Format: date-time */
+                occurred_at: string;
+            }[];
+            invalidate_on: string[];
+        };
+        /** HealthView */
+        "health_view.schema": {
+            device: Record<string, never> | null;
+            offline_queue: {
+                size: number;
+                last_sync_at: string | null;
+            };
+            providers: {
+                name: string;
+                configured: boolean;
+                /** @enum {unknown} */
+                mode: "live" | "fallback" | "replay" | "unknown";
+            }[];
+            ai_spend_today_paise: number;
+            backup: {
+                last_snapshot_at: string | null;
+            };
+            invalidate_on: string[];
+        };
+        /** CapitalView */
+        "capital_view.schema": {
+            profile: Record<string, never>;
+            need: Record<string, never> | null;
+            affordability: Record<string, never>;
+            offers: {
+                id: components["schemas"]["PrefixedId"];
+                lender: string;
+                amount_paise: number;
+                tenor_days: number;
+                apr_bp: number;
+                edi_paise: number;
+                processing_fee_paise: number;
+                total_repayment_paise: number;
+                kfs_url: string;
+                cooling_off_days: number;
+                /** Format: date-time */
+                expires_at: string;
+                affordable: boolean;
+            }[];
+            recommended_offer_id: components["schemas"]["PrefixedId"] | null;
+            console_pointer: {
+                route: string;
+                message_key: components["schemas"]["MessageKey"];
+            };
+            invalidate_on: string[];
+        };
+        /** KotView */
+        "kot_view.schema": {
+            tickets: {
+                id: components["schemas"]["PrefixedId"];
+                bill_id: components["schemas"]["PrefixedId"];
+                token: number;
+                /** @enum {unknown} */
+                status: "new" | "preparing" | "ready" | "served";
+                age_seconds: number;
+                items: {
+                    name: string;
+                    qty_milli: number;
+                    modifiers: string[];
+                }[];
+            }[];
+            invalidate_on: string[];
+        };
+        /** AppointmentsView */
+        "appointments_view.schema": {
+            /** Format: date */
+            date: string;
+            staff: {
+                id: components["schemas"]["PrefixedId"];
+                name: string;
+                skills: string[];
+                appointments: {
+                    id: components["schemas"]["PrefixedId"];
+                    service_item_id: components["schemas"]["PrefixedId"];
+                    staff_id: components["schemas"]["PrefixedId"] | null;
+                    patron_id: components["schemas"]["PrefixedId"] | null;
+                    start_at: string | null;
+                    end_at: string | null;
+                    status: string;
+                    source: string;
+                }[];
+            }[];
+            walk_ins: {
+                id: components["schemas"]["PrefixedId"];
+                service_item_id: components["schemas"]["PrefixedId"];
+                staff_id: components["schemas"]["PrefixedId"] | null;
+                patron_id: components["schemas"]["PrefixedId"] | null;
+                start_at: string | null;
+                end_at: string | null;
+                status: string;
+                source: string;
+            }[];
+            no_shows: number;
+            invalidate_on: string[];
+        };
+        /** RxView */
+        "rx_view.schema": {
+            rx_sales: {
+                bill_id: components["schemas"]["PrefixedId"];
+                item_id: components["schemas"]["PrefixedId"];
+                name: string;
+                staff_id: string;
+                /** Format: date-time */
+                occurred_at: string;
+            }[];
+            refills_due: {
+                patron_id: components["schemas"]["PrefixedId"];
+                item_id: components["schemas"]["PrefixedId"];
+                /** Format: date */
+                due_on: string;
+            }[];
+            recalls: {
+                batch_id: components["schemas"]["PrefixedId"];
+                item_id: components["schemas"]["PrefixedId"];
+                buyer_ids: components["schemas"]["PrefixedId"][];
+            }[];
+            invalidate_on: string[];
+        };
+        /** VerdictView */
+        "verdict_view.schema": {
+            check_id: components["schemas"]["PrefixedId"];
+            /** @enum {unknown} */
+            verdict: "received" | "not_received" | "pending" | "unclear";
+            headline_key: components["schemas"]["MessageKey"];
+            evidence: {
+                kind: string;
+                claimed: string | null;
+                ledger: string | null;
+                /** @enum {unknown} */
+                state: "match" | "mismatch" | "missing";
+            }[];
+            signals: {
+                kind: string;
+                state: string;
+            }[];
+            footnote_key: components["schemas"]["MessageKey"];
+            invalidate_on: string[];
+        };
+        /** PatronExport */
+        "patron_export.schema": {
+            patron: Record<string, never>;
+            identities: {
+                kind: string;
+                value: string;
+            }[];
+            consents: {
+                purpose: string;
+                granted: boolean;
+                /** Format: date-time */
+                occurred_at: string;
+            }[];
+            khata: Record<string, never> | null;
+            bills: {
+                id: components["schemas"]["PrefixedId"];
+                total_paise: number;
+                closed_at: string | null;
+            }[];
+            invalidate_on: string[];
+        };
+        /** PublicStorefront */
+        "public_storefront.schema": {
+            name: string;
+            slug: string;
+            hours: {
+                start: string;
+                end: string;
+            };
+            items: {
+                item_id: components["schemas"]["PrefixedId"];
+                names: {
+                    [key: string]: string;
+                };
+                unit: string;
+                price_paise: number;
+                in_stock: boolean;
+                category: string;
+            }[];
+            offers: {
+                program_id: components["schemas"]["PrefixedId"];
+                terms: {
+                    amount_paise: number;
+                    min_spend_paise: number;
+                    expiry_days: number;
+                };
+                type: string;
+            }[];
+            invalidate_on: string[];
+        };
+        /**
          * @description UI (screen) locale.
          * @enum {string}
          */
@@ -664,11 +2185,6 @@ export interface components {
                 value: string;
             }[];
         };
-        /**
-         * @description Risk tier of a command (spec Part C6).
-         * @enum {string}
-         */
-        Tier: "R0" | "R1" | "R2" | "R3" | "R4";
         /**
          * @description Speech locale. Speech engines take language-REGION codes, so Hinglish (hi-Latn on screen) is spoken as hi-IN.
          * @enum {string}
@@ -1234,6 +2750,923 @@ export interface operations {
             };
             401: components["responses"]["Problem"];
             409: components["responses"]["Problem"];
+        };
+    };
+    getHomeView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scoped merchant read model */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["home_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    getAskView: {
+        parameters: {
+            query?: {
+                session?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scoped merchant read model */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["layer_pending_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    getForecastView: {
+        parameters: {
+            query?: {
+                metric?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scoped merchant read model */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["layer_pending_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    getNotificationsView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scoped merchant read model */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["notifications_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    getGateView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                gate_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scoped merchant read model */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["gate_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    getBillView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                bill_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scoped merchant read model */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["bill_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    getBillPayView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                bill_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scoped merchant read model */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["bill_pay_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    getBillPaidView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                bill_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scoped merchant read model */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["bill_paid_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    getParkView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scoped merchant read model */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["park_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    getOrdersView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scoped merchant read model */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["orders_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    getOrderView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                order_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scoped merchant read model */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["order_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    getStockExpiryView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scoped merchant read model */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["expiry_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    getSuppliersView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scoped merchant read model */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["suppliers_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    getPoView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                po_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scoped merchant read model */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["po_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    getGrnView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                po_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scoped merchant read model */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["grn_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    getClaimView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                claim_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scoped merchant read model */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["claim_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    getGrowView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scoped merchant read model */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["layer_pending_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    getGrowPlanView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                plan_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scoped merchant read model */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["layer_pending_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    getGrowDemandView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scoped merchant read model */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["demand_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    getGrowBundlesView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scoped merchant read model */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["layer_pending_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    getGrowLedgerView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scoped merchant read model */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["layer_pending_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    getCampaignView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                campaign_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scoped merchant read model */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["layer_pending_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    getOffersView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scoped merchant read model */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["offers_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    getOfferView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                program_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scoped merchant read model */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["offer_detail_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    getStorefrontView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scoped merchant read model */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["storefront_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    getTeamView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scoped merchant read model */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["layer_pending_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    getRunView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scoped merchant read model */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["layer_pending_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    getMemoryView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scoped merchant read model */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["layer_pending_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    getHisaabView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scoped merchant read model */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["hisaab_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    getReportsView: {
+        parameters: {
+            query?: {
+                month?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scoped merchant read model */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["reports_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    getFeedbackView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scoped merchant read model */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["feedback_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    getTrustView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scoped merchant read model */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["trust_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    getHealthView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scoped merchant read model */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["health_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    getCapitalView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scoped merchant read model */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["capital_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    getKotView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scoped merchant read model */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["kot_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    getAppointmentsView: {
+        parameters: {
+            query?: {
+                date?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scoped merchant read model */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["appointments_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    getRxView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scoped merchant read model */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["rx_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    getVerdictView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                check_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scoped merchant read model */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["verdict_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    getPatronExport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                patron_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scoped merchant read model */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["patron_export.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            409: components["responses"]["Problem"];
+        };
+    };
+    getPublicStorefront: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Public shop page (nothing personal) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["public_storefront.schema"];
+                };
+            };
+            404: components["responses"]["Problem"];
         };
     };
     patronsadd: {

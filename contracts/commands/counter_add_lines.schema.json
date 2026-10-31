@@ -1,0 +1,69 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/counter_add_lines.schema.json",
+  "title": "CounterAddLines",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "bill_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "lines": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "item_id": {
+            "$ref": "../common.schema.json#/definitions/PrefixedId"
+          },
+          "qty_milli": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "amount_paise": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "modifier_ids": {
+            "type": "array",
+            "items": {
+              "$ref": "../common.schema.json#/definitions/PrefixedId"
+            },
+            "minItems": 0,
+            "maxItems": 10
+          },
+          "added_via": {
+            "enum": [
+              "scan",
+              "tap",
+              "voice",
+              "search",
+              "hint"
+            ]
+          },
+          "unit_price_paise": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "reason_key": {
+            "$ref": "../common.schema.json#/definitions/MessageKey"
+          },
+          "rx_seen": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "item_id",
+          "added_via"
+        ]
+      },
+      "minItems": 1,
+      "maxItems": 50
+    }
+  },
+  "required": [
+    "bill_id",
+    "lines"
+  ]
+}

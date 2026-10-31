@@ -120,6 +120,523 @@ paths:
               schema: {$ref: './payables_view.schema.json'}
         '401': {$ref: '#/components/responses/Problem'}
         '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/home:
+    get:
+      operationId: getHomeView
+      security: [{device: []}, {console: []}]
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './home_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/ask:
+    get:
+      operationId: getAskView
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: query, name: session, required: false, schema: {type: string}}
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './layer_pending_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/forecast:
+    get:
+      operationId: getForecastView
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: query, name: metric, required: false, schema: {type: string}}
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './layer_pending_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/notifications:
+    get:
+      operationId: getNotificationsView
+      security: [{device: []}, {console: []}]
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './notifications_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/gates/{gate_id}:
+    get:
+      operationId: getGateView
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: path, name: gate_id, required: true, schema: {type: string}}
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './gate_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/bill/{bill_id}:
+    get:
+      operationId: getBillView
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: path, name: bill_id, required: true, schema: {type: string}}
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './bill_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/bill/{bill_id}/pay:
+    get:
+      operationId: getBillPayView
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: path, name: bill_id, required: true, schema: {type: string}}
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './bill_pay_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/bill/{bill_id}/paid:
+    get:
+      operationId: getBillPaidView
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: path, name: bill_id, required: true, schema: {type: string}}
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './bill_paid_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/park:
+    get:
+      operationId: getParkView
+      security: [{device: []}, {console: []}]
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './park_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/orders:
+    get:
+      operationId: getOrdersView
+      security: [{device: []}, {console: []}]
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './orders_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/orders/{order_id}:
+    get:
+      operationId: getOrderView
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: path, name: order_id, required: true, schema: {type: string}}
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './order_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/stock/expiry:
+    get:
+      operationId: getStockExpiryView
+      security: [{device: []}, {console: []}]
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './expiry_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/suppliers:
+    get:
+      operationId: getSuppliersView
+      security: [{device: []}, {console: []}]
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './suppliers_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/po/{po_id}:
+    get:
+      operationId: getPoView
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: path, name: po_id, required: true, schema: {type: string}}
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './po_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/grn/{po_id}:
+    get:
+      operationId: getGrnView
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: path, name: po_id, required: true, schema: {type: string}}
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './grn_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/claims/{claim_id}:
+    get:
+      operationId: getClaimView
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: path, name: claim_id, required: true, schema: {type: string}}
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './claim_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/grow:
+    get:
+      operationId: getGrowView
+      security: [{device: []}, {console: []}]
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './layer_pending_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/grow/plans/{plan_id}:
+    get:
+      operationId: getGrowPlanView
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: path, name: plan_id, required: true, schema: {type: string}}
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './layer_pending_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/grow/demand:
+    get:
+      operationId: getGrowDemandView
+      security: [{device: []}, {console: []}]
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './demand_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/grow/bundles:
+    get:
+      operationId: getGrowBundlesView
+      security: [{device: []}, {console: []}]
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './layer_pending_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/grow/ledger:
+    get:
+      operationId: getGrowLedgerView
+      security: [{device: []}, {console: []}]
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './layer_pending_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/campaigns/{campaign_id}:
+    get:
+      operationId: getCampaignView
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: path, name: campaign_id, required: true, schema: {type: string}}
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './layer_pending_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/offers:
+    get:
+      operationId: getOffersView
+      security: [{device: []}, {console: []}]
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './offers_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/offers/{program_id}:
+    get:
+      operationId: getOfferView
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: path, name: program_id, required: true, schema: {type: string}}
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './offer_detail_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/storefront:
+    get:
+      operationId: getStorefrontView
+      security: [{device: []}, {console: []}]
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './storefront_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/team:
+    get:
+      operationId: getTeamView
+      security: [{device: []}, {console: []}]
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './layer_pending_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/runs/{run_id}:
+    get:
+      operationId: getRunView
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: path, name: run_id, required: true, schema: {type: string}}
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './layer_pending_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/memory:
+    get:
+      operationId: getMemoryView
+      security: [{device: []}, {console: []}]
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './layer_pending_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/hisaab:
+    get:
+      operationId: getHisaabView
+      security: [{device: []}, {console: []}]
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './hisaab_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/reports:
+    get:
+      operationId: getReportsView
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: query, name: month, required: false, schema: {type: string}}
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './reports_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/feedback:
+    get:
+      operationId: getFeedbackView
+      security: [{device: []}, {console: []}]
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './feedback_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/trust:
+    get:
+      operationId: getTrustView
+      security: [{device: []}, {console: []}]
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './trust_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/health:
+    get:
+      operationId: getHealthView
+      security: [{device: []}, {console: []}]
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './health_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/capital:
+    get:
+      operationId: getCapitalView
+      security: [{device: []}, {console: []}]
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './capital_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/kot:
+    get:
+      operationId: getKotView
+      security: [{device: []}, {console: []}]
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './kot_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/appointments:
+    get:
+      operationId: getAppointmentsView
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: query, name: date, required: false, schema: {type: string}}
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './appointments_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/rx:
+    get:
+      operationId: getRxView
+      security: [{device: []}, {console: []}]
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './rx_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/verdict/{check_id}:
+    get:
+      operationId: getVerdictView
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: path, name: check_id, required: true, schema: {type: string}}
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './verdict_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/privacy/patrons/{patron_id}/export:
+    get:
+      operationId: getPatronExport
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {in: path, name: patron_id, required: true, schema: {type: string}}
+      responses:
+        '200':
+          description: Scoped merchant read model
+          content:
+            application/json:
+              schema: {$ref: './patron_export.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/public/storefront/{slug}:
+    get:
+      operationId: getPublicStorefront
+      security: []
+      parameters:
+        - {in: path, name: slug, required: true, schema: {type: string}}
+      responses:
+        '200':
+          description: Public shop page (nothing personal)
+          content:
+            application/json:
+              schema: {$ref: './public_storefront.schema.json'}
+        '404': {$ref: '#/components/responses/Problem'}
   /v1/patrons:
     post:
       operationId: patronsadd

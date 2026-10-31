@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/appointments_book.schema.json",
+  "title": "AppointmentsBook",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "service_item_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "staff_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "start_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "patron_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "source": {
+      "enum": [
+        "device",
+        "whatsapp",
+        "storefront"
+      ]
+    }
+  },
+  "required": [
+    "service_item_id",
+    "staff_id",
+    "start_at",
+    "source"
+  ]
+}

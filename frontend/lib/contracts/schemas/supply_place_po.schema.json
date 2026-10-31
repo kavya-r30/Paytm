@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/supply_place_po.schema.json",
+  "title": "SupplyPlacePo",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "po_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    }
+  },
+  "required": [
+    "po_id"
+  ]
+}

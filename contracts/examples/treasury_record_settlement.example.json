@@ -1,0 +1,15 @@
+{
+  "external_ref": "stl-20261030",
+  "date": "2026-10-30",
+  "gross_paise": 100000,
+  "net_paise": 99000,
+  "lines": [
+    {
+      "kind": "fee",
+      "amount_paise": 1000
+    }
+  ],
+  "utrs": [
+    "430112345678"
+  ]
+}

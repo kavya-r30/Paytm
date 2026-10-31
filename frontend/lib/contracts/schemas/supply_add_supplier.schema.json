@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/supply_add_supplier.schema.json",
+  "title": "SupplyAddSupplier",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "phone": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "lang": {
+      "$ref": "../common.schema.json#/definitions/Locale"
+    },
+    "lead_days": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 60
+    }
+  },
+  "required": [
+    "name",
+    "lang",
+    "lead_days"
+  ]
+}

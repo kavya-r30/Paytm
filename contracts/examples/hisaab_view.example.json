@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-30",
+  "close": null,
+  "today": {
+    "sales_paise": 9000,
+    "by_mode": {
+      "cash": 9000
+    },
+    "expenses_paise": 0,
+    "refunds_paise": 0,
+    "khata_given_paise": 0
+  },
+  "unmatched": [],
+  "exceptions": [],
+  "settlements": [],
+  "shifts": [],
+  "expenses": [],
+  "invalidate_on": [
+    "x.changed"
+  ]
+}

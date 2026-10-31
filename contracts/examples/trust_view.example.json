@@ -1,0 +1,32 @@
+{
+  "tiers": [
+    {
+      "tier": "R0",
+      "commands": [],
+      "confirm_key": "trust.tier_r0"
+    }
+  ],
+  "roles": [
+    {
+      "role": "owner",
+      "max_tier": "R4",
+      "approve": [
+        "R2",
+        "R3"
+      ]
+    }
+  ],
+  "activity": [],
+  "audit": {
+    "ok": true,
+    "rows": 0
+  },
+  "undo": [],
+  "data_sharing": {
+    "peer_benchmarks": false
+  },
+  "data_requests": [],
+  "invalidate_on": [
+    "x.changed"
+  ]
+}

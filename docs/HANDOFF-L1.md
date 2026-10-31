@@ -1,6 +1,16 @@
 # Arth: Handoff for L1 (continue in a fresh Claude Code / Codex session)
 
-## Current checkpoint (30 Oct 2026, CP-1c)
+## Current checkpoint (30 Oct 2026, CP-1) — L1 DONE
+
+**CP-1 green:** 1175 pytest + 340 Vitest, gen-check/lint/typecheck clean. L1d (T1.12, T1.13, T1.16–T1.23) is recorded in
+`docs/superpowers/plans/2026-10-30-arth-L1d-commerce-completion.md`. New tables are in migration 0005 (frozen from now on;
+L2+ tables go in 0006+). `arth.domains.wiring.register_commerce` registers every domain; `arth.api.views` serves every J9 screen.
+Domain-table writes outside a bus command now raise (`Repository._writable`); tests seed with `conftest.seed_repo`.
+
+**Next (user, 30 Oct 2026): prototype pace, two parallel lanes** — Lane A backend L2→L6 (this account), Lane B frontend L7
+(second account), coordinated through GitHub issues; see the plan index. Git is now used: commit per layer, push, draft PR.
+
+## Previous checkpoint (CP-1c)
 
 L1a (T1.1–T1.6), L1b (T1.7–T1.10) and L1c (T1.11 Stock, T1.14 Patrons, T1.15 Ledger) are complete.
 CP-1c: `python dev.py check` exit 0, **741 pytest passed (1 existing Starlette/httpx warning), 214 Vitest passed**,

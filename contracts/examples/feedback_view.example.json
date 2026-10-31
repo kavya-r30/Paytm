@@ -1,0 +1,9 @@
+{
+  "average_bp": null,
+  "count": 0,
+  "ratings": [],
+  "complaints": 0,
+  "invalidate_on": [
+    "x.changed"
+  ]
+}

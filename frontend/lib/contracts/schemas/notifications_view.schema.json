@@ -1,0 +1,145 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/notifications_view.schema.json",
+  "title": "NotificationsView",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "needs_you": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "gate_id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "thread_id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "tier": {
+            "$ref": "./common.schema.json#/definitions/Tier"
+          },
+          "type": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "status": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "gate_id",
+          "thread_id",
+          "tier",
+          "type",
+          "status",
+          "expires_at"
+        ]
+      }
+    },
+    "done": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "command_id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "type": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "tier": {
+            "$ref": "./common.schema.json#/definitions/Tier"
+          },
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "undo_until": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "command_id",
+          "type",
+          "tier",
+          "occurred_at",
+          "undo_until"
+        ]
+      }
+    },
+    "snoozed": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "gate_id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "thread_id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "tier": {
+            "$ref": "./common.schema.json#/definitions/Tier"
+          },
+          "type": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "status": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "gate_id",
+          "thread_id",
+          "tier",
+          "type",
+          "status",
+          "expires_at"
+        ]
+      }
+    },
+    "invalidate_on": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    }
+  },
+  "required": [
+    "needs_you",
+    "done",
+    "snoozed",
+    "invalidate_on"
+  ]
+}

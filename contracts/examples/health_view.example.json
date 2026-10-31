@@ -1,0 +1,21 @@
+{
+  "device": null,
+  "offline_queue": {
+    "size": 0,
+    "last_sync_at": null
+  },
+  "providers": [
+    {
+      "name": "mistral",
+      "configured": false,
+      "mode": "unknown"
+    }
+  ],
+  "ai_spend_today_paise": 0,
+  "backup": {
+    "last_snapshot_at": null
+  },
+  "invalidate_on": [
+    "x.changed"
+  ]
+}

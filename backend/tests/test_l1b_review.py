@@ -1,6 +1,7 @@
 from datetime import timedelta
 
 import pytest
+from conftest import seed_repo
 from test_l1b_staff import setup_staff
 
 
@@ -59,7 +60,6 @@ async def test_merchant_quiet_hours_apply_and_cannot_loosen_guardrails(db):
 async def test_queued_approval_rechecks_revoked_session(db):
     from arth.domains.tables import staff_sessions
     from arth.governance.commands import CommandError
-    from arth.governance.repository import Repository
 
     bus, service, shop, owner, device = await setup_staff(db)
     token = (await service.login(device, owner.actor_id, "4826", "console", "owner-login"))["token"]
@@ -72,7 +72,7 @@ async def test_queued_approval_rechecks_revoked_session(db):
     gate = await bus.submit(session, "supply.place_po", {}, "po")
     await bus.decide(session, gate["thread_id"], "approve", "approve")
     async with db.write() as conn:
-        await Repository(conn, owner.merchant_id).update(staff_sessions, {"revoked": 1})
+        await seed_repo(conn, owner.merchant_id).update(staff_sessions, {"revoked": 1})
     bus.clock.set(bus.clock.now() + timedelta(seconds=30))
     with pytest.raises(CommandError, match="session"):
         await bus.run_due(owner.merchant_id)

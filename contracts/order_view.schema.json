@@ -1,0 +1,196 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/order_view.schema.json",
+  "title": "OrderView",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "order": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "./common.schema.json#/definitions/PrefixedId"
+        },
+        "status": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "channel": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "patron_id": {
+          "anyOf": [
+            {
+              "$ref": "./common.schema.json#/definitions/PrefixedId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "total_paise": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "lines": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "$ref": "./common.schema.json#/definitions/PrefixedId"
+              },
+              "item_id": {
+                "anyOf": [
+                  {
+                    "$ref": "./common.schema.json#/definitions/PrefixedId"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "qty_milli": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "unit_price_paise": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "amount_paise": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "check": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "id",
+              "item_id",
+              "text",
+              "qty_milli",
+              "unit_price_paise",
+              "amount_paise",
+              "check"
+            ]
+          }
+        }
+      },
+      "required": [
+        "id",
+        "status",
+        "channel",
+        "patron_id",
+        "total_paise",
+        "created_at",
+        "lines"
+      ]
+    },
+    "history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "from_state": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "to_state": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "actor_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "from_state",
+          "to_state",
+          "actor_id",
+          "occurred_at"
+        ]
+      }
+    },
+    "pick_list": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "item_id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "qty_milli": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "item_id",
+          "name",
+          "qty_milli"
+        ]
+      }
+    },
+    "allowed": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    "invalidate_on": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    }
+  },
+  "required": [
+    "order",
+    "history",
+    "pick_list",
+    "allowed",
+    "invalidate_on"
+  ]
+}
