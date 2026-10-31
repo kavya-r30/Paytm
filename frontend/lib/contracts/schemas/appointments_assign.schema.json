@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/appointments_assign.schema.json",
+  "title": "AppointmentsAssign",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "appointment_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "staff_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "start_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "appointment_id",
+    "staff_id",
+    "start_at"
+  ]
+}

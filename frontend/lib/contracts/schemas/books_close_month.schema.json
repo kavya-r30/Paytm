@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/books_close_month.schema.json",
+  "title": "BooksCloseMonth",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "month": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$"
+    }
+  },
+  "required": [
+    "month"
+  ]
+}

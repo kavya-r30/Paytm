@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/preorders_create.schema.json",
+  "title": "PreordersCreate",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "patron_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "account_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "item_id": {
+            "$ref": "../common.schema.json#/definitions/PrefixedId"
+          },
+          "qty_milli": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "item_id",
+          "qty_milli"
+        ]
+      },
+      "minItems": 1,
+      "maxItems": 10
+    },
+    "deposit_paise": {
+      "type": "integer",
+      "minimum": 1
+    }
+  },
+  "required": [
+    "patron_id",
+    "account_id",
+    "items",
+    "deposit_paise"
+  ]
+}

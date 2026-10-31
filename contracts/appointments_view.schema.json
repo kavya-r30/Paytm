@@ -1,0 +1,217 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/appointments_view.schema.json",
+  "title": "AppointmentsView",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "staff": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "skills": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          },
+          "appointments": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "$ref": "./common.schema.json#/definitions/PrefixedId"
+                },
+                "service_item_id": {
+                  "$ref": "./common.schema.json#/definitions/PrefixedId"
+                },
+                "staff_id": {
+                  "anyOf": [
+                    {
+                      "$ref": "./common.schema.json#/definitions/PrefixedId"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "patron_id": {
+                  "anyOf": [
+                    {
+                      "$ref": "./common.schema.json#/definitions/PrefixedId"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "start_at": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "end_at": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "status": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 200
+                },
+                "source": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 200
+                }
+              },
+              "required": [
+                "id",
+                "service_item_id",
+                "staff_id",
+                "patron_id",
+                "start_at",
+                "end_at",
+                "status",
+                "source"
+              ]
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "skills",
+          "appointments"
+        ]
+      }
+    },
+    "walk_ins": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "service_item_id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "staff_id": {
+            "anyOf": [
+              {
+                "$ref": "./common.schema.json#/definitions/PrefixedId"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "patron_id": {
+            "anyOf": [
+              {
+                "$ref": "./common.schema.json#/definitions/PrefixedId"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "start_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "end_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "source": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "id",
+          "service_item_id",
+          "staff_id",
+          "patron_id",
+          "start_at",
+          "end_at",
+          "status",
+          "source"
+        ]
+      }
+    },
+    "no_shows": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "invalidate_on": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    }
+  },
+  "required": [
+    "date",
+    "staff",
+    "walk_ins",
+    "no_shows",
+    "invalidate_on"
+  ]
+}

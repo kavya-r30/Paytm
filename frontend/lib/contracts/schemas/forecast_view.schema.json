@@ -1,0 +1,187 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/forecast_view.schema.json",
+  "title": "ForecastView",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "metric": {
+      "enum": [
+        "sales",
+        "items"
+      ]
+    },
+    "status": {
+      "enum": [
+        "ready",
+        "needs_more_data"
+      ]
+    },
+    "actuals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "sales_paise": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "date",
+          "sales_paise"
+        ]
+      }
+    },
+    "days": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "p10_paise": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "p50_paise": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "p90_paise": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "festive": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "date",
+          "p10_paise",
+          "p50_paise",
+          "p90_paise",
+          "festive"
+        ]
+      }
+    },
+    "accuracy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "wape_bp": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "coverage_bp": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "window_days": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "within_band": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "wape_bp",
+        "coverage_bp",
+        "window_days",
+        "within_band"
+      ]
+    },
+    "drivers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "key": {
+            "$ref": "./common.schema.json#/definitions/MessageKey"
+          },
+          "contribution_paise": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "key",
+          "contribution_paise"
+        ]
+      }
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "item_id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "daily_qty_milli": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "horizon_qty_milli": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "item_id",
+          "name",
+          "daily_qty_milli",
+          "horizon_qty_milli"
+        ]
+      }
+    },
+    "invalidate_on": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    }
+  },
+  "required": [
+    "metric",
+    "status",
+    "actuals",
+    "days",
+    "accuracy",
+    "drivers",
+    "items",
+    "invalidate_on"
+  ]
+}

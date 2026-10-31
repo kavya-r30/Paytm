@@ -118,7 +118,10 @@ reminders = record(
     Column("balance_paise", Integer, nullable=False),
     Column("command_id", String, nullable=False),
     Column("occurred_at", String, nullable=False),
-    constraints=(UniqueConstraint("merchant_id", "link_id"), UniqueConstraint("merchant_id", "command_id")),
+    constraints=(
+        UniqueConstraint("merchant_id", "link_id", name="uq_reminders_link"),
+        UniqueConstraint("merchant_id", "command_id", name="uq_reminders_command"),
+    ),
 )
 payables = record(
     "payables",

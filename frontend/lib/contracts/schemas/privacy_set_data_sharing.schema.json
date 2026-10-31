@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/privacy_set_data_sharing.schema.json",
+  "title": "PrivacySetDataSharing",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "peer_benchmarks": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "peer_benchmarks"
+  ]
+}

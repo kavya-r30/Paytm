@@ -12,7 +12,8 @@
       "enum": [
         "approve",
         "snooze",
-        "edit"
+        "edit",
+        "decline"
       ]
     },
     "edits": {
@@ -23,7 +24,8 @@
       "additionalProperties": {
         "enum": [
           "approve",
-          "snooze"
+          "snooze",
+          "decline"
         ]
       }
     }

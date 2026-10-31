@@ -1,0 +1,141 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/capital_view.schema.json",
+  "title": "CapitalView",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "profile": {
+      "type": "object"
+    },
+    "need": {
+      "anyOf": [
+        {
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "affordability": {
+      "type": "object"
+    },
+    "offers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "lender": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "amount_paise": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "tenor_days": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "apr_bp": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "edi_paise": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "processing_fee_paise": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "total_repayment_paise": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "kfs_url": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "cooling_off_days": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "affordable": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "lender",
+          "amount_paise",
+          "tenor_days",
+          "apr_bp",
+          "edi_paise",
+          "processing_fee_paise",
+          "total_repayment_paise",
+          "kfs_url",
+          "cooling_off_days",
+          "expires_at",
+          "affordable"
+        ]
+      }
+    },
+    "recommended_offer_id": {
+      "anyOf": [
+        {
+          "$ref": "./common.schema.json#/definitions/PrefixedId"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "console_pointer": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "route": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "message_key": {
+          "$ref": "./common.schema.json#/definitions/MessageKey"
+        }
+      },
+      "required": [
+        "route",
+        "message_key"
+      ]
+    },
+    "invalidate_on": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    }
+  },
+  "required": [
+    "profile",
+    "need",
+    "affordability",
+    "offers",
+    "recommended_offer_id",
+    "console_pointer",
+    "invalidate_on"
+  ]
+}

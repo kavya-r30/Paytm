@@ -1,0 +1,31 @@
+{
+  "month": "2026-10",
+  "profile": "unregistered",
+  "pnl": {
+    "month": "2026-10",
+    "sales_paise": 0,
+    "returns_paise": 0,
+    "cogs_paise": 0,
+    "gross_profit_paise": 0,
+    "expenses": [],
+    "expenses_paise": 0,
+    "reward_cost_paise": 0,
+    "net_paise": 0
+  },
+  "gst": {
+    "month": "2026-10",
+    "invoices": 0,
+    "rates": [],
+    "totals": {
+      "taxable_paise": 0,
+      "cgst_paise": 0,
+      "sgst_paise": 0,
+      "total_paise": 0
+    }
+  },
+  "closed_months": [],
+  "scheduled": [],
+  "invalidate_on": [
+    "x.changed"
+  ]
+}

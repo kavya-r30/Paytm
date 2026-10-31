@@ -1,0 +1,18 @@
+{
+  "check_id": "sentinel_01JBQ0Z7Y8K3M4N5P6Q7R8S9T0",
+  "verdict": "not_received",
+  "headline_key": "sentinel.not_received_yet",
+  "evidence": [
+    {
+      "kind": "amount",
+      "claimed": "50000",
+      "ledger": null,
+      "state": "missing"
+    }
+  ],
+  "signals": [],
+  "footnote_key": "sentinel.ledger_only",
+  "invalidate_on": [
+    "x.changed"
+  ]
+}

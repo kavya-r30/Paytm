@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import date
+from enum import Enum
 
 from pydantic import BaseModel, ConfigDict, Field, conint, constr
 
@@ -23,6 +24,13 @@ class Batch(BaseModel):
     qty_milli: int
 
 
+class Status(Enum):
+    ok = 'ok'
+    low = 'low'
+    out = 'out'
+    untracked = 'untracked'
+
+
 class Item(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
@@ -34,6 +42,12 @@ class Item(BaseModel):
     on_hand_qty_milli: int
     sellable_qty_milli: int
     batches: list[Batch]
+    name: str
+    unit: str
+    category: str
+    target_qty_milli: int
+    status: Status
+    supplier_name: str | None
 
 
 class StockView(BaseModel):

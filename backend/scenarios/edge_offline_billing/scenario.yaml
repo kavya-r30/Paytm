@@ -1,0 +1,39 @@
+scenario: edge_offline_billing
+title: Edge - the device bills offline and replays its queue
+pack: kirana
+world: {days: 2, seed: 37, size: micro, patrons: 6}
+scenes:
+  - id: "1"
+    title: Billing while the network is down
+    beats:
+      - id: "1.1"
+        cue: Wi-Fi drops; the device keeps billing and queues each command with its own key
+        input:
+          - command: {type: counter.open_bill, payload: {}, key: offline-open}
+        save: {bill: data.bill_id}
+      - id: "1.2"
+        cue: A kilo of sugar, paid in cash, all queued
+        input:
+          - command: {type: counter.add_lines, payload: {bill_id: "${bill}", lines: [{item_id: "${sugar_loose}", qty_milli: 1000, added_via: tap}]}, key: offline-add}
+          - command: {type: counter.checkout, payload: {bill_id: "${bill}", payments: [{mode: cash, amount_paise: 4500, tendered_paise: 5000}]}, key: offline-pay}
+        expect:
+          - {view: "bill/${bill}", path: bill.status, equals: closed}
+  - id: "2"
+    title: Back online, the queue replays and nothing doubles
+    beats:
+      - id: "2.1"
+        cue: The flaky reconnect sends the whole queue again
+        input:
+          - command: {type: counter.open_bill, payload: {}, key: offline-open}
+        expect:
+          - {result: data.bill_id, equals: "${bill}"}
+      - id: "2.2"
+        cue: Add and checkout replay; the bill stays ₹45 and closed
+        input:
+          - command: {type: counter.add_lines, payload: {bill_id: "${bill}", lines: [{item_id: "${sugar_loose}", qty_milli: 1000, added_via: tap}]}, key: offline-add}
+          - command: {type: counter.checkout, payload: {bill_id: "${bill}", payments: [{mode: cash, amount_paise: 4500, tendered_paise: 5000}]}, key: offline-pay}
+        expect:
+          - {view: "bill/${bill}", path: bill.status, equals: closed}
+          - {view: "bill/${bill}", path: bill.total_paise, equals: 4500}
+          - {view: trust, path: audit.ok, equals: true}
+          - {invariants: true}

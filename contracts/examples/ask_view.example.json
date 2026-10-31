@@ -1,0 +1,16 @@
+{
+  "session": null,
+  "turns": [
+    {
+      "id": "turn_01JBQ0Z7Y8K3M4N5P6Q7R8S9T0",
+      "surface": "device",
+      "heard": "Aaj kitna aaya?",
+      "intent": "read:today_sales",
+      "said": "Aaj ₹1,124 aaya, 14 bill.",
+      "created_at": "2026-10-29T04:00:00Z"
+    }
+  ],
+  "invalidate_on": [
+    "x.changed"
+  ]
+}

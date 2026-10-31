@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/counter_advance_ticket.schema.json",
+  "title": "CounterAdvanceTicket",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "ticket_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "to": {
+      "enum": [
+        "preparing",
+        "ready",
+        "served"
+      ]
+    }
+  },
+  "required": [
+    "ticket_id",
+    "to"
+  ]
+}

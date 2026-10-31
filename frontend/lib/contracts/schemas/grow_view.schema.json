@@ -1,0 +1,226 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/grow_view.schema.json",
+  "title": "GrowView",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "diagnostics": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "current": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "customers": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "visits": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "sales_paise": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "customers",
+            "visits",
+            "sales_paise"
+          ]
+        },
+        "previous": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "customers": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "visits": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "sales_paise": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "customers",
+            "visits",
+            "sales_paise"
+          ]
+        },
+        "change_paise": {
+          "type": "integer"
+        },
+        "parts": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "customers_paise": {
+              "type": "integer"
+            },
+            "frequency_paise": {
+              "type": "integer"
+            },
+            "basket_paise": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "customers_paise",
+            "frequency_paise",
+            "basket_paise"
+          ]
+        }
+      },
+      "required": [
+        "current",
+        "previous",
+        "change_paise",
+        "parts"
+      ]
+    },
+    "peers": {
+      "type": "object"
+    },
+    "levers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "eligible": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "estimate_paise": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "label": {
+            "enum": [
+              "estimate"
+            ]
+          },
+          "gate": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "name",
+          "enabled",
+          "eligible",
+          "estimate_paise",
+          "label",
+          "gate"
+        ]
+      }
+    },
+    "plans": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "goal_key": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "status": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "budget_paise": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "levers": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          }
+        },
+        "required": [
+          "id",
+          "goal_key",
+          "status",
+          "budget_paise",
+          "levers"
+        ]
+      }
+    },
+    "advisor": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "account_id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "patron_id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "current_limit_paise": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "suggested_limit_paise": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "reason_key": {
+            "$ref": "./common.schema.json#/definitions/MessageKey"
+          }
+        },
+        "required": [
+          "account_id",
+          "patron_id",
+          "current_limit_paise",
+          "suggested_limit_paise",
+          "reason_key"
+        ]
+      }
+    },
+    "invalidate_on": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    }
+  },
+  "required": [
+    "diagnostics",
+    "peers",
+    "levers",
+    "plans",
+    "advisor",
+    "invalidate_on"
+  ]
+}

@@ -1,0 +1,140 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/public_storefront.schema.json",
+  "title": "PublicStorefront",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{2,40}$"
+    },
+    "hours": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "start": {
+          "type": "string",
+          "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$"
+        },
+        "end": {
+          "type": "string",
+          "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$"
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ]
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "item_id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "names": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "unit": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "price_paise": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "in_stock": {
+            "type": "boolean"
+          },
+          "category": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "item_id",
+          "names",
+          "unit",
+          "price_paise",
+          "in_stock",
+          "category"
+        ]
+      }
+    },
+    "offers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "program_id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "terms": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "amount_paise": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "min_spend_paise": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "expiry_days": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "amount_paise",
+              "min_spend_paise",
+              "expiry_days"
+            ]
+          },
+          "type": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "program_id",
+          "terms",
+          "type"
+        ]
+      }
+    },
+    "invalidate_on": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    }
+  },
+  "required": [
+    "name",
+    "slug",
+    "hours",
+    "items",
+    "offers",
+    "invalidate_on"
+  ]
+}

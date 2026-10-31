@@ -61,6 +61,14 @@ class Dispatcher:
     def unsubscribe(self, queue: asyncio.Queue[dict[str, Any]]) -> None:
         self.subscribers.pop(queue, None)
 
+    def publish(self, merchant_id: str, item: dict[str, Any]) -> None:
+        """Push a non-persisted stream item (e.g. a turn's envelope) to this merchant's live subscribers."""
+        for queue, owner in list(self.subscribers.items()):
+            if owner == merchant_id:
+                if queue.full():
+                    queue.get_nowait()
+                queue.put_nowait(item)
+
     def declare_view(self, name: str, topics: set[str]) -> None:
         self.views[name] = topics
 
@@ -72,6 +80,7 @@ class Dispatcher:
                 last = offsets[0]["last_seq"] if offsets else 0
                 rows = sorted(await repo.select(outbox, outbox.c.seq > last), key=lambda r: r["seq"])
                 for row in rows:
+                    repo.command_id = row["event_id"]  # consumer effects are caused by this event
                     await consumer(repo, json.loads(row["payload"]))
                     last = row["seq"]
                 if not offsets:

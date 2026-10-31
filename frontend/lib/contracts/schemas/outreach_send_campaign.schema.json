@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/outreach_send_campaign.schema.json",
+  "title": "OutreachSendCampaign",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "plan_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "lever": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "template": {
+      "$ref": "../common.schema.json#/definitions/MessageKey"
+    }
+  },
+  "required": [
+    "plan_id",
+    "lever",
+    "template"
+  ]
+}

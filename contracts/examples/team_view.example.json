@@ -1,0 +1,26 @@
+{
+  "helpers": [
+    {
+      "id": "khata",
+      "name_key": "helper.khata",
+      "agents": [
+        "collections"
+      ],
+      "status": "waiting",
+      "tier": "R3",
+      "pending_gates": 1,
+      "open_work": 0,
+      "line": null
+    }
+  ],
+  "runs": [],
+  "work": [],
+  "kill_switch": false,
+  "summary": {
+    "done_since_night": 3,
+    "waiting_for_you": 1
+  },
+  "invalidate_on": [
+    "x.changed"
+  ]
+}
