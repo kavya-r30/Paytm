@@ -10,3 +10,6 @@ __pycache__/
 *.pyc
 frontend/e2e-output/
 frontend/AGENTS.md
+
+.vercel
+.env.local

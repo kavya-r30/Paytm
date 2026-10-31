@@ -1,0 +1,48 @@
+# Render blueprint for the Arth API (frontend is on Vercel).
+# One always-on instance: SQLite, the shop clock and the scheduler live in the process, and every live
+# surface holds an SSE stream, so no autoscaling and a persistent disk at ARTH_DATA_DIR.
+services:
+  - type: web
+    name: arth-api
+    runtime: python
+    plan: starter # free has no disk and sleeps, which stops the shop clock
+    region: singapore
+    rootDir: backend # the app also reads ../contracts and ../design; Render clones the whole repo
+    buildCommand: pip install uv && uv sync --frozen --no-dev
+    startCommand: uv run --no-sync uvicorn arth.main:app --host 0.0.0.0 --port $PORT --timeout-graceful-shutdown 3
+    healthCheckPath: /healthz
+    numInstances: 1
+    disk:
+      name: arth-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
+      - key: ARTH_DATA_DIR
+        value: /var/data
+      # prod needs every provider key below; demo replays recorded cassettes for missing ones
+      - key: ARTH_MODE
+        sync: false
+      # same values as the Vercel project's NEXT_PUBLIC_*_TOKEN
+      - key: ARTH_DIRECTOR_TOKEN
+        sync: false
+      - key: ARTH_DEVICE_TOKEN
+        sync: false
+      - key: ARTH_CONSOLE_TOKEN
+        sync: false
+      # JSON list, e.g. ["https://arth.vercel.app"]
+      - key: ARTH_CORS_ORIGINS
+        sync: false
+      - key: AZURE_OPENAI_ENDPOINT
+        sync: false
+      - key: AZURE_OPENAI_API_KEY
+        sync: false
+      - key: AZURE_OPENAI_API_VERSION
+        value: 2025-04-01-preview
+      - key: MISTRAL_API_KEY
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: SARVAM_API_KEY
+        sync: false
