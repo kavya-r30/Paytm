@@ -80,4 +80,25 @@ export interface BillView {
     key: string;
     label: string;
   }[];
+  hint?: {
+    /**
+     * A ULID prefixed by its kind, e.g. bill_01JBQ0Z7Y8K3M4N5P6Q7R8S9T1 (spec Part C1).
+     */
+    hint_id: string;
+    /**
+     * A ULID prefixed by its kind, e.g. bill_01JBQ0Z7Y8K3M4N5P6Q7R8S9T1 (spec Part C1).
+     */
+    patron_id: string;
+    /**
+     * A ULID prefixed by its kind, e.g. bill_01JBQ0Z7Y8K3M4N5P6Q7R8S9T1 (spec Part C1).
+     */
+    item_id: string;
+    name: string;
+    price_paise: number;
+    /**
+     * An i18n message key: two or more dot-separated segments, e.g. chip.aaj_kitna_aaya.
+     */
+    reason_key: string;
+    audience: "owner";
+  } | null;
 }

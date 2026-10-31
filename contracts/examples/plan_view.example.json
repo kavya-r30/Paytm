@@ -1,0 +1,32 @@
+{
+  "plan": {
+    "id": "plan_01JBQ0Z7Y8K3M4N5P6Q7R8S9T0",
+    "goal_key": "goal.more_visits",
+    "status": "active",
+    "budget_paise": 50000,
+    "holdout_bp": 2000,
+    "levers": [
+      "winback"
+    ],
+    "diagnosis": {}
+  },
+  "campaigns": [
+    {
+      "id": "campaign_01JBQ0Z7Y8K3M4N5P6Q7R8S9T0",
+      "plan_id": "plan_01JBQ0Z7Y8K3M4N5P6Q7R8S9T0",
+      "lever": "winback",
+      "status": "running",
+      "stop_reason": null,
+      "treated": 8,
+      "holdout": 2,
+      "sent": 6,
+      "result": {
+        "mode": "counts",
+        "measurable": false
+      }
+    }
+  ],
+  "invalidate_on": [
+    "x.changed"
+  ]
+}

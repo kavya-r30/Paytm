@@ -28,9 +28,11 @@ import type { BillTicketChanged } from './bill_ticket_changed';
 import type { BillView } from './bill_view';
 import type { BooksCloseMonth } from './books_close_month';
 import type { BooksMonthClosed } from './books_month_closed';
+import type { BundlesView } from './bundles_view';
 import type { CalendarAddLocalEvent } from './calendar_add_local_event';
 import type { CalendarLocalEventAdded } from './calendar_local_event_added';
 import type { CalendarView } from './calendar_view';
+import type { CampaignView } from './campaign_view';
 import type { CapitalApplied } from './capital_applied';
 import type { CapitalApply } from './capital_apply';
 import type { CapitalOfferReceived } from './capital_offer_received';
@@ -86,7 +88,15 @@ import type { FeedbackView } from './feedback_view';
 import type { ForecastView } from './forecast_view';
 import type { GateView } from './gate_view';
 import type { GrnView } from './grn_view';
+import type { GrowView } from './grow_view';
+import type { GrowthCreatePlan } from './growth_create_plan';
+import type { GrowthLedgerView } from './growth_ledger_view';
+import type { GrowthOutreachRequested } from './growth_outreach_requested';
+import type { GrowthStopCampaign } from './growth_stop_campaign';
+import type { GrowthUpdated } from './growth_updated';
 import type { HealthView } from './health_view';
+import type { HintOffered } from './hint_offered';
+import type { HintsAccept } from './hints_accept';
 import type { HisaabView } from './hisaab_view';
 import type { HomeView } from './home_view';
 import type { LanguageChanged } from './i18n_changed';
@@ -152,6 +162,7 @@ import type { OrdersPlace } from './orders_place';
 import type { OrdersSettle } from './orders_settle';
 import type { OrdersSubstitute } from './orders_substitute';
 import type { OrdersView } from './orders_view';
+import type { OutreachSendCampaign } from './outreach_send_campaign';
 import type { ParkView } from './park_view';
 import type { PatronChanged } from './patron_changed';
 import type { PatronConsentChanged } from './patron_consent_changed';
@@ -177,6 +188,7 @@ import type { PaymentPending } from './payment_pending';
 import type { PaymentReceived } from './payment_received';
 import type { PaymentRefunded } from './payment_refunded';
 import type { PeersView } from './peers_view';
+import type { PlanView } from './plan_view';
 import type { PlaybookUpdated } from './playbook_updated';
 import type { PlaybooksCancel } from './playbooks_cancel';
 import type { PlaybooksStart } from './playbooks_start';
@@ -184,6 +196,8 @@ import type { PoChanged } from './po_changed';
 import type { PoSupplierAdded } from './po_supplier_added';
 import type { PoVarianceFound } from './po_variance_found';
 import type { PoView } from './po_view';
+import type { PreorderChanged } from './preorder_changed';
+import type { PreordersCreate } from './preorders_create';
 import type { PrivacyErasePatron } from './privacy_erase_patron';
 import type { PrivacyErased } from './privacy_erased';
 import type { PrivacyExportPatron } from './privacy_export_patron';
@@ -285,9 +299,11 @@ import bill_ticket_changedSchema from './schemas/bill_ticket_changed.schema.json
 import bill_viewSchema from './schemas/bill_view.schema.json';
 import books_close_monthSchema from './schemas/books_close_month.schema.json';
 import books_month_closedSchema from './schemas/books_month_closed.schema.json';
+import bundles_viewSchema from './schemas/bundles_view.schema.json';
 import calendar_add_local_eventSchema from './schemas/calendar_add_local_event.schema.json';
 import calendar_local_event_addedSchema from './schemas/calendar_local_event_added.schema.json';
 import calendar_viewSchema from './schemas/calendar_view.schema.json';
+import campaign_viewSchema from './schemas/campaign_view.schema.json';
 import capital_appliedSchema from './schemas/capital_applied.schema.json';
 import capital_applySchema from './schemas/capital_apply.schema.json';
 import capital_offer_receivedSchema from './schemas/capital_offer_received.schema.json';
@@ -343,7 +359,15 @@ import feedback_viewSchema from './schemas/feedback_view.schema.json';
 import forecast_viewSchema from './schemas/forecast_view.schema.json';
 import gate_viewSchema from './schemas/gate_view.schema.json';
 import grn_viewSchema from './schemas/grn_view.schema.json';
+import grow_viewSchema from './schemas/grow_view.schema.json';
+import growth_create_planSchema from './schemas/growth_create_plan.schema.json';
+import growth_ledger_viewSchema from './schemas/growth_ledger_view.schema.json';
+import growth_outreach_requestedSchema from './schemas/growth_outreach_requested.schema.json';
+import growth_stop_campaignSchema from './schemas/growth_stop_campaign.schema.json';
+import growth_updatedSchema from './schemas/growth_updated.schema.json';
 import health_viewSchema from './schemas/health_view.schema.json';
+import hint_offeredSchema from './schemas/hint_offered.schema.json';
+import hints_acceptSchema from './schemas/hints_accept.schema.json';
 import hisaab_viewSchema from './schemas/hisaab_view.schema.json';
 import home_viewSchema from './schemas/home_view.schema.json';
 import i18n_changedSchema from './schemas/i18n_changed.schema.json';
@@ -409,6 +433,7 @@ import orders_placeSchema from './schemas/orders_place.schema.json';
 import orders_settleSchema from './schemas/orders_settle.schema.json';
 import orders_substituteSchema from './schemas/orders_substitute.schema.json';
 import orders_viewSchema from './schemas/orders_view.schema.json';
+import outreach_send_campaignSchema from './schemas/outreach_send_campaign.schema.json';
 import park_viewSchema from './schemas/park_view.schema.json';
 import patron_changedSchema from './schemas/patron_changed.schema.json';
 import patron_consent_changedSchema from './schemas/patron_consent_changed.schema.json';
@@ -434,6 +459,7 @@ import payment_pendingSchema from './schemas/payment_pending.schema.json';
 import payment_receivedSchema from './schemas/payment_received.schema.json';
 import payment_refundedSchema from './schemas/payment_refunded.schema.json';
 import peers_viewSchema from './schemas/peers_view.schema.json';
+import plan_viewSchema from './schemas/plan_view.schema.json';
 import playbook_updatedSchema from './schemas/playbook_updated.schema.json';
 import playbooks_cancelSchema from './schemas/playbooks_cancel.schema.json';
 import playbooks_startSchema from './schemas/playbooks_start.schema.json';
@@ -441,6 +467,8 @@ import po_changedSchema from './schemas/po_changed.schema.json';
 import po_supplier_addedSchema from './schemas/po_supplier_added.schema.json';
 import po_variance_foundSchema from './schemas/po_variance_found.schema.json';
 import po_viewSchema from './schemas/po_view.schema.json';
+import preorder_changedSchema from './schemas/preorder_changed.schema.json';
+import preorders_createSchema from './schemas/preorders_create.schema.json';
 import privacy_erase_patronSchema from './schemas/privacy_erase_patron.schema.json';
 import privacy_erasedSchema from './schemas/privacy_erased.schema.json';
 import privacy_export_patronSchema from './schemas/privacy_export_patron.schema.json';
@@ -543,9 +571,11 @@ export type { BillTicketChanged } from './bill_ticket_changed';
 export type { BillView } from './bill_view';
 export type { BooksCloseMonth } from './books_close_month';
 export type { BooksMonthClosed } from './books_month_closed';
+export type { BundlesView } from './bundles_view';
 export type { CalendarAddLocalEvent } from './calendar_add_local_event';
 export type { CalendarLocalEventAdded } from './calendar_local_event_added';
 export type { CalendarView } from './calendar_view';
+export type { CampaignView } from './campaign_view';
 export type { CapitalApplied } from './capital_applied';
 export type { CapitalApply } from './capital_apply';
 export type { CapitalOfferReceived } from './capital_offer_received';
@@ -601,7 +631,15 @@ export type { FeedbackView } from './feedback_view';
 export type { ForecastView } from './forecast_view';
 export type { GateView } from './gate_view';
 export type { GrnView } from './grn_view';
+export type { GrowView } from './grow_view';
+export type { GrowthCreatePlan } from './growth_create_plan';
+export type { GrowthLedgerView } from './growth_ledger_view';
+export type { GrowthOutreachRequested } from './growth_outreach_requested';
+export type { GrowthStopCampaign } from './growth_stop_campaign';
+export type { GrowthUpdated } from './growth_updated';
 export type { HealthView } from './health_view';
+export type { HintOffered } from './hint_offered';
+export type { HintsAccept } from './hints_accept';
 export type { HisaabView } from './hisaab_view';
 export type { HomeView } from './home_view';
 export type { LanguageChanged } from './i18n_changed';
@@ -667,6 +705,7 @@ export type { OrdersPlace } from './orders_place';
 export type { OrdersSettle } from './orders_settle';
 export type { OrdersSubstitute } from './orders_substitute';
 export type { OrdersView } from './orders_view';
+export type { OutreachSendCampaign } from './outreach_send_campaign';
 export type { ParkView } from './park_view';
 export type { PatronChanged } from './patron_changed';
 export type { PatronConsentChanged } from './patron_consent_changed';
@@ -692,6 +731,7 @@ export type { PaymentPending } from './payment_pending';
 export type { PaymentReceived } from './payment_received';
 export type { PaymentRefunded } from './payment_refunded';
 export type { PeersView } from './peers_view';
+export type { PlanView } from './plan_view';
 export type { PlaybookUpdated } from './playbook_updated';
 export type { PlaybooksCancel } from './playbooks_cancel';
 export type { PlaybooksStart } from './playbooks_start';
@@ -699,6 +739,8 @@ export type { PoChanged } from './po_changed';
 export type { PoSupplierAdded } from './po_supplier_added';
 export type { PoVarianceFound } from './po_variance_found';
 export type { PoView } from './po_view';
+export type { PreorderChanged } from './preorder_changed';
+export type { PreordersCreate } from './preorders_create';
 export type { PrivacyErasePatron } from './privacy_erase_patron';
 export type { PrivacyErased } from './privacy_erased';
 export type { PrivacyExportPatron } from './privacy_export_patron';
@@ -804,9 +846,11 @@ export const SCHEMAS = [
   { name: 'bill_view', id: 'https://arth.local/contracts/bill_view.schema.json', schema: bill_viewSchema },
   { name: 'books_close_month', id: 'https://arth.local/contracts/commands/books_close_month.schema.json', schema: books_close_monthSchema },
   { name: 'books_month_closed', id: 'https://arth.local/contracts/events/books_month_closed.schema.json', schema: books_month_closedSchema },
+  { name: 'bundles_view', id: 'https://arth.local/contracts/bundles_view.schema.json', schema: bundles_viewSchema },
   { name: 'calendar_add_local_event', id: 'https://arth.local/contracts/commands/calendar_add_local_event.schema.json', schema: calendar_add_local_eventSchema },
   { name: 'calendar_local_event_added', id: 'https://arth.local/contracts/events/calendar_local_event_added.schema.json', schema: calendar_local_event_addedSchema },
   { name: 'calendar_view', id: 'https://arth.local/contracts/calendar_view.schema.json', schema: calendar_viewSchema },
+  { name: 'campaign_view', id: 'https://arth.local/contracts/campaign_view.schema.json', schema: campaign_viewSchema },
   { name: 'capital_applied', id: 'https://arth.local/contracts/events/capital_applied.schema.json', schema: capital_appliedSchema },
   { name: 'capital_apply', id: 'https://arth.local/contracts/commands/capital_apply.schema.json', schema: capital_applySchema },
   { name: 'capital_offer_received', id: 'https://arth.local/contracts/events/capital_offer_received.schema.json', schema: capital_offer_receivedSchema },
@@ -862,7 +906,15 @@ export const SCHEMAS = [
   { name: 'forecast_view', id: 'https://arth.local/contracts/forecast_view.schema.json', schema: forecast_viewSchema },
   { name: 'gate_view', id: 'https://arth.local/contracts/gate_view.schema.json', schema: gate_viewSchema },
   { name: 'grn_view', id: 'https://arth.local/contracts/grn_view.schema.json', schema: grn_viewSchema },
+  { name: 'grow_view', id: 'https://arth.local/contracts/grow_view.schema.json', schema: grow_viewSchema },
+  { name: 'growth_create_plan', id: 'https://arth.local/contracts/commands/growth_create_plan.schema.json', schema: growth_create_planSchema },
+  { name: 'growth_ledger_view', id: 'https://arth.local/contracts/growth_ledger_view.schema.json', schema: growth_ledger_viewSchema },
+  { name: 'growth_outreach_requested', id: 'https://arth.local/contracts/events/growth_outreach_requested.schema.json', schema: growth_outreach_requestedSchema },
+  { name: 'growth_stop_campaign', id: 'https://arth.local/contracts/commands/growth_stop_campaign.schema.json', schema: growth_stop_campaignSchema },
+  { name: 'growth_updated', id: 'https://arth.local/contracts/events/growth_updated.schema.json', schema: growth_updatedSchema },
   { name: 'health_view', id: 'https://arth.local/contracts/health_view.schema.json', schema: health_viewSchema },
+  { name: 'hint_offered', id: 'https://arth.local/contracts/events/hint_offered.schema.json', schema: hint_offeredSchema },
+  { name: 'hints_accept', id: 'https://arth.local/contracts/commands/hints_accept.schema.json', schema: hints_acceptSchema },
   { name: 'hisaab_view', id: 'https://arth.local/contracts/hisaab_view.schema.json', schema: hisaab_viewSchema },
   { name: 'home_view', id: 'https://arth.local/contracts/home_view.schema.json', schema: home_viewSchema },
   { name: 'i18n_changed', id: 'https://arth.local/contracts/events/i18n_changed.schema.json', schema: i18n_changedSchema },
@@ -928,6 +980,7 @@ export const SCHEMAS = [
   { name: 'orders_settle', id: 'https://arth.local/contracts/commands/orders_settle.schema.json', schema: orders_settleSchema },
   { name: 'orders_substitute', id: 'https://arth.local/contracts/commands/orders_substitute.schema.json', schema: orders_substituteSchema },
   { name: 'orders_view', id: 'https://arth.local/contracts/orders_view.schema.json', schema: orders_viewSchema },
+  { name: 'outreach_send_campaign', id: 'https://arth.local/contracts/commands/outreach_send_campaign.schema.json', schema: outreach_send_campaignSchema },
   { name: 'park_view', id: 'https://arth.local/contracts/park_view.schema.json', schema: park_viewSchema },
   { name: 'patron_changed', id: 'https://arth.local/contracts/events/patron_changed.schema.json', schema: patron_changedSchema },
   { name: 'patron_consent_changed', id: 'https://arth.local/contracts/events/patron_consent_changed.schema.json', schema: patron_consent_changedSchema },
@@ -953,6 +1006,7 @@ export const SCHEMAS = [
   { name: 'payment_received', id: 'https://arth.local/contracts/events/payment_received.schema.json', schema: payment_receivedSchema },
   { name: 'payment_refunded', id: 'https://arth.local/contracts/events/payment_refunded.schema.json', schema: payment_refundedSchema },
   { name: 'peers_view', id: 'https://arth.local/contracts/peers_view.schema.json', schema: peers_viewSchema },
+  { name: 'plan_view', id: 'https://arth.local/contracts/plan_view.schema.json', schema: plan_viewSchema },
   { name: 'playbook_updated', id: 'https://arth.local/contracts/events/playbook_updated.schema.json', schema: playbook_updatedSchema },
   { name: 'playbooks_cancel', id: 'https://arth.local/contracts/commands/playbooks_cancel.schema.json', schema: playbooks_cancelSchema },
   { name: 'playbooks_start', id: 'https://arth.local/contracts/commands/playbooks_start.schema.json', schema: playbooks_startSchema },
@@ -960,6 +1014,8 @@ export const SCHEMAS = [
   { name: 'po_supplier_added', id: 'https://arth.local/contracts/events/po_supplier_added.schema.json', schema: po_supplier_addedSchema },
   { name: 'po_variance_found', id: 'https://arth.local/contracts/events/po_variance_found.schema.json', schema: po_variance_foundSchema },
   { name: 'po_view', id: 'https://arth.local/contracts/po_view.schema.json', schema: po_viewSchema },
+  { name: 'preorder_changed', id: 'https://arth.local/contracts/events/preorder_changed.schema.json', schema: preorder_changedSchema },
+  { name: 'preorders_create', id: 'https://arth.local/contracts/commands/preorders_create.schema.json', schema: preorders_createSchema },
   { name: 'privacy_erase_patron', id: 'https://arth.local/contracts/commands/privacy_erase_patron.schema.json', schema: privacy_erase_patronSchema },
   { name: 'privacy_erased', id: 'https://arth.local/contracts/events/privacy_erased.schema.json', schema: privacy_erasedSchema },
   { name: 'privacy_export_patron', id: 'https://arth.local/contracts/commands/privacy_export_patron.schema.json', schema: privacy_export_patronSchema },
@@ -1067,9 +1123,11 @@ export interface ContractTypes {
   bill_view: BillView;
   books_close_month: BooksCloseMonth;
   books_month_closed: BooksMonthClosed;
+  bundles_view: BundlesView;
   calendar_add_local_event: CalendarAddLocalEvent;
   calendar_local_event_added: CalendarLocalEventAdded;
   calendar_view: CalendarView;
+  campaign_view: CampaignView;
   capital_applied: CapitalApplied;
   capital_apply: CapitalApply;
   capital_offer_received: CapitalOfferReceived;
@@ -1125,7 +1183,15 @@ export interface ContractTypes {
   forecast_view: ForecastView;
   gate_view: GateView;
   grn_view: GrnView;
+  grow_view: GrowView;
+  growth_create_plan: GrowthCreatePlan;
+  growth_ledger_view: GrowthLedgerView;
+  growth_outreach_requested: GrowthOutreachRequested;
+  growth_stop_campaign: GrowthStopCampaign;
+  growth_updated: GrowthUpdated;
   health_view: HealthView;
+  hint_offered: HintOffered;
+  hints_accept: HintsAccept;
   hisaab_view: HisaabView;
   home_view: HomeView;
   i18n_changed: LanguageChanged;
@@ -1191,6 +1257,7 @@ export interface ContractTypes {
   orders_settle: OrdersSettle;
   orders_substitute: OrdersSubstitute;
   orders_view: OrdersView;
+  outreach_send_campaign: OutreachSendCampaign;
   park_view: ParkView;
   patron_changed: PatronChanged;
   patron_consent_changed: PatronConsentChanged;
@@ -1216,6 +1283,7 @@ export interface ContractTypes {
   payment_received: PaymentReceived;
   payment_refunded: PaymentRefunded;
   peers_view: PeersView;
+  plan_view: PlanView;
   playbook_updated: PlaybookUpdated;
   playbooks_cancel: PlaybooksCancel;
   playbooks_start: PlaybooksStart;
@@ -1223,6 +1291,8 @@ export interface ContractTypes {
   po_supplier_added: PoSupplierAdded;
   po_variance_found: PoVarianceFound;
   po_view: PoView;
+  preorder_changed: PreorderChanged;
+  preorders_create: PreordersCreate;
   privacy_erase_patron: PrivacyErasePatron;
   privacy_erased: PrivacyErased;
   privacy_export_patron: PrivacyExportPatron;
