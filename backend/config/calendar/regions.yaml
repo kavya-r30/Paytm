@@ -1,0 +1,25 @@
+# States/UTs (ISO 3166-2:IN codes) and the cities Arth knows.
+# ui_locale = the screen language suggested at onboarding (the owner can always change it).
+# Kannada, Malayalam, Punjabi, Odia and Assamese are not yet UI locales (see spec N2); those states default to en or hi-Latn.
+states:
+  - { code: IN-UP, name: Uttar Pradesh, ui_locale: hi, cities: [lucknow, kanpur, varanasi, gorakhpur, agra, prayagraj, noida] }
+  - { code: IN-BR, name: Bihar, ui_locale: hi, cities: [patna, gaya, muzaffarpur, bhagalpur] }
+  - { code: IN-JH, name: Jharkhand, ui_locale: hi, cities: [ranchi, jamshedpur, dhanbad] }
+  - { code: IN-DL, name: Delhi, ui_locale: hi, cities: [delhi] }
+  - { code: IN-HR, name: Haryana, ui_locale: hi, cities: [gurugram, faridabad, panipat] }
+  - { code: IN-PB, name: Punjab, ui_locale: hi-Latn, cities: [amritsar, ludhiana, jalandhar, patiala] }
+  - { code: IN-CH, name: Chandigarh, ui_locale: hi-Latn, cities: [chandigarh] }
+  - { code: IN-RJ, name: Rajasthan, ui_locale: hi, cities: [jaipur, jodhpur, udaipur, kota] }
+  - { code: IN-MP, name: Madhya Pradesh, ui_locale: hi, cities: [indore, bhopal, gwalior, jabalpur] }
+  - { code: IN-UK, name: Uttarakhand, ui_locale: hi, cities: [dehradun, haridwar] }
+  - { code: IN-GJ, name: Gujarat, ui_locale: gu, cities: [ahmedabad, surat, vadodara, rajkot] }
+  - { code: IN-MH, name: Maharashtra, ui_locale: mr, cities: [mumbai, pune, nagpur, nashik, thane] }
+  - { code: IN-GA, name: Goa, ui_locale: en, cities: [panaji, margao] }
+  - { code: IN-KA, name: Karnataka, ui_locale: en, cities: [bengaluru, mysuru, mangaluru, hubballi] }
+  - { code: IN-KL, name: Kerala, ui_locale: en, cities: [kochi, thiruvananthapuram, kozhikode, thrissur] }
+  - { code: IN-TN, name: Tamil Nadu, ui_locale: ta, cities: [chennai, madurai, coimbatore, tiruchirappalli] }
+  - { code: IN-TG, name: Telangana, ui_locale: te, cities: [hyderabad, warangal] }
+  - { code: IN-AP, name: Andhra Pradesh, ui_locale: te, cities: [vijayawada, visakhapatnam, tirupati, guntur] }
+  - { code: IN-WB, name: West Bengal, ui_locale: bn, cities: [kolkata, howrah, siliguri, durgapur] }
+  - { code: IN-OD, name: Odisha, ui_locale: en, cities: [bhubaneswar, cuttack, puri] }
+  - { code: IN-AS, name: Assam, ui_locale: en, cities: [guwahati, dibrugarh, silchar] }

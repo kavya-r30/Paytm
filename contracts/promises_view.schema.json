@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/promises_view.schema.json",
+  "title": "PromisesView",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "promises": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "account_id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "amount_paise": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "due_on": {
+            "type": "string",
+            "format": "date"
+          },
+          "status": {
+            "enum": [
+              "active",
+              "kept",
+              "broken"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "account_id",
+          "amount_paise",
+          "due_on",
+          "status"
+        ]
+      }
+    },
+    "invalidate_on": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "promises",
+    "invalidate_on"
+  ]
+}

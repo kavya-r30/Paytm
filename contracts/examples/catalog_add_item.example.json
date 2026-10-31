@@ -1,0 +1,21 @@
+{
+  "sku": "TATA-SALT-1KG",
+  "names": {
+    "en": "Tata Salt",
+    "hi": "टाटा नमक",
+    "hi-Latn": "Tata namak"
+  },
+  "unit": "pcs",
+  "mrp_paise": 2800,
+  "price_paise": 2700,
+  "cost_paise": 2300,
+  "category": "staples",
+  "aliases": [
+    "namak"
+  ],
+  "barcodes": [
+    "8901000000001"
+  ],
+  "hsn": "2501",
+  "gst_rate_bp": 0
+}

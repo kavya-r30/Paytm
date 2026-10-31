@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/stock_count.schema.json",
+  "title": "StockCount",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "item_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "batch_id": {
+      "anyOf": [
+        {
+          "$ref": "../common.schema.json#/definitions/PrefixedId"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "counted_qty_milli": {
+      "type": "integer",
+      "minimum": 0
+    }
+  },
+  "required": [
+    "item_id",
+    "counted_qty_milli"
+  ]
+}

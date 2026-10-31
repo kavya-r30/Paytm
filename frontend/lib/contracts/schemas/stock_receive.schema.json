@@ -1,0 +1,55 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/stock_receive.schema.json",
+  "title": "StockReceive",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "item_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "qty_milli": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "batch": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "batch_no": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "expires_on": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "mrp_paise": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cost_paise": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "batch_no",
+        "mrp_paise",
+        "cost_paise"
+      ]
+    }
+  },
+  "required": [
+    "item_id",
+    "qty_milli"
+  ]
+}

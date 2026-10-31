@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/rewards_redeem.schema.json",
+  "title": "RewardsRedeem",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "patron_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "bill_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    }
+  },
+  "required": [
+    "patron_id",
+    "bill_id"
+  ]
+}

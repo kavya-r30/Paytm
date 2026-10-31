@@ -1,0 +1,10 @@
+{
+  "display_name": "Example Customer",
+  "lang": "hi",
+  "identities": [
+    {
+      "kind": "vpa",
+      "value": "example@paytm"
+    }
+  ]
+}

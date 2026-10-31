@@ -1,0 +1,19 @@
+{
+  "patron_id": "pat_01K8S08QNP0000000000000000",
+  "display_name": "Example customer",
+  "lang": "hi",
+  "consent": {
+    "marketing": false,
+    "reminders": false,
+    "receipts": false
+  },
+  "household_members": [],
+  "rewards": {
+    "stamps": 0,
+    "available_rewards": 0,
+    "available_value_paise": 0
+  },
+  "invalidate_on": [
+    "patron.changed"
+  ]
+}

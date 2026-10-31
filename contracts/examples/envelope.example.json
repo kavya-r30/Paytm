@@ -1,0 +1,26 @@
+{
+  "turn_id": "turn_01JBQ0Z7Y8K3M4N5P6Q7R8S9T0",
+  "lang": { "screen": "hi-Latn", "speech": "hi-IN" },
+  "speech": { "text": "Parle-G joda. Kul ₹62.", "voice": "sarvam:bulbul", "ssml_ready": true },
+  "caption": { "heard": "aur ek Parle-G", "said": "Parle-G joda. Kul ₹62." },
+  "audience": "all",
+  "cards": [
+    { "type": "bill", "id": "bill_01JBQ0Z7Y8K3M4N5P6Q7R8S9T1", "audience": "all" },
+    {
+      "type": "hint",
+      "audience": "owner",
+      "patron_ref": "pat_01JBQ0Z7Y8K3M4N5P6Q7R8S9T2",
+      "item_ref": "item_01JBQ0Z7Y8K3M4N5P6Q7R8S9T3",
+      "reason_key": "hint.weekday_habit"
+    }
+  ],
+  "nav": { "screen": "bill", "params": { "bill_id": "bill_01JBQ0Z7Y8K3M4N5P6Q7R8S9T1" } },
+  "followups": [{ "label_key": "chip.aaj_kitna_aaya", "turn_text": "Aaj kitna aaya?" }],
+  "provenance": [{ "kind": "bills", "count": 214 }, { "kind": "upi_ledger" }],
+  "presence": { "state": "speaking", "gaze": "card" },
+  "led": { "pattern": "solid", "color": "signal" },
+  "tier": null,
+  "undo": { "command_id": "cmd_01JBQ0Z7Y8K3M4N5P6Q7R8S9T4", "until": "2026-10-29T03:43:30Z" },
+  "sensitivity": "normal",
+  "fallback": { "channel": "messages", "thread": "owner" }
+}

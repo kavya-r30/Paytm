@@ -1,0 +1,7 @@
+{
+  "current": null,
+  "invalidate_on": [
+    "staff.shift_opened",
+    "staff.shift_closed"
+  ]
+}

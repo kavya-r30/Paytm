@@ -1,0 +1,6 @@
+{
+  "type": "merchant.update_settings",
+  "payload": {
+    "screen_lang": "hi"
+  }
+}

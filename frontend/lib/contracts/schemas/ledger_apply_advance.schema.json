@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/ledger_apply_advance.schema.json",
+  "title": "LedgerApplyAdvance",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "account_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "amount_paise": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "purpose_ref": {
+      "anyOf": [
+        {
+          "$ref": "../common.schema.json#/definitions/PrefixedId"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "account_id",
+    "amount_paise"
+  ]
+}

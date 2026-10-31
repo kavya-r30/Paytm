@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/common.schema.json",
+  "title": "Common",
+  "description": "Shared definitions referenced by every other contract (spec Part C1). Reference them as `common.schema.json#/definitions/<Name>`.",
+  "definitions": {
+    "Locale": {
+      "type": "string",
+      "description": "UI (screen) locale.",
+      "enum": ["hi", "en", "hi-Latn", "mr", "ta", "bn", "gu", "te"]
+    },
+    "SpeechLocale": {
+      "type": "string",
+      "description": "Speech locale. Speech engines take language-REGION codes, so Hinglish (hi-Latn on screen) is spoken as hi-IN.",
+      "enum": ["hi-IN", "en-IN", "mr-IN", "ta-IN", "bn-IN", "gu-IN", "te-IN"]
+    },
+    "Audience": {
+      "type": "string",
+      "description": "Who may see a payload: a surface never renders content for an audience it does not serve.",
+      "enum": ["all", "owner", "customer"]
+    },
+    "Tier": {
+      "type": "string",
+      "description": "Risk tier of a command (spec Part C6).",
+      "enum": ["R0", "R1", "R2", "R3", "R4"]
+    },
+    "Ulid": {
+      "type": "string",
+      "description": "A bare ULID (Crockford base32, 26 characters).",
+      "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "PrefixedId": {
+      "type": "string",
+      "description": "A ULID prefixed by its kind, e.g. bill_01JBQ0Z7Y8K3M4N5P6Q7R8S9T1 (spec Part C1).",
+      "pattern": "^[a-z][a-z0-9]{1,9}_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "DottedCode": {
+      "type": "string",
+      "description": "A stable dotted code such as an event topic (clock.ticked) or an error code (policy.quiet_hours).",
+      "pattern": "^[a-z_]+(\\.[a-z_]+)+$"
+    },
+    "MessageKey": {
+      "type": "string",
+      "description": "An i18n message key: two or more dot-separated segments, e.g. chip.aaj_kitna_aaya.",
+      "minLength": 1,
+      "pattern": "^[a-z0-9_]+(\\.[a-z0-9_]+)+$"
+    },
+    "NonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

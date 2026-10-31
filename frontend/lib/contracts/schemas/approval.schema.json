@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/approval.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "ApprovalRequest",
+  "required": [
+    "decision"
+  ],
+  "properties": {
+    "decision": {
+      "enum": [
+        "approve",
+        "snooze",
+        "edit"
+      ]
+    },
+    "edits": {
+      "type": "object"
+    },
+    "decisions": {
+      "type": "object",
+      "additionalProperties": {
+        "enum": [
+          "approve",
+          "snooze"
+        ]
+      }
+    }
+  }
+}

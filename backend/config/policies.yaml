@@ -1,0 +1,66 @@
+tiers:
+  ledger.open_account: R2
+  ledger.set_limit: R2
+  ledger.record_payment: R2
+  ledger.apply_verified_payment: R1
+  ledger.record_deposit: R2
+  ledger.apply_advance: R2
+  ledger.dispute_entry: R1
+  ledger.acknowledge_entry: R1
+  ledger.resolve_dispute: R2
+  ledger.reverse_entry: R2
+  ledger.record_promise: R1
+  ledger.send_reminder: R3
+  ledger.send_statement: R3
+  ledger.add_payable: R2
+  ledger.pay_payable: R2
+  patrons.add: R1
+  patrons.update_profile: R1
+  patrons.propose_merge: R1
+  patrons.merge: R2
+  patrons.add_household_member: R1
+  consent.grant: R1
+  consent.withdraw: R1
+  consent.stop: R1
+  rewards.configure: R3
+  rewards.record_visit: R1
+  rewards.redeem: R1
+  stock.receive: R1
+  stock.count: R1
+  stock.adjust: R1
+  stock.recall_batch: R1
+  stock.log_unmet_demand: R1
+  merchant.bootstrap: R1
+  merchant.update_settings: R1
+  onboarding.complete_step: R1
+  staff.add: R1
+  staff.login: R1
+  staff.logout: R1
+  shift.open: R1
+  shift.close: R1
+  catalog.add_item: R1
+  catalog.import_items: R1
+  catalog.change_price: R2
+  catalog.bulk_price: R4
+  counter.add_lines: R1
+  ledger.add_entry: R2
+  supply.place_po: R3
+  outreach.send_campaign: R3
+  offers.create_program: R3
+  treasury.refund: R4
+  capital.apply: R4
+  privacy.erase_patron: R4
+roles:
+  system: { max_tier: R1 }
+  owner: { max_tier: R4, approve: [R2, R3] }
+  manager: { max_tier: R2, approve: [R2] }
+  cashier: { max_tier: R1, allow: [treasury.cash_payment] }
+  helper: { max_tier: R1 }
+quiet_hours: { start: '21:30', end: '08:00' }
+contact_caps: { marketing_per_patron_per_week: 1 }
+reminders: { per_patron_per_week: 1, cadence_days: [0, 7, 14] }
+growth: { holdout_share: 0.2, holdout_min: 1, margin_floor: 0.15, monthly_incentive_budget_paise: 0 }
+expiry_alert_days: { default: 30 }
+discreet_mode: { busy_hours: ['09:00-11:00', '17:30-21:00'] }
+attention: { proactive_per_day: 1, urgent_interrupts_per_day: 3 }
+forbid_offers_on_flags: []

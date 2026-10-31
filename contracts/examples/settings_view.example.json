@@ -1,0 +1,10 @@
+{
+  "name": "Example Shop",
+  "pack": "kirana",
+  "screen_lang": "hi-Latn",
+  "speech_lang": "hi-IN",
+  "customer_lang": "hi",
+  "tax_profile": "unregistered",
+  "marketing_consent_default": false,
+  "receipts_consent_default": false
+}

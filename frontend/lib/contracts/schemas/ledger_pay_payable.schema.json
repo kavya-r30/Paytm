@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/ledger_pay_payable.schema.json",
+  "title": "LedgerPayPayable",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "payable_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "amount_paise": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "payment_ref": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    }
+  },
+  "required": [
+    "payable_id",
+    "amount_paise",
+    "payment_ref"
+  ]
+}

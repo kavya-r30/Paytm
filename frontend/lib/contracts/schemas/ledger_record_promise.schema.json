@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/ledger_record_promise.schema.json",
+  "title": "LedgerRecordPromise",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "account_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "amount_paise": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "due_on": {
+      "type": "string",
+      "format": "date"
+    }
+  },
+  "required": [
+    "account_id",
+    "amount_paise",
+    "due_on"
+  ]
+}

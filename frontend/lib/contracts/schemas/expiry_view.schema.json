@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/expiry_view.schema.json",
+  "title": "ExpiryView",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "batches": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "batch_id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "item_id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "days_to_expiry": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "recalled": {
+            "type": "boolean"
+          },
+          "qty_milli": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "batch_id",
+          "item_id",
+          "days_to_expiry",
+          "recalled",
+          "qty_milli"
+        ]
+      }
+    },
+    "invalidate_on": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "batches",
+    "invalidate_on"
+  ]
+}

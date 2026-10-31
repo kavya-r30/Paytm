@@ -1,0 +1,138 @@
+# 2027: PARTIAL. Only fixed-date events and dates found in sources on 30 Oct 2026. Everything lunar is tentative.
+# Task T2.10 completes 2027 from the Government of India 2027 holiday notification, the state lists and a panchang,
+# and replaces tentative rows. Islamic dates are intentionally absent until official notices exist (never estimated).
+# Field meanings: see events-2026.yaml.
+events:
+  - id: lohri_2027
+    kind: lohri
+    type: festival
+    names: { en: Lohri, hi: लोहड़ी, hi-Latn: Lohri }
+    start: 2027-01-13
+    scope: { states: [IN-PB, IN-HR, IN-DL, IN-CH] }
+    confidence: tentative
+    lead_days: 3
+    priors: { kirana: { peanuts_rewari: 3.0, jaggery: 1.8, popcorn: 2.5 } }
+    source: usual date (13 Jan); verify
+
+  - id: makar_sankranti_2027
+    kind: makar_sankranti
+    type: festival
+    names: { en: Makar Sankranti, hi: मकर संक्रांति, hi-Latn: Makar Sankranti, gu: ઉત્તરાયણ, te: సంక్రాంతి }
+    start: 2027-01-15
+    scope: { national: true }
+    confidence: panchang
+    lead_days: 4
+    priors: { kirana: { sesame: 3.0, jaggery: 2.5, rice: 1.3, kites: 6.0 } }
+    source: HinduPad Hindu festivals 2027
+
+  - id: republic_day_2027
+    kind: republic_day
+    type: public_holiday
+    names: { en: Republic Day, hi: गणतंत्र दिवस, hi-Latn: Republic Day }
+    start: 2027-01-26
+    scope: { national: true }
+    confidence: published
+    closure: partial
+    source: fixed date
+
+  - id: holi_2027
+    kind: holi
+    type: festival
+    names: { en: Holi, hi: होली, hi-Latn: Holi }
+    start: 2027-03-21
+    scope: { national: true }
+    confidence: tentative
+    lead_days: 6
+    closure: partial
+    priors: { kirana: { colours: 8.0, sweets: 2.5, milk: 1.8, snacks: 2.0, gujiya_ingredients: 3.0, cold_drinks: 2.0 } }
+    source: HinduPad 2027 (21 Mar); confirm Holika Dahan and Dhulandi split against the 2027 govt list
+
+  - id: good_friday_2027
+    kind: good_friday
+    type: public_holiday
+    names: { en: Good Friday, hi: गुड फ्राइडे, hi-Latn: Good Friday }
+    start: 2027-03-26
+    scope: { national: true }
+    confidence: published
+    source: Easter Sunday is 28 Mar 2027
+
+  - id: ambedkar_jayanti_2027
+    kind: ambedkar_jayanti
+    type: public_holiday
+    names: { en: Ambedkar Jayanti, hi: आंबेडकर जयंती, hi-Latn: Ambedkar Jayanti }
+    start: 2027-04-14
+    scope: { national: true }
+    confidence: published
+    source: fixed date
+
+  - id: ram_navami_2027
+    kind: ram_navami
+    type: festival
+    names: { en: Ram Navami, hi: राम नवमी, hi-Latn: Ram Navami }
+    start: 2027-04-15
+    scope: { national: true }
+    confidence: panchang
+    lead_days: 2
+    source: hindu-blog Hindu festivals 2027
+
+  - id: independence_day_2027
+    kind: independence_day
+    type: public_holiday
+    names: { en: Independence Day, hi: स्वतंत्रता दिवस, hi-Latn: Independence Day }
+    start: 2027-08-15
+    scope: { national: true }
+    confidence: published
+    closure: partial
+    source: fixed date
+
+  - id: ganesh_chaturthi_2027
+    kind: ganesh_chaturthi
+    type: festival
+    names: { en: Ganesh Chaturthi, mr: गणेश चतुर्थी, hi: गणेश चतुर्थी, hi-Latn: Ganesh Chaturthi }
+    start: 2027-09-03
+    scope: { states: [IN-MH, IN-GA, IN-KA, IN-TG, IN-AP, IN-GJ], cities: [chennai, kolkata] }
+    confidence: tentative
+    lead_days: 7
+    source: Vedic Marga 2027 (a non-India locale; the India date may differ by a day)
+
+  - id: navratri_2027
+    kind: navratri
+    type: festival
+    names: { en: Navratri, hi: नवरात्रि, hi-Latn: Navratri, gu: નવરાત્રી }
+    start: 2027-09-30
+    scope: { national: true }
+    confidence: panchang
+    lead_days: 3
+    source: Drik Panchang and Vedic Marga (Ghatasthapana 30 Sep 2027); the end date is added in T2.10
+
+  - id: gandhi_jayanti_2027
+    kind: gandhi_jayanti
+    type: public_holiday
+    names: { en: Gandhi Jayanti, hi: गांधी जयंती, hi-Latn: Gandhi Jayanti }
+    start: 2027-10-02
+    scope: { national: true }
+    confidence: published
+    source: fixed date
+
+  - id: diwali_2027
+    kind: diwali
+    type: festival
+    names: { en: Diwali, hi: दिवाली, hi-Latn: Diwali, ta: தீபாவளி }
+    start: 2027-10-29
+    scope: { national: true }
+    confidence: tentative
+    lead_days: 14
+    closure: partial
+    priors: { kirana: { dry_fruits: 3.1, diyas: 5.0, sweets: 2.2, ghee: 1.8, puja_items: 3.0, gift_packs: 4.0, cleaning: 2.0 } }
+    source: hindu-blog 2027 says 29 Oct, Vedic Marga says 28 Oct; resolve against the 2027 govt list
+
+  - id: christmas_2027
+    kind: christmas
+    type: festival
+    names: { en: Christmas, hi: क्रिसमस, hi-Latn: Christmas }
+    start: 2027-12-25
+    scope: { national: true }
+    confidence: published
+    lead_days: 7
+    priors: { cafe: { cakes: 2.5, plum_cake: 4.0 } }
+    source: fixed date
