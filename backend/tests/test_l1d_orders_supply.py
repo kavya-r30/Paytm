@@ -294,7 +294,14 @@ async def test_po_lifecycle_grn_three_way_match_variance_claim_and_payable(db):
     assert result["data"]["variance_paise"] == 5000  # planted ₹46 billed vs ₹45 agreed on 50 kg
     grn = await view(s, grn_view, po)
     assert grn["variances"] == [
-        {"item_id": s.items["SUGAR"], "kind": "price", "expected": 4500, "actual": 4600, "delta_paise": 5000}
+        {
+            "item_id": s.items["SUGAR"],
+            "kind": "price",
+            "expected": 4500,
+            "actual": 4600,
+            "delta_paise": 5000,
+            "name": "Sugar",
+        }
     ]
     assert grn["claim_id"]
     async with db.read() as conn:
@@ -338,7 +345,14 @@ async def test_short_receipt_is_a_qty_variance_and_pharmacy_grn_needs_batch(db):
     )
     variances = (await view(s, grn_view, po))["variances"]
     assert variances == [
-        {"item_id": s.items["SUGAR"], "kind": "qty", "expected": 48000, "actual": 50000, "delta_paise": 9000}
+        {
+            "item_id": s.items["SUGAR"],
+            "kind": "qty",
+            "expected": 48000,
+            "actual": 50000,
+            "delta_paise": 9000,
+            "name": "Sugar",
+        }
     ]
     p = await shop(db, "pharmacy")
     supplier = (await run(p, "supply.add_supplier", {"name": "Medi Dist", "lang": "en", "lead_days": 1}))[

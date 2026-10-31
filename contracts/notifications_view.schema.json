@@ -33,6 +33,25 @@
           "expires_at": {
             "type": "string",
             "format": "date-time"
+          },
+          "title_key": {
+            "$ref": "./common.schema.json#/definitions/MessageKey"
+          },
+          "summary_params": {
+            "type": "object",
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
           }
         },
         "required": [
@@ -41,7 +60,9 @@
           "tier",
           "type",
           "status",
-          "expires_at"
+          "expires_at",
+          "title_key",
+          "summary_params"
         ]
       }
     },
@@ -115,6 +136,25 @@
           "expires_at": {
             "type": "string",
             "format": "date-time"
+          },
+          "title_key": {
+            "$ref": "./common.schema.json#/definitions/MessageKey"
+          },
+          "summary_params": {
+            "type": "object",
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
           }
         },
         "required": [
@@ -123,7 +163,9 @@
           "tier",
           "type",
           "status",
-          "expires_at"
+          "expires_at",
+          "title_key",
+          "summary_params"
         ]
       }
     },

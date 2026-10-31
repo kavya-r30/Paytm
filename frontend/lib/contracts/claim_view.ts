@@ -28,6 +28,8 @@ export interface ClaimView {
     expected: number;
     actual: number;
     delta_paise: number;
+    name: string;
   }[];
   invalidate_on: string[];
+  supplier_name: string;
 }

@@ -49,6 +49,14 @@ class Upi(BaseModel):
     expires_at: AwareDatetime
 
 
+class Category(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    key: str
+    label: str
+
+
 class Line(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
@@ -83,6 +91,20 @@ class Ticket(BaseModel):
     status: Status10
 
 
+class Patron(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    id: constr(pattern=r'^[a-z][a-z0-9]{1,9}_[0-9A-HJKMNP-TV-Z]{26}$') = Field(
+        ...,
+        description='A ULID prefixed by its kind, e.g. bill_01JBQ0Z7Y8K3M4N5P6Q7R8S9T1 (spec Part C1).',
+    )
+    display_name: str
+    lang: str
+    khata_balance_paise: int | None
+    reward_stamps: int
+
+
 class Bill(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
@@ -104,6 +126,21 @@ class Bill(BaseModel):
     payments: list[Payment]
     ticket: Ticket | None
     upi: Upi | None
+    patron: Patron | None
+
+
+class QuickItem(BaseModel):
+    model_config = ConfigDict(
+        extra='forbid',
+    )
+    item_id: constr(pattern=r'^[a-z][a-z0-9]{1,9}_[0-9A-HJKMNP-TV-Z]{26}$') = Field(
+        ...,
+        description='A ULID prefixed by its kind, e.g. bill_01JBQ0Z7Y8K3M4N5P6Q7R8S9T1 (spec Part C1).',
+    )
+    name: str
+    price_paise: int
+    unit: str
+    category: str
 
 
 class BillView(BaseModel):
@@ -113,3 +150,5 @@ class BillView(BaseModel):
     bill: Bill
     parked_count: conint(ge=0)
     invalidate_on: list[constr(min_length=1, max_length=200)]
+    quick_items: list[QuickItem]
+    categories: list[Category]

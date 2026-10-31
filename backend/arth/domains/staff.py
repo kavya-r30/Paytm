@@ -118,6 +118,26 @@ class StaffService:
         await self.resolve(token)  # replay cannot revive an expired/revoked session
         return {"token": token, "staff_id": staff_id, "expires_at": result["data"]["expires_at"]}
 
+    async def issue(
+        self, merchant_id: str, staff_id: str, device_id: str, channel: str, key: str
+    ) -> dict[str, Any]:
+        """Presenter-only (director token checked by the API): a real session without a PIN, for the stage."""
+        if channel not in {"device", "console"}:
+            raise CommandError("auth.invalid_channel")
+        async with self.bus.db.read() as conn:
+            actors = await Repository(conn, merchant_id).select(staff, staff.c.id == staff_id)
+        if not actors:
+            raise CommandError("staff.invalid_login")
+        result = await self.bus.submit(
+            Session(merchant_id, staff_id, actors[0]["role"], channel=channel, device_id=device_id),
+            "staff.login",
+            {"staff_id": staff_id, "device_id": device_id, "channel": channel},
+            key,
+            private={"presenter_issued": True},
+        )
+        token = self._sign(merchant_id, result["data"]["session_id"], "session")
+        return {"token": token, "staff_id": staff_id, "expires_at": result["data"]["expires_at"]}
+
     async def add(self, actor: Session, name: str, role: str, pin: str, key: str) -> dict[str, Any]:
         return await self.bus.submit(
             actor, "staff.add", {"name": name, "role": role}, key, private={"pin": pin}
@@ -142,7 +162,7 @@ class StaffService:
             if (
                 repo.session is None
                 or repo.session.actor_id != payload["staff_id"]
-                or "pin" not in repo.private
+                or ("pin" not in repo.private and not repo.private.get("presenter_issued"))
             ):
                 raise CommandError("staff.invalid_login")
             rows = await repo.select(staff_credentials, staff_credentials.c.staff_id == payload["staff_id"])
@@ -152,7 +172,8 @@ class StaffService:
             now = iso_utc(bus.clock.now())
             if row["locked_until"] and row["locked_until"] > now:
                 return {"authenticated": False, "code": "staff.locked"}
-            if not verify_pin(repo.private["pin"], row["pin_hash"]):
+            presenter = bool(repo.private.get("presenter_issued"))
+            if not presenter and not verify_pin(repo.private["pin"], row["pin_hash"]):
                 failed = (row["failed"] if not row["locked_until"] or row["locked_until"] > now else 0) + 1
                 await repo.update(
                     staff_credentials,

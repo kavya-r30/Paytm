@@ -17,6 +17,13 @@ export interface NotificationsView {
     type: string;
     status: string;
     expires_at: string;
+    /**
+     * An i18n message key: two or more dot-separated segments, e.g. chip.aaj_kitna_aaya.
+     */
+    title_key: string;
+    summary_params: {
+      [k: string]: string | number | null;
+    };
   }[];
   done: {
     /**
@@ -47,6 +54,13 @@ export interface NotificationsView {
     type: string;
     status: string;
     expires_at: string;
+    /**
+     * An i18n message key: two or more dot-separated segments, e.g. chip.aaj_kitna_aaya.
+     */
+    title_key: string;
+    summary_params: {
+      [k: string]: string | number | null;
+    };
   }[];
   invalidate_on: string[];
 }

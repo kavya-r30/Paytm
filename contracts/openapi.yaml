@@ -33,7 +33,7 @@ paths:
       operationId: getCustomerSearchView
       security: [{device: []}, {console: []}]
       parameters:
-        - {in: query, name: q, required: true, schema: {type: string, minLength: 1, maxLength: 200}}
+        - {in: query, name: q, required: false, schema: {type: string, maxLength: 200}}
       responses:
         '200':
           description: Scoped merchant read model
@@ -929,6 +929,23 @@ paths:
           content:
             application/json:
               schema: {$ref: './calendar_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/director/session:
+    post:
+      operationId: directorSession
+      security: [{director: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        '200':
+          description: A real staff session for a seeded shop (presenter only)
+          content:
+            application/json:
+              schema: {$ref: './session_result.schema.json'}
         '401': {$ref: '#/components/responses/Problem'}
         '409': {$ref: '#/components/responses/Problem'}
   /v1/patrons:

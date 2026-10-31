@@ -12,6 +12,7 @@ export interface OrdersView {
     total_paise: number;
     created_at: string;
     lines: number;
+    patron_name: string | null;
   }[];
   by_status: {
     [k: string]: number;

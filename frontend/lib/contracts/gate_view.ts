@@ -23,6 +23,13 @@ export interface GateView {
     conditions: {
       [k: string]: unknown;
     };
+    /**
+     * An i18n message key: two or more dot-separated segments, e.g. chip.aaj_kitna_aaya.
+     */
+    title_key: string;
+    summary_params: {
+      [k: string]: string | number | null;
+    };
   };
   readback_key: string | null;
   invalidate_on: string[];

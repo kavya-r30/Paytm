@@ -35,6 +35,7 @@ class Order(BaseModel):
     total_paise: conint(ge=0)
     created_at: AwareDatetime
     lines: list[Line]
+    patron_name: str | None
 
 
 class HistoryItem(BaseModel):

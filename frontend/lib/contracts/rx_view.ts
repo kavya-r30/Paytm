@@ -24,6 +24,8 @@ export interface RxView {
      */
     item_id: string;
     due_on: string;
+    patron_name: string;
+    item_name: string;
   }[];
   recalls: {
     /**
@@ -35,6 +37,7 @@ export interface RxView {
      */
     item_id: string;
     buyer_ids: string[];
+    item_name: string;
   }[];
   invalidate_on: string[];
 }

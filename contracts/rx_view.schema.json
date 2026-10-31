@@ -56,12 +56,20 @@
           "due_on": {
             "type": "string",
             "format": "date"
+          },
+          "patron_name": {
+            "type": "string"
+          },
+          "item_name": {
+            "type": "string"
           }
         },
         "required": [
           "patron_id",
           "item_id",
-          "due_on"
+          "due_on",
+          "patron_name",
+          "item_name"
         ]
       }
     },
@@ -82,12 +90,16 @@
             "items": {
               "$ref": "./common.schema.json#/definitions/PrefixedId"
             }
+          },
+          "item_name": {
+            "type": "string"
           }
         },
         "required": [
           "batch_id",
           "item_id",
-          "buyer_ids"
+          "buyer_ids",
+          "item_name"
         ]
       }
     },

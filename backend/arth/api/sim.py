@@ -270,6 +270,41 @@ async def world(request: Request, body: WorldBody) -> dict[str, Any]:
     return manifest
 
 
+class SessionBody(BaseModel):
+    merchant_id: str | None = None
+    surface: str = Field("device", pattern="^(device|console)$")
+    role: str = Field("owner", pattern="^(owner|manager|cashier|helper)$")
+
+
+@router.post("/v1/director/session", dependencies=director)
+async def presenter_session(request: Request, body: SessionBody) -> dict[str, Any]:
+    """A real staff session for a seeded shop, so the stage can pass `?session=` to each surface."""
+    from arth.domains.tables import devices
+    from arth.governance.tables import staff
+
+    state = request.app.state
+    merchants = sorted(state.commands.merchant_ids)
+    merchant_id = body.merchant_id or (merchants[-1] if len(merchants) == 1 else None)
+    if merchant_id is None or merchant_id not in state.commands.merchant_ids:
+        raise refused(CommandError("director.merchant_required"), 422)
+    async with state.db.read() as conn:
+        repo = Repository(conn, merchant_id)
+        people = await repo.select(staff, staff.c.role == body.role)
+        device = await repo.select(devices)
+    if not people or not device:
+        raise refused(CommandError("director.no_such_staff"), 404)
+    try:
+        return await state.staff.issue(
+            merchant_id,
+            people[0]["id"],
+            device[0]["id"],
+            body.surface,
+            f"presenter-{merchant_id}-{body.surface}-{body.role}-{iso_utc(state.clock.now())}",
+        )
+    except CommandError as exc:
+        raise refused(exc) from exc
+
+
 @router.get("/v1/peers/{pack}")
 async def peers(request: Request, pack: str, session: Actor) -> dict[str, Any]:
     async with request.app.state.db.read() as conn:
