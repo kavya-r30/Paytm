@@ -42,9 +42,11 @@ async function visit(context, path, locale) {
   try {
     const sep = path.includes('?') ? '&' : '?';
     const res = await page.goto(`${WEB}${path}${sep}lang=${encodeURIComponent(locale)}`, {
-      waitUntil: 'networkidle',
+      waitUntil: 'load',
       timeout: 60000,
     });
+    // the stage polls /healthz and hosts iframes, so idle is best-effort (slow CI runners never reach it)
+    await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
     const text = (await page.locator('body').innerText()).trim();
     if (!res?.ok()) errors.push(`HTTP ${res?.status()}`);
     if (!text) errors.push('empty body');
