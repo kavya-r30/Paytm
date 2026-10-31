@@ -523,12 +523,12 @@ function DoneRow({ d }: { d: NotificationsView['done'][number] }) {
         <span className="num text-meta text-ink-3">{time(d.occurred_at)}</span>
       </span>
       <TierChip tier={d.tier} />
-      {open && (
+      {open && d.bill_id && (
         <Button
           variant="tint"
           size="sm"
           icon={<Undo2 size={16} />}
-          onClick={() => void run('counter.undo', { command_id: d.command_id })}
+          onClick={() => void run('counter.undo', { bill_id: d.bill_id })}
         >
           {t('notif.undo')}
         </Button>

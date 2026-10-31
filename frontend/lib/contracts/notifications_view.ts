@@ -37,6 +37,10 @@ export interface NotificationsView {
     tier: "R0" | "R1" | "R2" | "R3" | "R4";
     occurred_at: string;
     undo_until: string | null;
+    /**
+     * Bill of an undoable line command (counter.undo takes the bill); null for everything else.
+     */
+    bill_id: string | null;
   }[];
   snoozed: {
     /**

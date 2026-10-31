@@ -27,7 +27,11 @@ async def test_router_live_then_cassette_replay_and_data_tags(tmp_path):
 
     def handler(request: httpx.Request) -> httpx.Response:
         calls.append(request.url.host)
-        assert "Bearer secret-mistral" == request.headers["authorization"]
+        # Azure: the deployment is in the path, the key in `api-key`, and the body carries no model
+        assert request.headers["api-key"] == "secret-azure" and "authorization" not in request.headers
+        assert request.url.path == "/openai/deployments/renaiscent-gpt-5.4-mini/chat/completions"
+        assert request.url.params["api-version"] == "2025-04-01-preview"
+        assert "model" not in json.loads(request.content)
         return httpx.Response(
             200,
             json={
@@ -38,15 +42,20 @@ async def test_router_live_then_cassette_replay_and_data_tags(tmp_path):
 
     providers = load_providers(CONFIG_DIR / "providers.yaml")
     live = ProviderRouter(
-        settings(MISTRAL_API_KEY="secret-mistral"), providers, cassettes=tmp_path, transport=mock(handler)
+        settings(
+            AZURE_OPENAI_API_KEY="secret-azure", AZURE_OPENAI_ENDPOINT="https://shop.example.azure.com/"
+        ),
+        providers,
+        cassettes=tmp_path,
+        transport=mock(handler),
     )
     result = await live.chat("llm.fast", [{"role": "user", "content": "aaj kitna"}], json_mode=True)
     assert (result.provider, result.mode, json.loads(result.text)["tool"]) == (
-        "mistral",
+        "azure",
         "live",
         "today_sales",
     )
-    assert calls == ["api.mistral.ai"] and list(tmp_path.rglob("*.json"))  # recorded in dev
+    assert calls == ["shop.example.azure.com"] and list(tmp_path.rglob("*.json"))  # recorded in dev
     offline = ProviderRouter(settings(), providers, cassettes=tmp_path)
     replay = await offline.chat("llm.fast", [{"role": "user", "content": "aaj kitna"}], json_mode=True)
     assert replay.mode == "replay" and replay.text == result.text
@@ -71,16 +80,21 @@ async def test_router_falls_back_on_timeout_and_rate_limit(tmp_path):
 
     providers = load_providers(CONFIG_DIR / "providers.yaml")
     router = ProviderRouter(
-        settings(MISTRAL_API_KEY="m"), providers, cassettes=tmp_path, transport=mock(failing)
+        settings(
+            AZURE_OPENAI_API_KEY="secret-azure", AZURE_OPENAI_ENDPOINT="https://shop.example.azure.com/"
+        ),
+        providers,
+        cassettes=tmp_path,
+        transport=mock(failing),
     )
     with pytest.raises(ProviderUnavailable) as info:
         await router.chat("llm.fast", [{"role": "user", "content": "x"}])
     assert (
-        "mistral/mistral-small-latest:HTTPStatusError" in str(info.value)
-        and router.status["mistral"] == "fallback"
+        "azure/renaiscent-gpt-5.4-mini:HTTPStatusError" in str(info.value)
+        and router.status["azure"] == "fallback"
     )
-    router.buckets["mistral"].tokens = 0
-    router.buckets["mistral"].rpm = 0
+    router.buckets["azure"].tokens = 0
+    router.buckets["azure"].rpm = 0
     with pytest.raises(ProviderUnavailable, match="rate_limited"):
         await router.chat("llm.fast", [{"role": "user", "content": "y"}])
 
@@ -267,6 +281,9 @@ def test_turns_api_same_answer_on_three_channels_and_counter_by_voice(tmp_path):
         assert "doctor" in r.json()["speech"]["text"].lower()
         ask = client.get("/v1/views/ask", headers=auth).json()
         assert len(ask["turns"]) >= 6 and not list(validator("ask_view").iter_errors(ask))
+        # the Ask screen asks for `session=current`: this session's turns, not a session literally named so
+        mine = client.get("/v1/views/ask", params={"session": "current"}, headers=auth).json()["turns"]
+        assert mine and mine[-1]["heard"] == "bukhar ki dawai batao"
         tts = client.get("/v1/tts", params={"text": "Kul ₹62"}, headers=auth).json()
         assert tts["spoken_text"] == "Kul baasath rupaye" and tts["mode"] == "unavailable"
         health = client.get("/v1/views/health", headers=auth).json()

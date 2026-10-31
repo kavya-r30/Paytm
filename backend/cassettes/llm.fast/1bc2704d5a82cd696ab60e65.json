@@ -1,1 +1,1 @@
-{"provider": "groq", "model": "openai/gpt-oss-20b", "text": "{\"ok\":true}", "data": {"tool_calls": []}}
+{"provider": "azure", "model": "renaiscent-gpt-5.4-mini", "text": "{\"ok\": true}", "data": {"tool_calls": []}}

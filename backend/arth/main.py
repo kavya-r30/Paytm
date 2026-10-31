@@ -11,7 +11,7 @@ import asyncio
 import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from datetime import timedelta
+from datetime import datetime, timedelta
 from typing import Any
 
 from fastapi import FastAPI
@@ -40,7 +40,7 @@ from arth.api import (
 )
 from arth.api.problems import install_problem_handlers
 from arth.core.calendar import CalendarIndex, load_calendar
-from arth.core.clock import SimClock, iso_utc
+from arth.core.clock import SimClock, iso_utc, parse_iso
 from arth.core.config import (
     Settings,
     check_auth_tokens,
@@ -68,6 +68,22 @@ from arth.sim.hub import Simulators
 from arth.sim.personas import PersonaEngine
 
 
+async def resume_time(db: Database, start: datetime) -> datetime:
+    """The clock resumes where the shop left off (last audited command or job run), never before
+    `clock_start`: a restart must not put the shop's own records in the future."""
+    from sqlalchemy import func, select
+
+    from arth.core.tables import jobs
+    from arth.governance.tables import audit_log
+
+    async with db.read() as conn:
+        stamps = [
+            (await conn.execute(select(func.max(audit_log.c.occurred_at)))).scalar(),
+            (await conn.execute(select(func.max(jobs.c.ran_at)))).scalar(),
+        ]
+    return max([start, *(parse_iso(s) for s in stamps if s)])
+
+
 def create_app(settings: Settings | None = None) -> FastAPI:
     settings = settings or Settings()
 
@@ -83,7 +99,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         upgrade(settings.db_path)
         db = Database(settings.db_path)
         await db.open()
-        clock = SimClock(settings.clock_start)
+        clock = SimClock(await resume_time(db, settings.clock_start), running=settings.clock_runs)
         app.state.db, app.state.clock = db, clock
         scheduler = Scheduler(db, clock)
         await scheduler.recover()
@@ -188,6 +204,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             stop.set()
             await ticker
             await dispatcher_task
+            await app.state.router.aclose()
             await spans.aclose()
             await db.close()
 
@@ -195,8 +212,15 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.settings = settings
     # Provisioned by the trusted session service (staff login arrives in T1.8).
     app.state.sessions = {}
+    # Dev: the web app may run on any local origin (127.0.0.1, port 3001 when 3000 is busy, a phone on the
+    # LAN); an unlisted origin made the browser block every call and the surfaces fell back to fixtures.
+    local = r"https?://(localhost|127\.0\.0\.1|\[::1\]|10\.\d+\.\d+\.\d+|192\.168\.\d+\.\d+)(:\d+)?"
     app.add_middleware(
-        CORSMiddleware, allow_origins=settings.cors_origins, allow_methods=["*"], allow_headers=["*"]
+        CORSMiddleware,
+        allow_origins=settings.cors_origins,
+        allow_origin_regex=local if settings.mode == "dev" else None,
+        allow_methods=["*"],
+        allow_headers=["*"],
     )
     install_problem_handlers(app)
     app.include_router(health.router)

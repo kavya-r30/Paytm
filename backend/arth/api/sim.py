@@ -106,6 +106,7 @@ class ScreenshotBody(BaseModel):
 class ClockBody(BaseModel):
     advance_minutes: int | None = Field(None, ge=0, le=60 * 24 * 120)
     to: str | None = None
+    running: bool | None = None  # STG-DIRECTOR clock controls: freeze (false) or run at real time (true)
 
 
 class WorldBody(BaseModel):
@@ -240,9 +241,13 @@ async def clock(request: Request, body: ClockBody) -> dict[str, Any]:
             await request.app.state.scheduler.advance_to(
                 sim_clock.now() + timedelta(minutes=body.advance_minutes)
             )
+        if body.running is True:
+            sim_clock.run(1.0)
+        elif body.running is False:
+            sim_clock.freeze()
     except ValueError as exc:
         raise refused(exc, 422) from exc
-    return {"clock": iso_utc(sim_clock.now())}
+    return {"clock": iso_utc(sim_clock.now()), "running": sim_clock.running}
 
 
 @router.post("/v1/director/world", dependencies=director)
@@ -276,6 +281,24 @@ class SessionBody(BaseModel):
     role: str = Field("owner", pattern="^(owner|manager|cashier|helper)$")
 
 
+async def _most_active(state: Any) -> str | None:
+    """The shop with the latest audited command (cross-tenant on purpose: director-only, dev surfaces)."""
+    from sqlalchemy import func, select
+
+    from arth.governance.tables import audit_log
+
+    async with state.db.read() as conn:
+        row = (
+            await conn.execute(
+                select(audit_log.c.merchant_id, func.max(audit_log.c.seq).label("last"))
+                .group_by(audit_log.c.merchant_id)
+                .order_by(func.max(audit_log.c.seq).desc())
+                .limit(1)
+            )
+        ).first()
+    return str(row[0]) if row else None
+
+
 @router.post("/v1/director/session", dependencies=director)
 async def presenter_session(request: Request, body: SessionBody) -> dict[str, Any]:
     """A real staff session for a seeded shop, so the stage can pass `?session=` to each surface."""
@@ -284,7 +307,12 @@ async def presenter_session(request: Request, body: SessionBody) -> dict[str, An
 
     state = request.app.state
     merchants = sorted(state.commands.merchant_ids)
-    merchant_id = body.merchant_id or (merchants[-1] if len(merchants) == 1 else None)
+    # one shop: that one; several: the shop the Director last played or restored, else the most recently
+    # active shop (survives an API restart, when the in-memory choice is gone)
+    default = getattr(state, "default_merchant", None)
+    if default is None and len(merchants) > 1:
+        default = await _most_active(state)
+    merchant_id = body.merchant_id or (merchants[-1] if len(merchants) == 1 else default)
     if merchant_id is None or merchant_id not in state.commands.merchant_ids:
         raise refused(CommandError("director.merchant_required"), 422)
     async with state.db.read() as conn:
@@ -324,8 +352,29 @@ async def snapshot(request: Request, body: SnapshotBody) -> dict[str, Any]:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.unlink(missing_ok=True)
     await request.app.state.db.snapshot(path)
-    path.with_suffix(".json").write_text(json.dumps({"clock": iso_utc(request.app.state.clock.now())}))
+    meta: dict[str, Any] = {"clock": iso_utc(request.app.state.clock.now())}
+    if getattr(request.app.state, "default_merchant", None):  # the shop the surfaces open on after a restore
+        meta["merchant_id"] = request.app.state.default_merchant
+    playing = getattr(request.app.state, "director_play", None)
+    if playing:  # the Director can go on beat by beat after a restore, without rebuilding the world
+        meta["play"] = {"scenario": playing["scenario"]["scenario"], "saved": playing["runner"].saved}
+    path.with_suffix(".json").write_text(json.dumps(meta, default=str))
     return {"name": body.name, "clock": iso_utc(request.app.state.clock.now())}
+
+
+def _resume_play(request: Request, play: dict[str, Any]) -> None:
+    """Rebuild the Director's scenario runner from a snapshot: its saved ids and the owner's two sessions."""
+    from arth.governance.policy import Session
+    from arth.sim.scenario import CONSOLE, DEVICE, SCENARIOS_DIR, LiveClient, ScenarioRunner, load
+
+    state = request.app.state
+    runner = ScenarioRunner(LiveClient(request.app))
+    runner.saved = play["saved"]
+    mid, owner = runner.saved["merchant_id"], runner.saved["world"]["owner_id"]
+    state.sessions[CONSOLE] = Session(mid, owner, "owner", channel="console", step_up=True)
+    state.sessions[DEVICE] = Session(mid, owner, "owner", channel="device")
+    scenario = load(SCENARIOS_DIR / play["scenario"] / "scenario.yaml")
+    state.director_play = {"scenario": scenario, "runner": runner}
 
 
 @router.post("/v1/director/restore", dependencies=director)
@@ -344,7 +393,11 @@ async def restore(request: Request, body: SnapshotBody) -> dict[str, Any]:
     await state.db.restore(path)
     clock_file = path.with_suffix(".json")
     if clock_file.exists():
-        state.clock.reset(parse_iso(json.loads(clock_file.read_text())["clock"]))
+        meta = json.loads(clock_file.read_text())
+        state.clock.reset(parse_iso(meta["clock"]))
+        state.default_merchant = meta.get("merchant_id")
+        if meta.get("play"):
+            _resume_play(request, meta["play"])
     async with state.db.read() as conn:
         state.commands.merchant_ids = await Repo.merchant_directory(conn)
     return {
@@ -381,16 +434,27 @@ async def play(request: Request, body: PlayBody) -> dict[str, Any]:
     if not path.exists():
         raise refused(CommandError("director.scenario_not_found"), 404)
     scenario = load(path)
+    request.app.state.clock.freeze()  # beats move time explicitly; the presenter may run it again
     runner = ScenarioRunner(LiveClient(request.app))
     import secrets
 
     await anyio.to_thread.run_sync(runner.setup, scenario, "-play-" + secrets.token_hex(4))
     request.app.state.director_play = {"scenario": scenario, "runner": runner}
+    request.app.state.default_merchant = runner.saved["merchant_id"]  # surfaces auto-connect to this shop
     return {
         "scenario": body.scenario,
         "merchant_id": runner.saved["merchant_id"],
         "beats": [b["id"] for scene in scenario["scenes"] for b in scene["beats"]],
     }
+
+
+@router.get("/v1/director/play", dependencies=director)
+async def playing(request: Request) -> dict[str, Any]:
+    """What the Director can continue: a scenario played or restored (`python dev.py demo`) on this server."""
+    play = getattr(request.app.state, "director_play", None)
+    if play is None:
+        return {"scenario": None, "merchant_id": None}
+    return {"scenario": play["scenario"]["scenario"], "merchant_id": play["runner"].saved["merchant_id"]}
 
 
 @router.post("/v1/director/play/beat", dependencies=director)

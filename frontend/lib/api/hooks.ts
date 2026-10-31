@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import type { LayerPendingView } from '../contracts';
 import { validate } from '../validate';
 import { apiGet, dataMode, type DataMode } from './client';
@@ -16,10 +16,9 @@ export type ViewState<T> = {
   refetch: () => void;
 };
 
-/** Mode is resolved on the client after mount, so server and first client render agree (fixture). */
+/** Surfaces render client-only (app/providers.tsx), so the mode is known on the first render. */
 export function useDataMode(): DataMode {
-  const [mode, setMode] = useState<DataMode>('fixture');
-  useEffect(() => setMode(dataMode()), []);
+  const [mode] = useState<DataMode>(() => (typeof window === 'undefined' ? 'fixture' : dataMode()));
   return mode;
 }
 

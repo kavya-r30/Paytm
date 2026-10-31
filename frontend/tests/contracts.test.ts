@@ -117,6 +117,7 @@ const contractNames = [
   'khata_account_view',
   'khata_view',
   'kot_view',
+  'latest_ref_view',
   'layer_pending_view',
   'ledger_acknowledge_entry',
   'ledger_add_entry',

@@ -136,3 +136,7 @@ class BillPayView(BaseModel):
     alternatives: list[Alternative]
     exception: constr(min_length=1, max_length=200) | None
     invalidate_on: list[constr(min_length=1, max_length=200)]
+    pay_token: constr(pattern=r'^[0-9a-z]{26}$') | None = Field(
+        ...,
+        description="Rails-simulator token of the current dynamic QR: the customer's UPI app opens /pay/<token> (null before a QR is requested).",
+    )

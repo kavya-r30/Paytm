@@ -7,7 +7,7 @@ data-sufficiency read model naming the layer that fills them, so every surface c
 import json
 from collections.abc import Awaitable, Callable
 from datetime import timedelta
-from typing import Annotated, Any
+from typing import Annotated, Any, Literal
 
 from fastapi import APIRouter, Query, Request
 from pydantic import BaseModel, Field
@@ -205,7 +205,7 @@ async def notifications(request: Request, session: Actor) -> dict[str, Any]:
     async def build(repo: Repository) -> dict[str, Any]:
         now = iso_utc(clock.now())
         done = [
-            {k: r[k] for k in ("command_id", "type", "tier", "occurred_at", "undo_until")}
+            {k: r[k] for k in ("command_id", "type", "tier", "occurred_at", "undo_until", "bill_id")}
             for r in await recent_commands(repo, now, 20)
         ]
         return {
@@ -224,7 +224,9 @@ async def recent_commands(repo: Repository, now: str, limit: int) -> list[dict[s
         await repo.select(audit_log, audit_log.c.action == "command.executed"), key=lambda r: -r["seq"]
     ):
         data = json.loads(row["data"])
-        kind = await command_type(repo, row["command_id"])
+        command = await repo.select(commands, commands.c.id == row["command_id"])
+        kind = str(command[0]["type"]) if command else "unknown"
+        payload = json.loads(command[0]["payload"]) if command else {}
         until = iso_utc(parse_iso(row["occurred_at"]) + timedelta(seconds=UNDO_SECONDS))
         result.append(
             {
@@ -235,16 +237,12 @@ async def recent_commands(repo: Repository, now: str, limit: int) -> list[dict[s
                 "undo_until": until if kind in UNDOABLE and until > now else None,
                 "actor_id": data["session"]["actor_id"],
                 "status": data["result"]["status"],
+                "bill_id": payload.get("bill_id") if kind in UNDOABLE else None,
             }
         )
         if len(result) >= limit:
             break
     return result
-
-
-async def command_type(repo: Repository, command_id: str) -> str:
-    rows = await repo.select(commands, commands.c.id == command_id)
-    return str(rows[0]["type"]) if rows else "unknown"
 
 
 @router.get("/v1/views/gates/{gate_id}")
@@ -286,10 +284,18 @@ async def bill(request: Request, bill_id: str, session: Actor) -> dict[str, Any]
 @router.get("/v1/views/bill/{bill_id}/pay")
 async def bill_pay(request: Request, bill_id: str, session: Actor) -> dict[str, Any]:
     async def build(repo: Repository) -> dict[str, Any]:
+        from arth.sim.tables import sim_rails_orders
+
         state = await bill_state(repo, bill_id)
         failed = state["upi"] is not None and state["upi"]["status"] in {"failed", "expired"}
+        qr = (
+            await repo.select(sim_rails_orders, sim_rails_orders.c.order_ref == state["upi"]["order_ref"])
+            if state["upi"]
+            else []
+        )
         return {
             "bill": state,
+            "pay_token": qr[0]["token"] if qr else None,
             "payee_vpa": (await settings_view(repo)).get("vpa"),
             "alternatives": ["cash", "khata", "regenerate"] if failed else ["cash", "khata"],
             "exception": ("payment." + state["upi"]["status"])
@@ -791,3 +797,57 @@ async def storefront_order(request: Request, slug: str, body: StorefrontOrder) -
         customer, "orders.create_draft", {"channel": "storefront", "lines": lines}, new_id("web")
     )
     return {"order_id": result["data"]["order_id"], "status": "draft"}
+
+
+LatestKind = Literal[
+    "bill_open",
+    "bill_closed",
+    "gate",
+    "po",
+    "claim",
+    "offer",
+    "plan",
+    "campaign",
+    "run",
+    "order",
+    "verdict",
+    "item",
+    "patron",
+]
+
+
+def _latest_source(kind: str) -> tuple[Any, list[Any], list[str]]:
+    from arth.agents.tables import playbook_runs
+    from arth.domains.commerce_tables import claims, offer_programs, orders, purchase_orders, sentinel_checks
+    from arth.growth.tables import campaigns, growth_plans
+
+    sources: dict[str, tuple[Any, list[Any], list[str]]] = {
+        "bill_open": (bills, [bills.c.status == "open"], ["bill.changed"]),
+        "bill_closed": (bills, [bills.c.status == "closed"], ["bill.paid"]),
+        "gate": (approvals, [], ["approval.requested", "approval.decided"]),
+        "po": (purchase_orders, [], ["po.changed"]),
+        "claim": (claims, [], ["claim.changed"]),
+        "offer": (offer_programs, [], ["offer.program_changed"]),
+        "plan": (growth_plans, [], ["growth.updated"]),
+        "campaign": (campaigns, [], ["growth.updated"]),
+        "run": (playbook_runs, [], ["playbook.changed"]),
+        "order": (orders, [], ["order.changed"]),
+        "verdict": (sentinel_checks, [], ["sentinel.verdict"]),
+        "item": (items, [], ["catalog.changed"]),
+        "patron": (patrons, [patrons.c.erased == 0], ["patron.changed"]),
+    }
+    return sources[kind]
+
+
+@router.get("/v1/views/latest/{kind}")
+async def latest_ref(request: Request, kind: LatestKind, session: Actor) -> dict[str, Any]:
+    """Newest record of a kind (ULIDs sort by time): a detail screen opened without an id shows real data."""
+    table, where, events = _latest_source(kind)
+
+    async def build(repo: Repository) -> dict[str, Any]:
+        rows = await repo.select(table, *where)
+        if kind == "gate":
+            rows = [r for r in rows if r["status"] == "pending"] or rows
+        return {"kind": kind, "id": max((r["id"] for r in rows), default=None), "invalidate_on": events}
+
+    return await read(request, session, build)

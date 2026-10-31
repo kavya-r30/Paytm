@@ -65,6 +65,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/views/latest/{kind}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Newest record of a kind, so a detail screen opened without an id shows real data. */
+        get: operations["getLatestRef"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/views/khata": {
         parameters: {
             query?: never;
@@ -1256,7 +1273,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /** @description The scenario played or restored on this server (python dev.py demo), so the Director continues it. */
+        get: operations["directorCurrentPlay"];
         put?: never;
         post: operations["directorPlay"];
         delete?: never;
@@ -1691,6 +1709,16 @@ export interface components {
             };
             invalidate_on: string[];
         };
+        /**
+         * LatestRefView
+         * @description The newest record of a kind in the session's shop, so a detail screen opened without an id shows real data (null: the shop has none yet, the screen shows its empty state).
+         */
+        "latest_ref_view.schema": {
+            /** @enum {string} */
+            kind: "bill_open" | "bill_closed" | "gate" | "po" | "claim" | "offer" | "plan" | "campaign" | "run" | "order" | "verdict" | "item" | "patron";
+            id: components["schemas"]["PrefixedId"] | null;
+            invalidate_on: string[];
+        };
         /** KhataAccountView */
         "khata_account_view.schema": {
             account_id: components["schemas"]["PrefixedId"];
@@ -1889,6 +1917,8 @@ export interface components {
                 /** Format: date-time */
                 occurred_at: string;
                 undo_until: string | null;
+                /** @description Bill of an undoable line command (counter.undo takes the bill); null for everything else. */
+                bill_id: components["schemas"]["PrefixedId"] | null;
             }[];
             snoozed: {
                 gate_id: components["schemas"]["PrefixedId"];
@@ -2063,6 +2093,8 @@ export interface components {
             alternatives: ("cash" | "khata" | "regenerate")[];
             exception: string | null;
             invalidate_on: string[];
+            /** @description Rails-simulator token of the current dynamic QR: the customer's UPI app opens /pay/<token> (null before a QR is requested). */
+            pay_token: string | null;
         };
         /** BillPaidView */
         "bill_paid_view.schema": {
@@ -3594,6 +3626,30 @@ export interface operations {
             };
             401: components["responses"]["Problem"];
             409: components["responses"]["Problem"];
+        };
+    };
+    getLatestRef: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                kind: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The newest id, or null when the shop has none yet */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["latest_ref_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            422: components["responses"]["Problem"];
         };
     };
     getKhataView: {
@@ -5402,6 +5458,26 @@ export interface operations {
             };
             401: components["responses"]["Problem"];
             404: components["responses"]["Problem"];
+        };
+    };
+    directorCurrentPlay: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scenario id and merchant, or nulls */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": Record<string, never>;
+                };
+            };
         };
     };
     directorPlay: {

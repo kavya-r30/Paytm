@@ -47,6 +47,8 @@ async def turn(
 async def ask(
     request: Request, session: Actor, session_ref: Annotated[str | None, Query(alias="session")] = None
 ) -> dict[str, Any]:
+    if session_ref == "current":  # the Ask screen's own conversation (same key the conductor logs under)
+        session_ref = session.session_id or session.actor_id
     async with request.app.state.db.read() as conn:
         rows = await Repository(conn, session.merchant_id).select(turns)
     rows = sorted(

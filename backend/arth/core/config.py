@@ -26,7 +26,14 @@ TOKEN_ENVS = {
     "ARTH_DEVICE_TOKEN": "device_token",
     "ARTH_CONSOLE_TOKEN": "console_token",
 }
-KEY_ENVS = ("MISTRAL_API_KEY", "GROQ_API_KEY", "SARVAM_API_KEY", "LANGFUSE_PUBLIC_KEY", "LANGFUSE_SECRET_KEY")
+KEY_ENVS = (
+    "AZURE_OPENAI_API_KEY",
+    "MISTRAL_API_KEY",
+    "GROQ_API_KEY",
+    "SARVAM_API_KEY",
+    "LANGFUSE_PUBLIC_KEY",
+    "LANGFUSE_SECRET_KEY",
+)
 
 
 # ---- settings and secrets ------------------------------------------------------------------
@@ -48,7 +55,19 @@ class Settings(BaseSettings):
     session_signing_key: SecretStr | None = None
     cors_origins: list[str] = ["http://localhost:3000"]
     tick_interval_s: float = 1.0
+    # Normal (dev/prod) mode: the shop's clock runs at real time, so undo windows elapse, hourly intel and the
+    # nightly agents fire; test/demo keep it frozen for deterministic runs. The Director can freeze/run it.
+    clock_running: bool | None = None
 
+    @property
+    def clock_runs(self) -> bool:
+        return self.clock_running if self.clock_running is not None else self.mode in {"dev", "prod"}
+
+    azure_openai_api_key: SecretStr | None = Field(default=None, validation_alias="AZURE_OPENAI_API_KEY")
+    azure_openai_endpoint: str | None = Field(default=None, validation_alias="AZURE_OPENAI_ENDPOINT")
+    azure_openai_api_version: str = Field(
+        default="2025-04-01-preview", validation_alias="AZURE_OPENAI_API_VERSION"
+    )
     mistral_api_key: SecretStr | None = Field(default=None, validation_alias="MISTRAL_API_KEY")
     groq_api_key: SecretStr | None = Field(default=None, validation_alias="GROQ_API_KEY")
     sarvam_api_key: SecretStr | None = Field(default=None, validation_alias="SARVAM_API_KEY")
@@ -57,6 +76,8 @@ class Settings(BaseSettings):
     langfuse_host: str = Field(default="https://cloud.langfuse.com", validation_alias="LANGFUSE_HOST")
 
     @field_validator(
+        "azure_openai_api_key",
+        "azure_openai_endpoint",
         "mistral_api_key",
         "groq_api_key",
         "sarvam_api_key",
@@ -74,6 +95,7 @@ class Settings(BaseSettings):
 
     def secret(self, env_name: str) -> SecretStr | None:
         secrets = {
+            "AZURE_OPENAI_API_KEY": self.azure_openai_api_key if self.azure_openai_endpoint else None,
             "MISTRAL_API_KEY": self.mistral_api_key,
             "GROQ_API_KEY": self.groq_api_key,
             "SARVAM_API_KEY": self.sarvam_api_key,
@@ -174,6 +196,7 @@ class Hop(Strict):
     timeout_ms: int | None = Field(default=None, gt=0)
     json_mode: bool = Field(default=False, alias="json")
     langs: list[str] | None = None
+    speaker: str | None = None  # TTS voice for this model (speaker sets differ per Bulbul version)
 
 
 class RoleChain(Strict):

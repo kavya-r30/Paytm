@@ -1,0 +1,1 @@
+{"provider": "azure", "model": "renaiscent-gpt-5.4-mini", "text": "", "data": {"tool_calls": [{"function": {"arguments": "{\"period\":\"this_week\"}", "name": "compare_periods"}, "id": "call_drdzvug9NrxX59XdsfQ8POFO", "type": "function"}]}}

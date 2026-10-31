@@ -6,9 +6,11 @@ become approval cards, R4 returns the Console pointer. No apply/loan tool exists
 """
 
 import json
+import re
 from datetime import timedelta
 from typing import Any
 
+from arth.ai.agent import ShopAgent
 from arth.ai.fastpath import Intent, parse
 from arth.ai.guards import Vault, critic, ground, injection, scope
 from arth.ai.prompts import prompt
@@ -17,15 +19,17 @@ from arth.ai.tables import turns
 from arth.ai.templates import render
 from arth.core.clock import iso_utc
 from arth.core.ids import new_id
+from arth.domains.catalog import public_item
 from arth.domains.commerce_tables import bills
 from arth.domains.counter import bill_state
-from arth.domains.ledger import khata_view
+from arth.domains.ledger import account_view, khata_view
 from arth.domains.ledger_tables import credit_accounts
 from arth.domains.merchants import settings_view
 from arth.domains.patron_identity import related_ids, resolve_identity
 from arth.domains.patron_tables import patrons
 from arth.domains.resolution import resolve
 from arth.domains.stock import stock_view
+from arth.domains.tables import items
 from arth.governance.commands import CommandBus, CommandError
 from arth.governance.policy import Session
 from arth.governance.repository import Repository
@@ -48,6 +52,25 @@ FOLLOWUPS = [
     {"label_key": "chip.khata_kitna", "turn_text": "Khata kitna baaki hai?"},
     {"label_key": "chip.kya_pending", "turn_text": "Kya pending hai?"},
 ]
+
+
+COUNTER_KINDS = {"remove_last", "set_last_qty", "undo", "park", "pay_qr", "pay_cash"}
+
+
+def counter_command(parsed: Intent, text: str, bill_id: str | None) -> bool:
+    """The fast path keeps only what must be instant and unambiguous: "haan teeno", and at an open bill the
+    counter commands and plain item lists ("aur ek Parle-G"). Anything naming a customer, khata or a
+    question goes to the model with tools."""
+    if parsed.kind == "approve_all":
+        return True
+    if not bill_id:
+        return False
+    if parsed.kind in COUNTER_KINDS:
+        return True
+    lowered = text.lower()
+    return parsed.kind == "add_lines" and not re.search(
+        r"\b(ka|ke|ki|bill|khata|khate|udhaar|liye|customer|grahak|mein|aaye|mangwa|rate)\b", lowered
+    )
 
 
 class Conductor:
@@ -86,9 +109,14 @@ class Conductor:
         else:
             topic = scope(text, settings["pack"])
             parsed = parse(text)
+            agent = None
             if topic in {"medical", "tax_advice"}:
                 env, intent = self.envelope(lang, text, render(topic, lang)), topic
-            elif parsed:
+            elif parsed and counter_command(parsed, text, bill_id):
+                env, intent = await self.run_intent(session, parsed, text, lang, bill_id, key)
+            elif (agent := await ShopAgent(self, session, lang).run(text, bill_id, key)) is not None:
+                env, intent = agent  # the model with the shop's tools (G4); writes still go through the bus
+            elif parsed:  # model unreachable: the fast path keeps the counter and khata working offline
                 env, intent = await self.run_intent(session, parsed, text, lang, bill_id, key)
             else:
                 routed = await self.route_with_model(session, text)
@@ -122,10 +150,15 @@ class Conductor:
             data = json.loads(result.text or "{}")
         except (ProviderUnavailable, json.JSONDecodeError):
             return None
+        if data.get("tool") and data["tool"] != "unknown":  # a question gets an answer, not just a screen
+            params = {"tool": data["tool"]}
+            if data.get("item"):
+                params["item"] = str(data["item"])
+            if data.get("customer"):  # the model saw ⟦P1⟧ tokens; the vault puts the real name back
+                params["who"] = vault.fill(str(data["customer"]))
+            return Intent("read", params, 0.7)
         if data.get("screen"):
             return Intent("nav", {"screen": data["screen"]}, 0.7)
-        if data.get("tool") and data["tool"] != "unknown":
-            return Intent("read", {"tool": data["tool"]}, 0.7)
         return None
 
     async def submit(self, session: Session, kind: str, payload: dict[str, Any], key: str) -> dict[str, Any]:
@@ -148,9 +181,8 @@ class Conductor:
         mid = session.merchant_id
         try:
             if intent.kind == "read":
-                return await self.answer(mid, intent.params["tool"], heard, lang), "read:" + intent.params[
-                    "tool"
-                ]
+                tool = intent.params["tool"]
+                return await self.answer(mid, tool, heard, lang, intent.params), "read:" + tool
             if intent.kind == "approve_all":
                 return await self.approve_all(
                     session, intent.params["exclude"], heard, lang, key
@@ -322,9 +354,58 @@ class Conductor:
         said = render("pending", lang, count=skipped) if skipped else render("done", lang)
         return self.envelope(lang, heard, said, provenance=[{"kind": "gates", "count": approved + skipped}])
 
-    async def answer(self, mid: str, tool: str, heard: str, lang: str) -> dict[str, Any]:
+    async def answer(
+        self, mid: str, tool: str, heard: str, lang: str, params: dict[str, Any] | None = None
+    ) -> dict[str, Any]:
         clock = self.bus.clock
+        params = params or {}
         facts: dict[str, Any]
+        provenance: list[dict[str, Any]]
+        if tool in {"item_stock", "item_price"}:
+            said_item = str(params.get("item", heard))
+            found = await self.read(mid, resolve, said_item)
+            item = found["selected"]
+            if item is None:  # "surf excel" for "Surf Excel Detergent": every spoken word in one unique name
+                words = said_item.lower().split()
+                catalog = [public_item(r) for r in await self.read(mid, lambda repo: repo.select(items))]
+                named = [c for c in catalog if all(w in " ".join(c["names"].values()).lower() for w in words)]
+                item = named[0] if len(named) == 1 else None
+            if item is None:
+                return self.envelope(
+                    lang, heard, render("item_unknown", lang, text=params.get("item", heard))
+                )
+            name = item["names"].get("en") or next(iter(item["names"].values()))
+            if tool == "item_price":
+                facts = {"price_paise": item["price_paise"]}
+                said = render("item_price", lang, name=name, money=item["price_paise"], unit=item["unit"])
+                provenance = [{"kind": "catalog"}]
+            else:
+                rows = [
+                    r
+                    for r in (await self.read(mid, stock_view, clock))["items"]
+                    if r["item_id"] == item["id"]
+                ]
+                qty_milli = rows[0]["on_hand_qty_milli"] if rows else 0
+                qty = qty_milli // 1000 if qty_milli % 1000 == 0 else round(qty_milli / 1000, 1)
+                facts = {"qty": qty, "qty_milli": qty_milli}
+                said = render("item_stock", lang, name=name, qty=qty, unit=item["unit"])
+                provenance = [{"kind": "stock"}]
+            return self.envelope(lang, heard, said, provenance=provenance)
+        if tool == "patron_khata":
+            patron = await self.read(mid, _patron_by_name, str(params.get("who", "")))
+            accounts = await self.read(mid, _accounts, patron) if patron else []
+            if not accounts:
+                return self.envelope(lang, heard, render("patron_unknown", lang, text=params.get("who", "")))
+            view = await self.read(mid, account_view, accounts[0], clock)
+            facts = {"balance_paise": view["balance_paise"]}
+            said = render("patron_khata", lang, name=view["display_name"], money=view["balance_paise"])
+            return self.envelope(
+                lang,
+                heard,
+                said,
+                provenance=[{"kind": "khata", "count": 1}],
+                sensitivity="discreet",  # LED-12: one customer's dues are never read out loud by default
+            )
         if tool == "today_sales":
             row = (await self.read(mid, daily_sales, today(clock), today(clock)))[0]
             facts = {"sales_paise": row["sales_paise"], "bills": row["bills"]}
@@ -345,9 +426,16 @@ class Conductor:
         elif tool == "forecast":
             result = await self.read(mid, sales_forecast, clock, self.calendar)
             day = result["days"][1] if len(result["days"]) > 1 else result["days"][0]
-            facts = day
+            rounded = {k: round(day[k], -3) for k in ("p50_paise", "p10_paise", "p90_paise")}
+            facts = {**day, "rounded": rounded}  # the spoken (rounded) figures are what the guard checks
             said = (
-                render("forecast", lang, money=day["p50_paise"], low=day["p10_paise"], high=day["p90_paise"])
+                render(  # an estimate is spoken in round rupees (nearest ₹10), never with paise
+                    "forecast",
+                    lang,
+                    money=rounded["p50_paise"],
+                    low=rounded["p10_paise"],
+                    high=rounded["p90_paise"],
+                )
                 if result["status"] == "ready"
                 else render("forecast_unknown", lang)
             )
@@ -357,9 +445,8 @@ class Conductor:
                 r for r in (await self.read(mid, stock_view, clock))["items"] if r["status"] in {"low", "out"}
             ]
             facts = {"count": len(rows)}
-            said = render(
-                "low_stock", lang, count=len(rows), names=", ".join(r["name"] for r in rows[:3]) or "-"
-            )
+            names = list(dict.fromkeys(r["name"] for r in rows))  # one mention per name
+            said = render("low_stock", lang, count=len(rows), names=", ".join(names[:3]) or "-")
             provenance = [{"kind": "stock", "count": len(rows)}]
         else:
             rows = await self.read(mid, top_items, today(clock) - timedelta(days=6), today(clock), 3)

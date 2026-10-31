@@ -44,9 +44,18 @@ async def submit_command(
     idempotency_key: Annotated[str, Header(min_length=1, max_length=200)],
 ) -> dict[str, Any]:
     try:
-        return await request.app.state.commands.submit(session, body.type, body.payload, idempotency_key)
+        result: dict[str, Any] = await request.app.state.commands.submit(
+            session, body.type, body.payload, idempotency_key
+        )
     except CommandError as exc:
         raise problem(exc) from exc
+    if body.type == "counter.request_upi" and result["status"] == "executed":
+        # the merchant backend asks the payment gateway for a dynamic QR; the rails simulator plays it (T2.2)
+        data = result["data"]
+        sim = request.app.state.sim
+        qr = await sim.create_qr(session.merchant_id, data["order_ref"], data["amount_paise"])
+        result["data"] = {**data, "pay_token": qr["token"]}
+    return result
 
 
 @router.post("/v1/approvals/{thread_id}")
