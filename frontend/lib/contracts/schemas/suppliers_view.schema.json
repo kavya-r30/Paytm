@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/suppliers_view.schema.json",
+  "title": "SuppliersView",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "suppliers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "lang": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "lead_days": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "open_pos": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "payable_paise": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "lang",
+          "lead_days",
+          "open_pos",
+          "payable_paise"
+        ]
+      }
+    },
+    "invalidate_on": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    }
+  },
+  "required": [
+    "suppliers",
+    "invalidate_on"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "city": "lucknow",
+  "upcoming": [],
+  "local_events": [],
+  "tentative_within_60_days": 0,
+  "invalidate_on": [
+    "x.changed"
+  ]
+}

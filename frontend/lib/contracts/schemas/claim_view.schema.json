@@ -1,0 +1,106 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/claim_view.schema.json",
+  "title": "ClaimView",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "./common.schema.json#/definitions/PrefixedId"
+        },
+        "po_id": {
+          "$ref": "./common.schema.json#/definitions/PrefixedId"
+        },
+        "supplier_id": {
+          "$ref": "./common.schema.json#/definitions/PrefixedId"
+        },
+        "amount_paise": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "status": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "lang": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "po_id",
+        "supplier_id",
+        "amount_paise",
+        "status",
+        "lang",
+        "created_at"
+      ]
+    },
+    "variances": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "item_id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "kind": {
+            "enum": [
+              "price",
+              "qty"
+            ]
+          },
+          "expected": {
+            "type": "integer"
+          },
+          "actual": {
+            "type": "integer"
+          },
+          "delta_paise": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "item_id",
+          "kind",
+          "expected",
+          "actual",
+          "delta_paise",
+          "name"
+        ]
+      }
+    },
+    "invalidate_on": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    "supplier_name": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "claim",
+    "variances",
+    "invalidate_on",
+    "supplier_name"
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/counter_checkout_khata.schema.json",
+  "title": "CounterCheckoutKhata",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "bill_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "account_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "khata_paise": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "payments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "mode": {
+            "enum": [
+              "cash",
+              "card"
+            ]
+          },
+          "amount_paise": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "tendered_paise": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "mode",
+          "amount_paise"
+        ]
+      },
+      "minItems": 0,
+      "maxItems": 3
+    },
+    "member_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "limit_override": {
+      "type": "boolean"
+    },
+    "reason_key": {
+      "$ref": "../common.schema.json#/definitions/MessageKey"
+    }
+  },
+  "required": [
+    "bill_id",
+    "account_id",
+    "khata_paise",
+    "payments"
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/feedback_record.schema.json",
+  "title": "FeedbackRecord",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "target_kind": {
+      "enum": [
+        "order",
+        "bill"
+      ]
+    },
+    "target_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "rating": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5
+    },
+    "complaint_key": {
+      "$ref": "../common.schema.json#/definitions/MessageKey"
+    }
+  },
+  "required": [
+    "target_kind",
+    "target_id",
+    "rating"
+  ]
+}

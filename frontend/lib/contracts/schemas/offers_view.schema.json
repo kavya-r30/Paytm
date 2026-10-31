@@ -1,0 +1,164 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/offers_view.schema.json",
+  "title": "OffersView",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "programs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "type": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "status": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "funding": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "terms": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "amount_paise": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "min_spend_paise": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "expiry_days": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 365
+              }
+            },
+            "required": [
+              "amount_paise",
+              "min_spend_paise",
+              "expiry_days"
+            ]
+          },
+          "budget_paise": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "spent_paise": {
+            "type": "integer"
+          },
+          "liability": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "issued_paise": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "redeemed_paise": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "expired_paise": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "outstanding_paise": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "issued_paise",
+              "redeemed_paise",
+              "expired_paise",
+              "outstanding_paise"
+            ]
+          },
+          "treated": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "holdout": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "issued": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "valid_until": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "status",
+          "funding",
+          "terms",
+          "budget_paise",
+          "spent_paise",
+          "liability",
+          "treated",
+          "holdout",
+          "issued",
+          "valid_until"
+        ]
+      }
+    },
+    "liability": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "issued_paise": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "redeemed_paise": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "expired_paise": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "outstanding_paise": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "issued_paise",
+        "redeemed_paise",
+        "expired_paise",
+        "outstanding_paise"
+      ]
+    },
+    "invalidate_on": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    }
+  },
+  "required": [
+    "programs",
+    "liability",
+    "invalidate_on"
+  ]
+}

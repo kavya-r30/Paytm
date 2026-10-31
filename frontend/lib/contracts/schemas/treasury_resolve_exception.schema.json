@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/treasury_resolve_exception.schema.json",
+  "title": "TreasuryResolveException",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "exception_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "resolution": {
+      "enum": [
+        "dismissed",
+        "refunded",
+        "matched"
+      ]
+    }
+  },
+  "required": [
+    "exception_id",
+    "resolution"
+  ]
+}

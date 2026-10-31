@@ -1,0 +1,25 @@
+{
+  "claim": {
+    "id": "claim_01JBQ0Z7Y8K3M4N5P6Q7R8S9T0",
+    "po_id": "po_01JBQ0Z7Y8K3M4N5P6Q7R8S9T0",
+    "supplier_id": "supplier_01JBQ0Z7Y8K3M4N5P6Q7R8S9T0",
+    "amount_paise": 5000,
+    "status": "draft",
+    "lang": "hi",
+    "created_at": "2026-10-30T04:00:00Z"
+  },
+  "variances": [
+    {
+      "item_id": "item_01JBQ0Z7Y8K3M4N5P6Q7R8S9T0",
+      "kind": "price",
+      "expected": 4500,
+      "actual": 4600,
+      "delta_paise": 5000,
+      "name": "Sugar"
+    }
+  ],
+  "invalidate_on": [
+    "x.changed"
+  ],
+  "supplier_name": "Agarwal Traders"
+}

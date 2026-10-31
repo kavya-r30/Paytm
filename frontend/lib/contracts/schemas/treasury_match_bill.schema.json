@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/treasury_match_bill.schema.json",
+  "title": "TreasuryMatchBill",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "payment_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "bill_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    }
+  },
+  "required": [
+    "payment_id",
+    "bill_id"
+  ]
+}

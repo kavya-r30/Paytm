@@ -4,5 +4,6 @@
   "invalidate_on": [
     "patron.changed",
     "patron.merged"
-  ]
+  ],
+  "recent": []
 }

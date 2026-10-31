@@ -46,3 +46,27 @@ async def test_expired_gate_cannot_be_approved(db):
     bus.clock.set(bus.clock.now() + timedelta(hours=12))
     with pytest.raises(CommandError, match="expired"):
         await bus.decide(owner, gate["thread_id"], "approve", "decision")
+
+
+async def test_decline_closes_the_gate_without_running_the_command(db):
+    from l1d_helpers import run, shop
+
+    from arth.governance.commands import CommandError
+
+    s = await shop(db)
+    gate = await run(
+        s,
+        "ledger.open_account",
+        {
+            "patron_id": (
+                await s.services.patrons.submit(
+                    s.owner, "patrons.add", {"display_name": "Decline Me", "lang": "hi"}, "decline-patron"
+                )
+            )["data"]["patron_id"],
+            "limit_paise": 1000,
+        },
+    )
+    result = await s.bus.decide(s.owner, gate["thread_id"], "decline", "decline-1")
+    assert result["status"] == "declined"
+    with pytest.raises(CommandError, match="approval.already_decided"):
+        await s.bus.decide(s.owner, gate["thread_id"], "approve", "approve-after-decline")

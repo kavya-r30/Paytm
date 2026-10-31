@@ -1,0 +1,97 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/growth_ledger_view.schema.json",
+  "title": "GrowthLedgerView",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "campaign_id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "lever": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "treated_n": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "holdout_n": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "measured": {
+            "type": "object"
+          },
+          "direct_paise": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "reward_cost_paise": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "label": {
+            "enum": [
+              "measured",
+              "direct",
+              "estimated"
+            ]
+          }
+        },
+        "required": [
+          "campaign_id",
+          "lever",
+          "treated_n",
+          "holdout_n",
+          "measured",
+          "direct_paise",
+          "reward_cost_paise",
+          "label"
+        ]
+      }
+    },
+    "impact": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "measured_paise": {
+          "type": "integer"
+        },
+        "direct_paise": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "estimated_paise": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "measured_paise",
+        "direct_paise",
+        "estimated_paise"
+      ]
+    },
+    "invalidate_on": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    }
+  },
+  "required": [
+    "entries",
+    "impact",
+    "invalidate_on"
+  ]
+}

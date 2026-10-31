@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/staff_set_skills.schema.json",
+  "title": "StaffSetSkills",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "staff_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "skills": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "minItems": 0,
+      "maxItems": 20
+    }
+  },
+  "required": [
+    "staff_id",
+    "skills"
+  ]
+}

@@ -27,6 +27,7 @@ roles:
     chain:
       - { provider: sarvam, model: 'bulbul:v4-flash', timeout_ms: 2000, langs: [hi, en, mr, ta, bn, gu, te] }
       - { provider: sarvam, model: 'bulbul:v3', timeout_ms: 2000 }
+      - { provider: sarvam, model: 'bulbul:v2', timeout_ms: 2000 }
       - { provider: cassette }
   translate:
     chain:

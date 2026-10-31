@@ -1,0 +1,10 @@
+# Helper display groups (spec F5.2). Tier badges are computed from policies.yaml, never written here.
+helpers:
+  - {id: bikri, name_key: helper.bikri, agents: [concierge], commands: [orders.accept, messages.reply, orders.create_draft]}
+  - {id: stock, name_key: helper.stock, agents: [curator], commands: [catalog.change_price, stock.recall_batch, memory.propose]}
+  - {id: kharid, name_key: helper.kharid, agents: [procurement], commands: [supply.draft_po, supply.place_po, supply.send_claim]}
+  - {id: khata, name_key: helper.khata, agents: [collections], commands: [ledger.send_reminder, ledger.send_statement]}
+  - {id: hisaab, name_key: helper.hisaab, agents: [night_shift], commands: [alerts.scan, treasury.daily_close, memory.propose]}
+  - {id: grahak, name_key: helper.grahak, agents: [strategist, outreach], commands: [offers.create_program]}
+  - {id: andaaza, name_key: helper.andaaza, agents: [analyst], commands: []}
+  - {id: pehredaar, name_key: helper.pehredaar, agents: [], commands: []}

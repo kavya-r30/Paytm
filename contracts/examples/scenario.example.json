@@ -1,0 +1,33 @@
+{
+  "scenario": "billing_smoke",
+  "title": "Five-beat billing",
+  "pack": "kirana",
+  "world": {
+    "days": 2,
+    "seed": 11
+  },
+  "scenes": [
+    {
+      "id": "1",
+      "title": "Bill",
+      "beats": [
+        {
+          "id": "1.1",
+          "cue": "Open a bill",
+          "input": [
+            {
+              "command": {
+                "type": "counter.open_bill",
+                "payload": {}
+              }
+            }
+          ],
+          "save": {
+            "bill": "data.bill_id"
+          }
+        }
+      ]
+    }
+  ],
+  "invariants": "default"
+}

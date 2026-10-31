@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/counter_attach_patron.schema.json",
+  "title": "CounterAttachPatron",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "bill_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "patron_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    }
+  },
+  "required": [
+    "bill_id",
+    "patron_id"
+  ]
+}

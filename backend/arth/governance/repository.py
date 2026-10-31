@@ -9,6 +9,26 @@ from sqlalchemy.sql.elements import ColumnElement
 from arth.governance.policy import Session
 from arth.governance.tables import merchants
 
+# Governance bookkeeping may be written outside a command's execution (gates, audit, outbox, offsets).
+# Every other table is domain state and can only change while the Command Bus executes a command.
+BUS_INFRASTRUCTURE = frozenset(
+    {
+        "commands",
+        "approvals",
+        "audit_log",
+        "outbox",
+        "consumer_offsets",
+        "turns",
+        # agent runtime bookkeeping (what agents did and wait for); their effects still go through the bus
+        "playbook_runs",
+        "playbook_steps",
+        "work_items",
+        "contact_locks",
+        "agent_controls",
+        "briefs",
+    }
+)
+
 
 class Repository:
     @staticmethod
@@ -18,6 +38,17 @@ class Repository:
             select(merchants.c.merchant_id).where(merchants.c.id == merchants.c.merchant_id)
         )
         return {str(identity) for identity in rows.scalars()}
+
+    @staticmethod
+    async def storefront_slug_owner(conn: AsyncConnection, slug: str) -> str | None:
+        """Control-plane lookup: storefront slugs are globally unique; returns the owning tenant ID only."""
+        from arth.domains.commerce_tables import storefront_settings
+
+        row = await conn.execute(
+            select(storefront_settings.c.merchant_id).where(storefront_settings.c.slug == slug)
+        )
+        found = row.scalar()
+        return str(found) if found else None
 
     def __init__(
         self,
@@ -48,11 +79,18 @@ class Repository:
         rows = await self.conn.execute(select(table).where(self._scope(table), *where))
         return [dict(row) for row in rows.mappings()]
 
+    def _writable(self, table: Table) -> None:
+        simulated = table.name.startswith("sim_")  # outside parties' state, not Arth's
+        if table.name not in BUS_INFRASTRUCTURE and not simulated and self.command_id is None:
+            raise ValueError("write outside the command bus: " + table.name)
+
     async def insert(self, table: Table, values: dict[str, Any]) -> None:
         self._scope(table)
+        self._writable(table)
         await self.conn.execute(insert(table).values(**self._values(values)))
 
     async def update(self, table: Table, values: dict[str, Any], *where: ColumnElement[bool]) -> int:
+        self._writable(table)
         result = await self.conn.execute(
             update(table).where(self._scope(table), *where).values(**self._values(values))
         )

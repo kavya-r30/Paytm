@@ -1,0 +1,11 @@
+{
+  "entries": [],
+  "impact": {
+    "measured_paise": 0,
+    "direct_paise": 0,
+    "estimated_paise": 0
+  },
+  "invalidate_on": [
+    "x.changed"
+  ]
+}

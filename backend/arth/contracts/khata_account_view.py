@@ -62,7 +62,7 @@ class Payment(BaseModel):
     occurred_at: AwareDatetime
 
 
-class Status2(StrEnum):
+class Status18(StrEnum):
     active = 'active'
     kept = 'kept'
     broken = 'broken'
@@ -79,7 +79,7 @@ class Promise(BaseModel):
     amount_paise: conint(ge=0)
     due_on: date
     occurred_at: AwareDatetime
-    status: Status2
+    status: Status18
 
 
 class KhataAccountView(BaseModel):

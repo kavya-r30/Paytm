@@ -38,11 +38,57 @@
       "items": {
         "type": "string"
       }
+    },
+    "recent": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "patron_id",
+          "display_name",
+          "phone_masked",
+          "khata_balance_paise",
+          "reward_stamps"
+        ],
+        "properties": {
+          "patron_id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "display_name": {
+            "type": "string"
+          },
+          "phone_masked": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "khata_balance_paise": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reward_stamps": {
+            "type": "integer"
+          }
+        }
+      }
     }
   },
   "required": [
     "customers",
     "needs_clarification",
-    "invalidate_on"
+    "invalidate_on",
+    "recent"
   ]
 }

@@ -1,5 +1,6 @@
 """Physical stock is a sum of moves; sellable stock additionally enforces batch safety."""
 
+import json
 from datetime import date
 from typing import Any
 
@@ -16,6 +17,8 @@ from arth.governance.events import emit_event
 from arth.governance.repository import Repository
 from arth.governance.tables import merchants
 
+TARGET = 20_000  # default reorder target (milli-units) until L3 reorder points (STK-3)
+
 
 async def on_hand(
     repo: Repository, item_id: str, batch_id: str | None = None, *, all_batches: bool = True
@@ -24,6 +27,14 @@ async def on_hand(
     if not all_batches or batch_id is not None:
         where.append(stock_moves.c.batch_id == batch_id)
     return sum(row["delta_qty_milli"] for row in await repo.select(stock_moves, *where))
+
+
+async def stock_tracked(repo: Repository, item_id: str) -> bool:
+    """An item is stock-tracked once it has any move or batch; untracked items are sold without issue."""
+    return bool(
+        await repo.select(stock_moves, stock_moves.c.item_id == item_id)
+        or await repo.select(batches, batches.c.item_id == item_id)
+    )
 
 
 async def _move(
@@ -110,6 +121,44 @@ async def issue_stock(
     return result
 
 
+async def receive_stock(
+    repo: Repository,
+    clock: SimClock,
+    pack: Any,
+    item_id: str,
+    qty_milli: int,
+    batch: dict[str, Any] | None,
+) -> dict[str, Any]:
+    """Transaction-local receipt (stock.receive and Supply GRN); the pack decides batch/expiry rules."""
+    if pack.stock.batches == "required" and not batch:
+        raise CommandError("stock.batch_required")
+    if batch and pack.stock.batches == "off":
+        raise CommandError("stock.batches_disabled")
+    if pack.stock.expiry == "required" and (not batch or not batch.get("expires_on")):
+        raise CommandError("stock.expiry_required")
+    batch_id = None
+    if batch:
+        existing = await repo.select(
+            batches, batches.c.item_id == item_id, batches.c.batch_no == batch["batch_no"]
+        )
+        if existing:
+            row = existing[0]
+            if row["recalled"] or any(
+                row[key] != batch.get(key) for key in ("expires_on", "mrp_paise", "cost_paise")
+            ):
+                raise CommandError("stock.batch_conflict")
+            batch_id = row["id"]
+        else:
+            batch_id = new_id("batch")
+            await repo.insert(
+                batches, {"id": batch_id, "item_id": item_id, "received_at": iso_utc(clock.now()), **batch}
+            )
+    assert repo.session is not None and repo.command_id is not None
+    await _move(repo, clock, item_id, batch_id, qty_milli, "stock.receipt", repo.command_id)
+    await emit_event(repo, clock, repo.session, "stock.changed", repo.command_id, {"item_id": item_id})
+    return {"batch_id": batch_id, "qty_milli": qty_milli}
+
+
 async def stock_view(repo: Repository, clock: SimClock) -> dict[str, Any]:
     today = clock.now_ist().date().isoformat()
     result = []
@@ -124,9 +173,21 @@ async def stock_view(repo: Repository, clock: SimClock) -> dict[str, Any]:
                 {key: row[key] for key in ("id", "batch_no", "expires_on", "mrp_paise", "cost_paise")}
                 | {"recalled": bool(row["recalled"]), "qty_milli": quantity}
             )
+        from arth.domains.summaries import item_supplier, label
+
+        tracked = await stock_tracked(repo, item["id"])
+        status = (
+            "untracked" if not tracked else "out" if sellable <= 0 else "low" if sellable < TARGET else "ok"
+        )
         result.append(
             {
                 "item_id": item["id"],
+                "name": label(item["names"]),
+                "unit": item["unit"],
+                "category": item["category"],
+                "target_qty_milli": TARGET,
+                "status": status,
+                "supplier_name": await item_supplier(repo, item["id"]),
                 "on_hand_qty_milli": await on_hand(repo, item["id"]),
                 "sellable_qty_milli": sellable,
                 "batches": batch_rows,
@@ -136,6 +197,8 @@ async def stock_view(repo: Repository, clock: SimClock) -> dict[str, Any]:
 
 
 async def expiry_view(repo: Repository, clock: SimClock, within_days: int) -> dict[str, Any]:
+    from arth.domains.summaries import label
+
     today = clock.now_ist().date()
     result = []
     for row in await repo.select(batches):
@@ -144,6 +207,10 @@ async def expiry_view(repo: Repository, clock: SimClock, within_days: int) -> di
             result.append(
                 {
                     "batch_id": row["id"],
+                    "batch_no": row["batch_no"],
+                    "name": label(
+                        json.loads((await repo.select(items, items.c.id == row["item_id"]))[0]["names"])
+                    ),
                     "item_id": row["item_id"],
                     "days_to_expiry": days,
                     "recalled": bool(row["recalled"]),
@@ -164,48 +231,9 @@ def register_stock(bus: CommandBus, packs: PackRegistry) -> None:
 
     async def receive(repo: Repository, payload: dict[str, Any]) -> dict[str, Any]:
         _, pack = await checked(repo, payload)
-        batch = payload.get("batch")
-        if pack.stock.batches == "required" and not batch:
-            raise CommandError("stock.batch_required")
-        if batch and pack.stock.batches == "off":
-            raise CommandError("stock.batches_disabled")
-        if pack.stock.expiry == "required" and (not batch or not batch.get("expires_on")):
-            raise CommandError("stock.expiry_required")
-        batch_id = None
-        if batch:
-            existing = await repo.select(
-                batches, batches.c.item_id == payload["item_id"], batches.c.batch_no == batch["batch_no"]
-            )
-            if existing:
-                row = existing[0]
-                if row["recalled"] or any(
-                    row[key] != batch.get(key) for key in ("expires_on", "mrp_paise", "cost_paise")
-                ):
-                    raise CommandError("stock.batch_conflict")
-                batch_id = row["id"]
-            else:
-                batch_id = new_id("batch")
-                await repo.insert(
-                    batches,
-                    {
-                        "id": batch_id,
-                        "item_id": payload["item_id"],
-                        "received_at": iso_utc(bus.clock.now()),
-                        **batch,
-                    },
-                )
-        assert repo.command_id is not None
-        await _move(
-            repo,
-            bus.clock,
-            payload["item_id"],
-            batch_id,
-            payload["qty_milli"],
-            "stock.receipt",
-            repo.command_id,
+        return await receive_stock(
+            repo, bus.clock, pack, payload["item_id"], payload["qty_milli"], payload.get("batch")
         )
-        await domain_event(bus, repo, "stock.changed", {"item_id": payload["item_id"]})
-        return {"batch_id": batch_id, "qty_milli": payload["qty_milli"]}
 
     async def correction(repo: Repository, payload: dict[str, Any], count: bool) -> dict[str, Any]:
         _, pack = await checked(repo, payload)

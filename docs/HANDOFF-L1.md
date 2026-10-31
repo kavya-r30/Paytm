@@ -1,6 +1,54 @@
 # Arth: Handoff for L1 (continue in a fresh Claude Code / Codex session)
 
-## Current checkpoint (30 Oct 2026, CP-1c)
+## Current checkpoint (30 Oct 2026, CP-8) — L8 DONE (backend complete)
+
+L8 is in `backend/arth/sim/scenario.py` and `backend/scenarios/` (plan:
+`docs/superpowers/plans/2026-10-30-arth-L8-scenarios-demo.md`). 16 scenarios run headless; `python dev.py demo-check
+-- --runs 10` is green and writes `cues.md` per scenario. Director: `POST /v1/director/snapshot|restore {name}`, `GET
+/v1/director/scenarios`. Since then (31 Oct), Lane A has bound the Director and Stage to the library and added live play with per-beat pass/fail and
+Restore. It also added T7.18 (`python dev.py e2e`, CI workflow). The only step left needs a machine with provider
+access: `python dev.py ai-smoke` (live LLM/translate/TTS check and cassettes).
+
+## Checkpoint CP-6 — L6 DONE
+
+L6 growth is in `backend/arth/growth/` (plan: `docs/superpowers/plans/2026-10-30-arth-L6-growth.md`). Migration 0010
+is frozen. Lane B's requests 8–10 are done. Next: L8 scenario library and demo, together with Lane B.
+
+## Checkpoint CP-5 — L5 DONE
+
+L5 agents are in `backend/arth/agents/` (plan: `docs/superpowers/plans/2026-10-30-arth-L5-agents.md`). The dispatch
+loop ticks the runtime; Night Shift runs at 22:00 IST. Migration 0009 is frozen. Next: L6 growth.
+
+## Checkpoint CP-4 (offline) — L4 DONE (live evals pending)
+
+L4 is in `backend/arth/ai/` (plan: `docs/superpowers/plans/2026-10-30-arth-L4-ai-platform.md`). `POST /v1/turns`
+works on device/console/WhatsApp; providers fall back to cassettes/templates when unreachable (they are blocked in
+cloud sessions; run `python dev.py ai-smoke` on a laptop to record cassettes). Migration 0008 is frozen.
+
+## Checkpoint CP-3 — L3 DONE
+
+L3 intelligence is in `backend/arth/intel/` (plan: `docs/superpowers/plans/2026-10-30-arth-L3-intelligence.md`):
+analytics tools, 12 charts, forecasts with accuracy, cash flow, lifecycle, alerts, decisions. Migration 0007 is frozen.
+Next: L4 AI platform (provider router with real Mistral/Groq/Sarvam keys in `backend/.env`, cassettes for tests).
+
+## Checkpoint CP-2 — L2 DONE
+
+L2 simulators are in `backend/arth/sim/` (plan: `docs/superpowers/plans/2026-10-30-arth-L2-simulators.md`).
+`python dev.py seed -- --pack kirana --days 30` builds a demo shop into the data DB and prints the device credential;
+`python dev.py scenario` runs `backend/scenarios/billing_smoke.yaml` headless. Migration 0006 is now frozen.
+`backend/.env` now holds real provider keys (git-ignored) for L4.
+
+## Checkpoint CP-1 — L1 DONE
+
+**CP-1 green:** 1175 pytest + 340 Vitest, gen-check/lint/typecheck clean. L1d (T1.12, T1.13, T1.16–T1.23) is recorded in
+`docs/superpowers/plans/2026-10-30-arth-L1d-commerce-completion.md`. New tables are in migration 0005 (frozen from now on;
+L2+ tables go in 0006+). `arth.domains.wiring.register_commerce` registers every domain; `arth.api.views` serves every J9 screen.
+Domain-table writes outside a bus command now raise (`Repository._writable`); tests seed with `conftest.seed_repo`.
+
+**Next (user, 30 Oct 2026): prototype pace, two parallel lanes** — Lane A backend L2→L6 (this account), Lane B frontend L7
+(second account), coordinated through GitHub issues; see the plan index. Git is now used: commit per layer, push, draft PR.
+
+## Previous checkpoint (CP-1c)
 
 L1a (T1.1–T1.6), L1b (T1.7–T1.10) and L1c (T1.11 Stock, T1.14 Patrons, T1.15 Ledger) are complete.
 CP-1c: `python dev.py check` exit 0, **741 pytest passed (1 existing Starlette/httpx warning), 214 Vitest passed**,

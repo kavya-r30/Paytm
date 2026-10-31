@@ -9,6 +9,12 @@ import arth.domains.tables  # noqa: F401
 import arth.domains.stock_tables  # noqa: F401
 import arth.domains.patron_tables  # noqa: F401
 import arth.domains.ledger_tables  # noqa: F401
+import arth.domains.commerce_tables  # noqa: F401
+import arth.sim.tables  # noqa: F401
+import arth.intel.tables  # noqa: F401
+import arth.ai.tables  # noqa: F401
+import arth.agents.tables  # noqa: F401
+import arth.growth.tables  # noqa: F401
 from arth.core.db import metadata
 
 config = context.config
