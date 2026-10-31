@@ -382,9 +382,9 @@ async def play(request: Request, body: PlayBody) -> dict[str, Any]:
         raise refused(CommandError("director.scenario_not_found"), 404)
     scenario = load(path)
     runner = ScenarioRunner(LiveClient(request.app))
-    import time
+    import secrets
 
-    await anyio.to_thread.run_sync(runner.setup, scenario, f"-play{time.time_ns()}")
+    await anyio.to_thread.run_sync(runner.setup, scenario, "-play-" + secrets.token_hex(4))
     request.app.state.director_play = {"scenario": scenario, "runner": runner}
     return {
         "scenario": body.scenario,
