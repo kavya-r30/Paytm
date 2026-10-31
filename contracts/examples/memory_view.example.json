@@ -1,0 +1,6 @@
+{
+  "facts": [],
+  "invalidate_on": [
+    "x.changed"
+  ]
+}

@@ -1,0 +1,6 @@
+/* Generated from contracts. Do not edit; run `python dev.py gen`. */
+
+export interface AgentsPause {
+  agent: string;
+  paused: boolean;
+}

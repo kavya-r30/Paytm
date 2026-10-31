@@ -31,7 +31,7 @@ class Payload(BaseModel):
     amount_paise: conint(ge=1)
 
 
-class Kind36(StrEnum):
+class Kind39(StrEnum):
     owner = 'owner'
     staff = 'staff'
     customer = 'customer'
@@ -45,7 +45,7 @@ class Actor(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
     )
-    kind: Kind36
+    kind: Kind39
     id: constr(min_length=1) | None = None
 
 

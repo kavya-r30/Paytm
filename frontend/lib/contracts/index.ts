@@ -2,6 +2,8 @@
 
 import type { ActionSnoozed } from './action_snoozed';
 import type { ActionsSnooze } from './actions_snooze';
+import type { AgentsPause } from './agents_pause';
+import type { AgentsPaused } from './agents_paused';
 import type { AlertRaised } from './alert_raised';
 import type { AlertsScan } from './alerts_scan';
 import type { AppointmentsAssign } from './appointments_assign';
@@ -110,10 +112,18 @@ import type { LedgerSendReminder } from './ledger_send_reminder';
 import type { LedgerSendStatement } from './ledger_send_statement';
 import type { LedgerSetLimit } from './ledger_set_limit';
 import type { LedgerStatementView } from './ledger_statement_view';
+import type { MemoryChanged } from './memory_changed';
+import type { MemoryConfirm } from './memory_confirm';
+import type { MemoryForget } from './memory_forget';
+import type { MemoryPropose } from './memory_propose';
+import type { MemoryRetract } from './memory_retract';
+import type { MemoryView } from './memory_view';
 import type { MerchantBootstrap } from './merchant_bootstrap';
 import type { MerchantUpdateSettings } from './merchant_update_settings';
 import type { MessageIn } from './message_in';
+import type { MessageOut } from './message_out';
 import type { MessagesReceive } from './messages_receive';
+import type { MessagesReply } from './messages_reply';
 import type { NotificationsView } from './notifications_view';
 import type { OfferCashbackRequested } from './offer_cashback_requested';
 import type { OfferClawedBack } from './offer_clawed_back';
@@ -167,6 +177,9 @@ import type { PaymentPending } from './payment_pending';
 import type { PaymentReceived } from './payment_received';
 import type { PaymentRefunded } from './payment_refunded';
 import type { PeersView } from './peers_view';
+import type { PlaybookUpdated } from './playbook_updated';
+import type { PlaybooksCancel } from './playbooks_cancel';
+import type { PlaybooksStart } from './playbooks_start';
 import type { PoChanged } from './po_changed';
 import type { PoSupplierAdded } from './po_supplier_added';
 import type { PoVarianceFound } from './po_variance_found';
@@ -185,6 +198,7 @@ import type { ResolutionView } from './resolution_view';
 import type { RewardsConfigure } from './rewards_configure';
 import type { RewardsRecordVisit } from './rewards_record_visit';
 import type { RewardsRedeem } from './rewards_redeem';
+import type { RunView } from './run_view';
 import type { RxView } from './rx_view';
 import type { SentinelCheck } from './sentinel_check';
 import type { SentinelVerdict } from './sentinel_verdict';
@@ -229,6 +243,7 @@ import type { SupplyRecordBill } from './supply_record_bill';
 import type { SupplyRecordQuote } from './supply_record_quote';
 import type { SupplySendClaim } from './supply_send_claim';
 import type { TaxInvoiceIssued } from './tax_invoice_issued';
+import type { TeamView } from './team_view';
 import type { TreasuryDailyClose } from './treasury_daily_close';
 import type { TreasuryExpense } from './treasury_expense';
 import type { TreasuryMatchBill } from './treasury_match_bill';
@@ -244,6 +259,8 @@ import type { VerdictView } from './verdict_view';
 import type { ViewInvalidate } from './view_invalidate';
 import action_snoozedSchema from './schemas/action_snoozed.schema.json';
 import actions_snoozeSchema from './schemas/actions_snooze.schema.json';
+import agents_pauseSchema from './schemas/agents_pause.schema.json';
+import agents_pausedSchema from './schemas/agents_paused.schema.json';
 import alert_raisedSchema from './schemas/alert_raised.schema.json';
 import alerts_scanSchema from './schemas/alerts_scan.schema.json';
 import appointments_assignSchema from './schemas/appointments_assign.schema.json';
@@ -352,10 +369,18 @@ import ledger_send_reminderSchema from './schemas/ledger_send_reminder.schema.js
 import ledger_send_statementSchema from './schemas/ledger_send_statement.schema.json';
 import ledger_set_limitSchema from './schemas/ledger_set_limit.schema.json';
 import ledger_statement_viewSchema from './schemas/ledger_statement_view.schema.json';
+import memory_changedSchema from './schemas/memory_changed.schema.json';
+import memory_confirmSchema from './schemas/memory_confirm.schema.json';
+import memory_forgetSchema from './schemas/memory_forget.schema.json';
+import memory_proposeSchema from './schemas/memory_propose.schema.json';
+import memory_retractSchema from './schemas/memory_retract.schema.json';
+import memory_viewSchema from './schemas/memory_view.schema.json';
 import merchant_bootstrapSchema from './schemas/merchant_bootstrap.schema.json';
 import merchant_update_settingsSchema from './schemas/merchant_update_settings.schema.json';
 import message_inSchema from './schemas/message_in.schema.json';
+import message_outSchema from './schemas/message_out.schema.json';
 import messages_receiveSchema from './schemas/messages_receive.schema.json';
+import messages_replySchema from './schemas/messages_reply.schema.json';
 import notifications_viewSchema from './schemas/notifications_view.schema.json';
 import offer_cashback_requestedSchema from './schemas/offer_cashback_requested.schema.json';
 import offer_clawed_backSchema from './schemas/offer_clawed_back.schema.json';
@@ -409,6 +434,9 @@ import payment_pendingSchema from './schemas/payment_pending.schema.json';
 import payment_receivedSchema from './schemas/payment_received.schema.json';
 import payment_refundedSchema from './schemas/payment_refunded.schema.json';
 import peers_viewSchema from './schemas/peers_view.schema.json';
+import playbook_updatedSchema from './schemas/playbook_updated.schema.json';
+import playbooks_cancelSchema from './schemas/playbooks_cancel.schema.json';
+import playbooks_startSchema from './schemas/playbooks_start.schema.json';
 import po_changedSchema from './schemas/po_changed.schema.json';
 import po_supplier_addedSchema from './schemas/po_supplier_added.schema.json';
 import po_variance_foundSchema from './schemas/po_variance_found.schema.json';
@@ -427,6 +455,7 @@ import resolution_viewSchema from './schemas/resolution_view.schema.json';
 import rewards_configureSchema from './schemas/rewards_configure.schema.json';
 import rewards_record_visitSchema from './schemas/rewards_record_visit.schema.json';
 import rewards_redeemSchema from './schemas/rewards_redeem.schema.json';
+import run_viewSchema from './schemas/run_view.schema.json';
 import rx_viewSchema from './schemas/rx_view.schema.json';
 import sentinel_checkSchema from './schemas/sentinel_check.schema.json';
 import sentinel_verdictSchema from './schemas/sentinel_verdict.schema.json';
@@ -471,6 +500,7 @@ import supply_record_billSchema from './schemas/supply_record_bill.schema.json';
 import supply_record_quoteSchema from './schemas/supply_record_quote.schema.json';
 import supply_send_claimSchema from './schemas/supply_send_claim.schema.json';
 import tax_invoice_issuedSchema from './schemas/tax_invoice_issued.schema.json';
+import team_viewSchema from './schemas/team_view.schema.json';
 import treasury_daily_closeSchema from './schemas/treasury_daily_close.schema.json';
 import treasury_expenseSchema from './schemas/treasury_expense.schema.json';
 import treasury_match_billSchema from './schemas/treasury_match_bill.schema.json';
@@ -487,6 +517,8 @@ import view_invalidateSchema from './schemas/view_invalidate.schema.json';
 
 export type { ActionSnoozed } from './action_snoozed';
 export type { ActionsSnooze } from './actions_snooze';
+export type { AgentsPause } from './agents_pause';
+export type { AgentsPaused } from './agents_paused';
 export type { AlertRaised } from './alert_raised';
 export type { AlertsScan } from './alerts_scan';
 export type { AppointmentsAssign } from './appointments_assign';
@@ -595,10 +627,18 @@ export type { LedgerSendReminder } from './ledger_send_reminder';
 export type { LedgerSendStatement } from './ledger_send_statement';
 export type { LedgerSetLimit } from './ledger_set_limit';
 export type { LedgerStatementView } from './ledger_statement_view';
+export type { MemoryChanged } from './memory_changed';
+export type { MemoryConfirm } from './memory_confirm';
+export type { MemoryForget } from './memory_forget';
+export type { MemoryPropose } from './memory_propose';
+export type { MemoryRetract } from './memory_retract';
+export type { MemoryView } from './memory_view';
 export type { MerchantBootstrap } from './merchant_bootstrap';
 export type { MerchantUpdateSettings } from './merchant_update_settings';
 export type { MessageIn } from './message_in';
+export type { MessageOut } from './message_out';
 export type { MessagesReceive } from './messages_receive';
+export type { MessagesReply } from './messages_reply';
 export type { NotificationsView } from './notifications_view';
 export type { OfferCashbackRequested } from './offer_cashback_requested';
 export type { OfferClawedBack } from './offer_clawed_back';
@@ -652,6 +692,9 @@ export type { PaymentPending } from './payment_pending';
 export type { PaymentReceived } from './payment_received';
 export type { PaymentRefunded } from './payment_refunded';
 export type { PeersView } from './peers_view';
+export type { PlaybookUpdated } from './playbook_updated';
+export type { PlaybooksCancel } from './playbooks_cancel';
+export type { PlaybooksStart } from './playbooks_start';
 export type { PoChanged } from './po_changed';
 export type { PoSupplierAdded } from './po_supplier_added';
 export type { PoVarianceFound } from './po_variance_found';
@@ -670,6 +713,7 @@ export type { ResolutionView } from './resolution_view';
 export type { RewardsConfigure } from './rewards_configure';
 export type { RewardsRecordVisit } from './rewards_record_visit';
 export type { RewardsRedeem } from './rewards_redeem';
+export type { RunView } from './run_view';
 export type { RxView } from './rx_view';
 export type { SentinelCheck } from './sentinel_check';
 export type { SentinelVerdict } from './sentinel_verdict';
@@ -714,6 +758,7 @@ export type { SupplyRecordBill } from './supply_record_bill';
 export type { SupplyRecordQuote } from './supply_record_quote';
 export type { SupplySendClaim } from './supply_send_claim';
 export type { TaxInvoiceIssued } from './tax_invoice_issued';
+export type { TeamView } from './team_view';
 export type { TreasuryDailyClose } from './treasury_daily_close';
 export type { TreasuryExpense } from './treasury_expense';
 export type { TreasuryMatchBill } from './treasury_match_bill';
@@ -733,6 +778,8 @@ export type * from './common'; // shared definitions: Locale, SpeechLocale, Audi
 export const SCHEMAS = [
   { name: 'action_snoozed', id: 'https://arth.local/contracts/events/action_snoozed.schema.json', schema: action_snoozedSchema },
   { name: 'actions_snooze', id: 'https://arth.local/contracts/commands/actions_snooze.schema.json', schema: actions_snoozeSchema },
+  { name: 'agents_pause', id: 'https://arth.local/contracts/commands/agents_pause.schema.json', schema: agents_pauseSchema },
+  { name: 'agents_paused', id: 'https://arth.local/contracts/events/agents_paused.schema.json', schema: agents_pausedSchema },
   { name: 'alert_raised', id: 'https://arth.local/contracts/events/alert_raised.schema.json', schema: alert_raisedSchema },
   { name: 'alerts_scan', id: 'https://arth.local/contracts/commands/alerts_scan.schema.json', schema: alerts_scanSchema },
   { name: 'appointments_assign', id: 'https://arth.local/contracts/commands/appointments_assign.schema.json', schema: appointments_assignSchema },
@@ -841,10 +888,18 @@ export const SCHEMAS = [
   { name: 'ledger_send_statement', id: 'https://arth.local/contracts/commands/ledger_send_statement.schema.json', schema: ledger_send_statementSchema },
   { name: 'ledger_set_limit', id: 'https://arth.local/contracts/commands/ledger_set_limit.schema.json', schema: ledger_set_limitSchema },
   { name: 'ledger_statement_view', id: 'https://arth.local/contracts/ledger_statement_view.schema.json', schema: ledger_statement_viewSchema },
+  { name: 'memory_changed', id: 'https://arth.local/contracts/events/memory_changed.schema.json', schema: memory_changedSchema },
+  { name: 'memory_confirm', id: 'https://arth.local/contracts/commands/memory_confirm.schema.json', schema: memory_confirmSchema },
+  { name: 'memory_forget', id: 'https://arth.local/contracts/commands/memory_forget.schema.json', schema: memory_forgetSchema },
+  { name: 'memory_propose', id: 'https://arth.local/contracts/commands/memory_propose.schema.json', schema: memory_proposeSchema },
+  { name: 'memory_retract', id: 'https://arth.local/contracts/commands/memory_retract.schema.json', schema: memory_retractSchema },
+  { name: 'memory_view', id: 'https://arth.local/contracts/memory_view.schema.json', schema: memory_viewSchema },
   { name: 'merchant_bootstrap', id: 'https://arth.local/contracts/commands/merchant_bootstrap.schema.json', schema: merchant_bootstrapSchema },
   { name: 'merchant_update_settings', id: 'https://arth.local/contracts/commands/merchant_update_settings.schema.json', schema: merchant_update_settingsSchema },
   { name: 'message_in', id: 'https://arth.local/contracts/events/message_in.schema.json', schema: message_inSchema },
+  { name: 'message_out', id: 'https://arth.local/contracts/events/message_out.schema.json', schema: message_outSchema },
   { name: 'messages_receive', id: 'https://arth.local/contracts/commands/messages_receive.schema.json', schema: messages_receiveSchema },
+  { name: 'messages_reply', id: 'https://arth.local/contracts/commands/messages_reply.schema.json', schema: messages_replySchema },
   { name: 'notifications_view', id: 'https://arth.local/contracts/notifications_view.schema.json', schema: notifications_viewSchema },
   { name: 'offer_cashback_requested', id: 'https://arth.local/contracts/events/offer_cashback_requested.schema.json', schema: offer_cashback_requestedSchema },
   { name: 'offer_clawed_back', id: 'https://arth.local/contracts/events/offer_clawed_back.schema.json', schema: offer_clawed_backSchema },
@@ -898,6 +953,9 @@ export const SCHEMAS = [
   { name: 'payment_received', id: 'https://arth.local/contracts/events/payment_received.schema.json', schema: payment_receivedSchema },
   { name: 'payment_refunded', id: 'https://arth.local/contracts/events/payment_refunded.schema.json', schema: payment_refundedSchema },
   { name: 'peers_view', id: 'https://arth.local/contracts/peers_view.schema.json', schema: peers_viewSchema },
+  { name: 'playbook_updated', id: 'https://arth.local/contracts/events/playbook_updated.schema.json', schema: playbook_updatedSchema },
+  { name: 'playbooks_cancel', id: 'https://arth.local/contracts/commands/playbooks_cancel.schema.json', schema: playbooks_cancelSchema },
+  { name: 'playbooks_start', id: 'https://arth.local/contracts/commands/playbooks_start.schema.json', schema: playbooks_startSchema },
   { name: 'po_changed', id: 'https://arth.local/contracts/events/po_changed.schema.json', schema: po_changedSchema },
   { name: 'po_supplier_added', id: 'https://arth.local/contracts/events/po_supplier_added.schema.json', schema: po_supplier_addedSchema },
   { name: 'po_variance_found', id: 'https://arth.local/contracts/events/po_variance_found.schema.json', schema: po_variance_foundSchema },
@@ -916,6 +974,7 @@ export const SCHEMAS = [
   { name: 'rewards_configure', id: 'https://arth.local/contracts/commands/rewards_configure.schema.json', schema: rewards_configureSchema },
   { name: 'rewards_record_visit', id: 'https://arth.local/contracts/commands/rewards_record_visit.schema.json', schema: rewards_record_visitSchema },
   { name: 'rewards_redeem', id: 'https://arth.local/contracts/commands/rewards_redeem.schema.json', schema: rewards_redeemSchema },
+  { name: 'run_view', id: 'https://arth.local/contracts/run_view.schema.json', schema: run_viewSchema },
   { name: 'rx_view', id: 'https://arth.local/contracts/rx_view.schema.json', schema: rx_viewSchema },
   { name: 'sentinel_check', id: 'https://arth.local/contracts/commands/sentinel_check.schema.json', schema: sentinel_checkSchema },
   { name: 'sentinel_verdict', id: 'https://arth.local/contracts/events/sentinel_verdict.schema.json', schema: sentinel_verdictSchema },
@@ -960,6 +1019,7 @@ export const SCHEMAS = [
   { name: 'supply_record_quote', id: 'https://arth.local/contracts/commands/supply_record_quote.schema.json', schema: supply_record_quoteSchema },
   { name: 'supply_send_claim', id: 'https://arth.local/contracts/commands/supply_send_claim.schema.json', schema: supply_send_claimSchema },
   { name: 'tax_invoice_issued', id: 'https://arth.local/contracts/events/tax_invoice_issued.schema.json', schema: tax_invoice_issuedSchema },
+  { name: 'team_view', id: 'https://arth.local/contracts/team_view.schema.json', schema: team_viewSchema },
   { name: 'treasury_daily_close', id: 'https://arth.local/contracts/commands/treasury_daily_close.schema.json', schema: treasury_daily_closeSchema },
   { name: 'treasury_expense', id: 'https://arth.local/contracts/commands/treasury_expense.schema.json', schema: treasury_expenseSchema },
   { name: 'treasury_match_bill', id: 'https://arth.local/contracts/commands/treasury_match_bill.schema.json', schema: treasury_match_billSchema },
@@ -981,6 +1041,8 @@ export type SchemaName = (typeof SCHEMAS)[number]['name'];
 export interface ContractTypes {
   action_snoozed: ActionSnoozed;
   actions_snooze: ActionsSnooze;
+  agents_pause: AgentsPause;
+  agents_paused: AgentsPaused;
   alert_raised: AlertRaised;
   alerts_scan: AlertsScan;
   appointments_assign: AppointmentsAssign;
@@ -1089,10 +1151,18 @@ export interface ContractTypes {
   ledger_send_statement: LedgerSendStatement;
   ledger_set_limit: LedgerSetLimit;
   ledger_statement_view: LedgerStatementView;
+  memory_changed: MemoryChanged;
+  memory_confirm: MemoryConfirm;
+  memory_forget: MemoryForget;
+  memory_propose: MemoryPropose;
+  memory_retract: MemoryRetract;
+  memory_view: MemoryView;
   merchant_bootstrap: MerchantBootstrap;
   merchant_update_settings: MerchantUpdateSettings;
   message_in: MessageIn;
+  message_out: MessageOut;
   messages_receive: MessagesReceive;
+  messages_reply: MessagesReply;
   notifications_view: NotificationsView;
   offer_cashback_requested: OfferCashbackRequested;
   offer_clawed_back: OfferClawedBack;
@@ -1146,6 +1216,9 @@ export interface ContractTypes {
   payment_received: PaymentReceived;
   payment_refunded: PaymentRefunded;
   peers_view: PeersView;
+  playbook_updated: PlaybookUpdated;
+  playbooks_cancel: PlaybooksCancel;
+  playbooks_start: PlaybooksStart;
   po_changed: PoChanged;
   po_supplier_added: PoSupplierAdded;
   po_variance_found: PoVarianceFound;
@@ -1164,6 +1237,7 @@ export interface ContractTypes {
   rewards_configure: RewardsConfigure;
   rewards_record_visit: RewardsRecordVisit;
   rewards_redeem: RewardsRedeem;
+  run_view: RunView;
   rx_view: RxView;
   sentinel_check: SentinelCheck;
   sentinel_verdict: SentinelVerdict;
@@ -1208,6 +1282,7 @@ export interface ContractTypes {
   supply_record_quote: SupplyRecordQuote;
   supply_send_claim: SupplySendClaim;
   tax_invoice_issued: TaxInvoiceIssued;
+  team_view: TeamView;
   treasury_daily_close: TreasuryDailyClose;
   treasury_expense: TreasuryExpense;
   treasury_match_bill: TreasuryMatchBill;

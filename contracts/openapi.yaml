@@ -427,7 +427,7 @@ paths:
           description: Scoped merchant read model
           content:
             application/json:
-              schema: {$ref: './layer_pending_view.schema.json'}
+              schema: {$ref: './team_view.schema.json'}
         '401': {$ref: '#/components/responses/Problem'}
         '409': {$ref: '#/components/responses/Problem'}
   /v1/views/runs/{run_id}:
@@ -441,7 +441,7 @@ paths:
           description: Scoped merchant read model
           content:
             application/json:
-              schema: {$ref: './layer_pending_view.schema.json'}
+              schema: {$ref: './run_view.schema.json'}
         '401': {$ref: '#/components/responses/Problem'}
         '409': {$ref: '#/components/responses/Problem'}
   /v1/views/memory:
@@ -453,7 +453,7 @@ paths:
           description: Scoped merchant read model
           content:
             application/json:
-              schema: {$ref: './layer_pending_view.schema.json'}
+              schema: {$ref: './memory_view.schema.json'}
         '401': {$ref: '#/components/responses/Problem'}
         '409': {$ref: '#/components/responses/Problem'}
   /v1/views/hisaab:
@@ -1044,6 +1044,23 @@ paths:
             application/json:
               schema: {$ref: './tts_result.schema.json'}
         '401': {$ref: '#/components/responses/Problem'}
+  /v1/work/batches:
+    post:
+      operationId: postWorkBatch
+      security: [{device: []}, {console: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        '200':
+          description: Thread id for one batched ask; answer it via POST /v1/approvals/{thread_id}
+          content:
+            application/json:
+              schema: {type: object}
+        '401': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
   /v1/patrons:
     post:
       operationId: patronsadd

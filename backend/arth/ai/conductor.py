@@ -151,6 +151,10 @@ class Conductor:
                 return await self.answer(mid, intent.params["tool"], heard, lang), "read:" + intent.params[
                     "tool"
                 ]
+            if intent.kind == "approve_all":
+                return await self.approve_all(
+                    session, intent.params["exclude"], heard, lang, key
+                ), "approve_all"
             if intent.kind == "nav":
                 return self.envelope(
                     lang, heard, render("nav", lang), nav={"screen": intent.params["screen"]}
@@ -279,6 +283,33 @@ class Conductor:
             said = render("not_understood", lang)
             return self.envelope(lang, heard, said, presence={"state": "alert"}), "refused:" + str(exc)
         return self.envelope(lang, heard, render("not_understood", lang)), "unknown"
+
+    async def approve_all(
+        self, session: Session, exclude: str, heard: str, lang: str, key: str
+    ) -> dict[str, Any]:
+        """WFL-4: "Haan, Mehta ko chhod ke" approves every pending gate except the one naming Mehta."""
+        from arth.domains.summaries import gate_summary
+
+        async def pending(repo: Repository) -> list[tuple[dict[str, Any], dict[str, Any]]]:
+            rows = await repo.select(approvals, approvals.c.status == "pending")
+            result = []
+            for row in rows:
+                scope = json.loads(row["scope"])
+                result.append((row, (await gate_summary(repo, scope["type"], scope["payload"]))[1]))
+            return result
+
+        approved, skipped = 0, 0
+        word = exclude.replace(" ji", "").strip().lower()
+        for row, params in await self.read(session.merchant_id, pending):
+            named = " ".join(str(v) for v in params.values() if v).lower()
+            decision = "snooze" if word and word in named else "approve"
+            try:
+                await self.bus.decide(session, row["thread_id"], decision, f"{key}:{row['id']}")
+            except CommandError:
+                continue
+            approved, skipped = approved + (decision == "approve"), skipped + (decision == "snooze")
+        said = render("pending", lang, count=skipped) if skipped else render("done", lang)
+        return self.envelope(lang, heard, said, provenance=[{"kind": "gates", "count": approved + skipped}])
 
     async def answer(self, mid: str, tool: str, heard: str, lang: str) -> dict[str, Any]:
         clock = self.bus.clock

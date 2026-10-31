@@ -570,6 +570,21 @@ class Simulators:
                         "created_at": now,
                     },
                 )
+        elif topic == "message.out":
+            if not await repo.select(sim_messages, sim_messages.c.source_ref == event["event_id"]):
+                await repo.insert(
+                    sim_messages,
+                    {
+                        "id": new_id("msg"),
+                        "thread_id": payload["thread_ref"],
+                        "direction": "out",
+                        "category": payload["category"],
+                        "kind": "template",
+                        "body": json.dumps({"template": payload["template"], "params": payload["params"]}),
+                        "source_ref": event["event_id"],
+                        "created_at": now,
+                    },
+                )
         else:
             await self._deliver_outbound(repo, topic, payload, event["event_id"], now)
 
