@@ -2,7 +2,15 @@
 // renders before the seeded shop exists. tests/fixtures.test.ts validates each entry against its contract.
 import type {
   AskView,
+  BundlesView,
+  CampaignView,
   ForecastView,
+  GrowView,
+  GrowthLedgerView,
+  MemoryView,
+  PlanView,
+  RunView,
+  TeamView,
   AppointmentsView,
   BillPaidView,
   BillPayView,
@@ -409,6 +417,15 @@ export const bill: BillView = {
     { key: 'staples', label: 'Atta, chawal' },
     { key: 'diwali', label: 'Diwali' },
   ],
+  hint: {
+    hint_id: fid('hint', 1),
+    patron_id: PATRONS.priya.id,
+    item_id: ITEMS.amul.id,
+    name: ITEMS.amul.name,
+    price_paise: ITEMS.amul.price,
+    reason_key: 'hint.weekday_habit',
+    audience: 'owner',
+  },
 };
 
 export const billPay: BillPayView = {
@@ -1459,4 +1476,281 @@ export const ask: AskView = {
   invalidate_on: INV('turn.completed'),
 };
 
-export const IDS = { BILL_ID, PAID_BILL_ID, PO_ID, CLAIM_ID, GATES };
+const PLAN_ID = fid('plan', 1);
+const CAMPAIGN_ID = fid('campaign', 1);
+const RUN_ID = fid('run', 1);
+
+export const team: TeamView = {
+  helpers: [
+    {
+      id: 'khata',
+      name_key: 'helper.khata',
+      agents: ['collections'],
+      status: 'waiting',
+      tier: 'R3',
+      pending_gates: 1,
+      open_work: 2,
+      line: 'Mehta ji: reminder ready for 9 am',
+    },
+    {
+      id: 'stock',
+      name_key: 'helper.stock',
+      agents: ['procurement'],
+      status: 'working',
+      tier: 'R3',
+      pending_gates: 1,
+      open_work: 1,
+      line: 'Balaji se rate le raha hai',
+    },
+    {
+      id: 'growth',
+      name_key: 'helper.growth',
+      agents: ['strategist', 'outreach'],
+      status: 'waiting',
+      tier: 'R3',
+      pending_gates: 1,
+      open_work: 0,
+      line: '5 purane grahak, 1 holdout',
+    },
+    {
+      id: 'hisaab',
+      name_key: 'helper.hisaab',
+      agents: ['treasury'],
+      status: 'idle',
+      tier: 'R0',
+      pending_gates: 0,
+      open_work: 0,
+      line: 'Kal raat 212 payments match kiye',
+    },
+    {
+      id: 'night',
+      name_key: 'helper.night',
+      agents: ['night_shift'],
+      status: 'idle',
+      tier: 'R1',
+      pending_gates: 0,
+      open_work: 0,
+      line: 'Subah ka brief taiyaar',
+    },
+  ],
+  runs: [
+    {
+      id: RUN_ID,
+      playbook: 'reorder',
+      agent: 'procurement',
+      subject: ITEMS.kaju.id,
+      status: 'waiting',
+      step: 'await_quotes',
+      created_at: minutesAgo(95),
+      updated_at: minutesAgo(12),
+    },
+  ],
+  work: [],
+  kill_switch: false,
+  summary: { done_since_night: 7, waiting_for_you: 3 },
+  invalidate_on: INV('playbook.step', 'approval.requested'),
+};
+
+export const run: RunView = {
+  run: {
+    id: RUN_ID,
+    playbook: 'reorder',
+    agent: 'procurement',
+    subject: ITEMS.kaju.id,
+    status: 'waiting',
+    step: 'await_quotes',
+    created_at: minutesAgo(95),
+    updated_at: minutesAgo(12),
+    context: { festival: 'diwali' },
+    wait: { topic: 'message.in', until: minutesAhead(120) },
+  },
+  steps: [
+    { step: 'start', status: 'done', detail: { cover_days: 2 }, occurred_at: minutesAgo(95) },
+    { step: 'ask_quotes', status: 'done', detail: { suppliers: 2 }, occurred_at: minutesAgo(94) },
+    { step: 'await_quotes', status: 'active', detail: { received: 2 }, occurred_at: minutesAgo(12) },
+    { step: 'gate', status: 'todo', detail: {}, occurred_at: minutesAgo(12) },
+    { step: 'place', status: 'todo', detail: {}, occurred_at: minutesAgo(12) },
+  ],
+  invalidate_on: INV('playbook.step'),
+};
+
+export const memory: MemoryView = {
+  facts: [
+    {
+      id: fid('fact', 1),
+      subject: PATRONS.priya.id,
+      predicate: 'buys_on',
+      value: 'Thursday · milk',
+      evidence: ['11/12 Thursdays'],
+      source: 'bills',
+      status: 'active',
+      created_at: minutesAgo(3 * DAY),
+    },
+    {
+      id: fid('fact', 2),
+      subject: PATRONS.sharma.id,
+      predicate: 'pays_on',
+      value: '1st of the month',
+      evidence: ['6 payments'],
+      source: 'khata',
+      status: 'unverified',
+      created_at: minutesAgo(2 * DAY),
+    },
+    {
+      id: fid('fact', 3),
+      subject: SUPPLIERS.balaji.id,
+      predicate: 'on_time',
+      value: '94%',
+      evidence: ['6 deliveries'],
+      source: 'po',
+      status: 'active',
+      created_at: minutesAgo(DAY),
+    },
+  ],
+  invalidate_on: INV('memory.changed'),
+};
+
+export const grow: GrowView = {
+  diagnostics: {
+    current: { customers: 412, visits: 1180, sales_paise: 26840000 },
+    previous: { customers: 380, visits: 1090, sales_paise: 23900000 },
+    change_paise: 2940000,
+    parts: { customers_paise: 1870000, frequency_paise: 520000, basket_paise: 550000 },
+  },
+  peers: {
+    pack: 'kirana',
+    status: 'ready',
+    n: 14,
+    metrics: [
+      { metric: 'avg_bill_paise', p10: 9200, p25: 10900, p50: 16600, p75: 22600, p90: 26000 },
+      { metric: 'daily_sales_paise', p10: 291000, p25: 335000, p50: 410000, p75: 579000, p90: 654000 },
+    ],
+  },
+  levers: [
+    { name: 'winback', enabled: true, eligible: 5, estimate_paise: 120000, label: 'estimate', gate: 'ready' },
+    {
+      name: 'replenish',
+      enabled: true,
+      eligible: 18,
+      estimate_paise: 260000,
+      label: 'estimate',
+      gate: 'ready',
+    },
+    {
+      name: 'bundle',
+      enabled: true,
+      eligible: 0,
+      estimate_paise: 180000,
+      label: 'estimate',
+      gate: 'needs_plan',
+    },
+  ],
+  plans: [
+    {
+      id: PLAN_ID,
+      goal_key: 'goal.more_visits',
+      status: 'active',
+      budget_paise: 500000,
+      levers: ['winback', 'replenish'],
+    },
+  ],
+  advisor: [
+    {
+      account_id: fid('account', 3),
+      patron_id: PATRONS.sunita.id,
+      current_limit_paise: 500000,
+      suggested_limit_paise: 300000,
+      reason_key: 'advisor.slow_payer',
+    },
+  ],
+  invalidate_on: INV('growth.plan_changed'),
+};
+
+const campaignRow = {
+  id: CAMPAIGN_ID,
+  plan_id: PLAN_ID,
+  lever: 'winback',
+  status: 'running',
+  stop_reason: null,
+  treated: 4,
+  holdout: 1,
+  sent: 4,
+  result: { mode: 'counts', measurable: false, returned: 2, replied: 3, opted_out: 0 },
+};
+
+export const plan: PlanView = {
+  plan: {
+    id: PLAN_ID,
+    goal_key: 'goal.more_visits',
+    status: 'active',
+    budget_paise: 500000,
+    holdout_bp: 2000,
+    levers: ['winback', 'replenish'],
+    diagnosis: {},
+  },
+  campaigns: [campaignRow],
+  invalidate_on: INV('growth.plan_changed'),
+};
+
+export const campaign: CampaignView = {
+  campaign: campaignRow,
+  invalidate_on: INV('growth.campaign_changed'),
+};
+
+export const growthLedger: GrowthLedgerView = {
+  entries: [
+    {
+      campaign_id: CAMPAIGN_ID,
+      lever: 'winback',
+      treated_n: 4,
+      holdout_n: 1,
+      measured: {},
+      direct_paise: 84000,
+      reward_cost_paise: 5000,
+      label: 'direct',
+    },
+    {
+      campaign_id: fid('campaign', 2),
+      lever: 'cashback',
+      treated_n: 42,
+      holdout_n: 5,
+      measured: { uplift_bp: 900 },
+      direct_paise: 0,
+      reward_cost_paise: 37500,
+      label: 'measured',
+    },
+  ],
+  impact: { measured_paise: 312000, direct_paise: 84000, estimated_paise: 120000 },
+  invalidate_on: INV('growth.ledger_changed'),
+};
+
+export const bundles: BundlesView = {
+  bundles: [
+    {
+      items: [ITEMS.kaju.id, ITEMS.ghee.id, ITEMS.besan.id],
+      names: ['Kaju 250 g', 'Ghee 500 ml', 'Besan 1 kg'],
+      price_paise: 54900,
+      margin_bp: 1800,
+      support: 23,
+    },
+    {
+      items: [ITEMS.tea.id, ITEMS.parle.id],
+      names: ['Tea 250 g', 'Parle-G ×4'],
+      price_paise: 17500,
+      margin_bp: 1400,
+      support: 41,
+    },
+  ],
+  preorders: [
+    {
+      id: fid('preorder', 1),
+      patron_id: PATRONS.priya.id,
+      total_paise: 54900,
+      deposit_paise: 10000,
+      status: 'booked',
+    },
+  ],
+  invalidate_on: INV('preorder.changed'),
+};
+
+export const IDS = { BILL_ID, PAID_BILL_ID, PO_ID, CLAIM_ID, GATES, PLAN_ID, CAMPAIGN_ID, RUN_ID };

@@ -25,6 +25,26 @@ export default function Storefront({ params }: { params: Promise<{ slug: string 
   const [cat, setCat] = useState<string | null>(null);
   const [cart, setCart] = useState<Record<string, number>>({});
   const [placed, setPlaced] = useState(false);
+  const [failed, setFailed] = useState(false);
+
+  // STO-2: a public order goes in as a storefront draft (POST /v1/public/storefront/{slug}/orders, no login).
+  const placeOrder = async () => {
+    const lines = Object.entries(cart)
+      .filter(([, n]) => n > 0)
+      .map(([item_id, n]) => ({ item_id, qty_milli: n * 1000 }));
+    if (!q.data) return setPlaced(true);
+    try {
+      const res = await fetch(`${API_BASE}/v1/public/storefront/${encodeURIComponent(slug)}/orders`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lines }),
+      });
+      if (!res.ok) throw new Error(String(res.status));
+      setPlaced(true);
+    } catch {
+      setFailed(true);
+    }
+  };
 
   const cats = useMemo(() => [...new Set((shop?.items ?? []).map((i) => i.category))], [shop]);
   const items = (shop?.items ?? []).filter((i) => !cat || i.category === cat);
@@ -112,12 +132,14 @@ export default function Storefront({ params }: { params: Promise<{ slug: string 
         <div className="fixed bottom-0 left-1/2 w-full max-w-[480px] -translate-x-1/2 p-4">
           {placed ? (
             <Card className="p-4 text-center text-body font-bold text-green">{t('store.placed')}</Card>
+          ) : failed ? (
+            <Card className="p-4 text-center text-body font-bold text-red">{t('store.failed')}</Card>
           ) : (
             <Button
               size="lg"
               className="w-full"
               icon={<ShoppingBag size={20} />}
-              onClick={() => setPlaced(true)}
+              onClick={() => void placeOrder()}
             >
               {t('store.order', { n: count, total: money(total) })}
             </Button>

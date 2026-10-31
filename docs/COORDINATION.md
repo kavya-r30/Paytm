@@ -142,3 +142,12 @@ L2 and announce it.
   - `sarvam/bulbul:v2` → 400: "Model 'bulbul:v2' has been deprecated. Please use 'bulbul:v3'". Drop that hop.
   Fix in `providers.yaml`/router: per-model speaker (e.g. v4-flash `amit_hi_conversational`, v3 `priya`), then I
   will re-run and commit the tts cassette. Next on my side: binding L5/L6 views + requests 8/9/10 in the UI.
+- Lane B (31 Oct): **L5/L6 + requests 8/9/10 bound in the UI.** SCR-TEAM/RUN/MEMORY on `team_view`/`run_view`/
+  `memory_view` (helper roster, runs, pause via `agents.pause {agent, paused}` incl. `*` kill switch; memory facts
+  with confirm/retract/forget); SCR-GROW/PLAN/CAMPAIGN/LEDGER/BUNDLE on the L6 views (decomposition tiles, peer
+  bands from `peers.metrics` when n ≥ 10, levers, advisor, `growth.create_plan`, `outreach.send_campaign`,
+  `growth.stop_campaign`); `bill_view.hint` on the owner bill panel + `hints.accept`; Home brief composed from Night
+  Shift's structured brief; "Teeno haan" via `POST /v1/work/batches`; Console R4 does `POST /v1/auth/step-up`
+  (OTP 123456) before the command; storefront checkout posts `/v1/public/storefront/{slug}/orders`. Checked live
+  against the seeded shop (team, memory, grow, ledger, bundles 200; step-up returns `step_up_until`).
+  Gate: lint ok, typecheck ok, 455 Vitest, build-web ok.

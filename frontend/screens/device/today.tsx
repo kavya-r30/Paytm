@@ -9,7 +9,8 @@ import { Button, Card, Chip, Money, Pill, SectionTitle, TierChip, cx } from '@/c
 import { CardStack } from '@/components/cards/registry';
 import { Empty, Screen, StatusPill, useAction, useDeviceNav, useTurnSubmit } from '@/components/shell/device';
 import { useCommand, useDecide } from '@/lib/api/commands';
-import { useView } from '@/lib/api/hooks';
+import { apiPost } from '@/lib/api/client';
+import { useDataMode, useView } from '@/lib/api/hooks';
 import { views } from '@/lib/api/views';
 import type { ForecastView, HomeView, NotificationsView } from '@/lib/contracts';
 import { useI18n } from '@/lib/i18n/react';
@@ -53,8 +54,20 @@ function BriefCard({ brief }: { brief: HomeView['brief'] }) {
   const { t } = useI18n();
   const submit = useTurnSubmit();
   const [playing, setPlaying] = useState(false);
-  const text = field(brief, 'text', '');
-  const duration = field(brief, 'duration_s', 0);
+  const { money } = useI18n();
+  // Night Shift writes structured numbers; the sentence comes from the catalogue (no literal copy).
+  const sales = field(brief, 'sales_paise', -1);
+  const typical = field(brief, 'typical_paise', 0);
+  const composed =
+    sales >= 0
+      ? t(typical ? 'home.brief_compose' : 'home.brief_compose_no_typical', {
+          sales: money(sales),
+          delta: typical ? Math.round(((sales - typical) / typical) * 100) : 0,
+          khata: money(field(brief, 'khata_due_paise', 0)),
+        })
+      : '';
+  const text = field(brief, 'text', '') || composed;
+  const duration = field(brief, 'duration_s', Math.min(12, Math.ceil(text.length / 14)));
   if (!text) return null;
   const speak = () => {
     setPlaying(true);
@@ -221,10 +234,26 @@ function BatchCard({ gates }: { gates: Gate[] }) {
   const decide = useDecide();
   const text = useGateText();
   const [done, setDone] = useState(false);
+  const mode = useDataMode();
   const approveAll = useCallback(async () => {
+    // WFL-4: one thread for the batch (POST /v1/work/batches); each gate still keeps its own tier server-side.
+    if (mode === 'live') {
+      try {
+        const { thread_id } = (await apiPost('/v1/work/batches', {
+          gate_ids: gates.map((g) => g.gate_id),
+        })) as {
+          thread_id: string;
+        };
+        await decide(thread_id, 'approve');
+        setDone(true);
+        return;
+      } catch {
+        // fall through: approve one by one
+      }
+    }
     for (const g of gates) await decide(g.thread_id, 'approve');
     setDone(true);
-  }, [gates, decide]);
+  }, [gates, decide, mode]);
   useAction(
     useCallback(
       (a: string) => {
