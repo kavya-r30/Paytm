@@ -1,6 +1,13 @@
 # Arth: Handoff for L1 (continue in a fresh Claude Code / Codex session)
 
-## Current checkpoint (30 Oct 2026, CP-1) — L1 DONE
+## Current checkpoint (30 Oct 2026, CP-2) — L2 DONE
+
+L2 simulators are in `backend/arth/sim/` (plan: `docs/superpowers/plans/2026-10-30-arth-L2-simulators.md`).
+`python dev.py seed -- --pack kirana --days 30` builds a demo shop into the data DB and prints the device credential;
+`python dev.py scenario` runs `backend/scenarios/billing_smoke.yaml` headless. Migration 0006 is now frozen.
+`backend/.env` now holds real provider keys (git-ignored) for L4.
+
+## Checkpoint CP-1 — L1 DONE
 
 **CP-1 green:** 1175 pytest + 340 Vitest, gen-check/lint/typecheck clean. L1d (T1.12, T1.13, T1.16–T1.23) is recorded in
 `docs/superpowers/plans/2026-10-30-arth-L1d-commerce-completion.md`. New tables are in migration 0005 (frozen from now on;

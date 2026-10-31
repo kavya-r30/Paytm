@@ -64,7 +64,8 @@ class Repository:
         return [dict(row) for row in rows.mappings()]
 
     def _writable(self, table: Table) -> None:
-        if table.name not in BUS_INFRASTRUCTURE and self.command_id is None:
+        simulated = table.name.startswith("sim_")  # outside parties' state, not Arth's
+        if table.name not in BUS_INFRASTRUCTURE and not simulated and self.command_id is None:
             raise ValueError("write outside the command bus: " + table.name)
 
     async def insert(self, table: Table, values: dict[str, Any]) -> None:

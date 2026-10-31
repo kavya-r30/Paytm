@@ -21,6 +21,9 @@ import type { BillTicketChanged } from './bill_ticket_changed';
 import type { BillView } from './bill_view';
 import type { BooksCloseMonth } from './books_close_month';
 import type { BooksMonthClosed } from './books_month_closed';
+import type { CalendarAddLocalEvent } from './calendar_add_local_event';
+import type { CalendarLocalEventAdded } from './calendar_local_event_added';
+import type { CalendarView } from './calendar_view';
 import type { CapitalApplied } from './capital_applied';
 import type { CapitalApply } from './capital_apply';
 import type { CapitalOfferReceived } from './capital_offer_received';
@@ -101,6 +104,8 @@ import type { LedgerSetLimit } from './ledger_set_limit';
 import type { LedgerStatementView } from './ledger_statement_view';
 import type { MerchantBootstrap } from './merchant_bootstrap';
 import type { MerchantUpdateSettings } from './merchant_update_settings';
+import type { MessageIn } from './message_in';
+import type { MessagesReceive } from './messages_receive';
 import type { NotificationsView } from './notifications_view';
 import type { OfferCashbackRequested } from './offer_cashback_requested';
 import type { OfferClawedBack } from './offer_clawed_back';
@@ -153,6 +158,7 @@ import type { PaymentMatched } from './payment_matched';
 import type { PaymentPending } from './payment_pending';
 import type { PaymentReceived } from './payment_received';
 import type { PaymentRefunded } from './payment_refunded';
+import type { PeersView } from './peers_view';
 import type { PoChanged } from './po_changed';
 import type { PoSupplierAdded } from './po_supplier_added';
 import type { PoVarianceFound } from './po_variance_found';
@@ -247,6 +253,9 @@ import bill_ticket_changedSchema from './schemas/bill_ticket_changed.schema.json
 import bill_viewSchema from './schemas/bill_view.schema.json';
 import books_close_monthSchema from './schemas/books_close_month.schema.json';
 import books_month_closedSchema from './schemas/books_month_closed.schema.json';
+import calendar_add_local_eventSchema from './schemas/calendar_add_local_event.schema.json';
+import calendar_local_event_addedSchema from './schemas/calendar_local_event_added.schema.json';
+import calendar_viewSchema from './schemas/calendar_view.schema.json';
 import capital_appliedSchema from './schemas/capital_applied.schema.json';
 import capital_applySchema from './schemas/capital_apply.schema.json';
 import capital_offer_receivedSchema from './schemas/capital_offer_received.schema.json';
@@ -327,6 +336,8 @@ import ledger_set_limitSchema from './schemas/ledger_set_limit.schema.json';
 import ledger_statement_viewSchema from './schemas/ledger_statement_view.schema.json';
 import merchant_bootstrapSchema from './schemas/merchant_bootstrap.schema.json';
 import merchant_update_settingsSchema from './schemas/merchant_update_settings.schema.json';
+import message_inSchema from './schemas/message_in.schema.json';
+import messages_receiveSchema from './schemas/messages_receive.schema.json';
 import notifications_viewSchema from './schemas/notifications_view.schema.json';
 import offer_cashback_requestedSchema from './schemas/offer_cashback_requested.schema.json';
 import offer_clawed_backSchema from './schemas/offer_clawed_back.schema.json';
@@ -379,6 +390,7 @@ import payment_matchedSchema from './schemas/payment_matched.schema.json';
 import payment_pendingSchema from './schemas/payment_pending.schema.json';
 import payment_receivedSchema from './schemas/payment_received.schema.json';
 import payment_refundedSchema from './schemas/payment_refunded.schema.json';
+import peers_viewSchema from './schemas/peers_view.schema.json';
 import po_changedSchema from './schemas/po_changed.schema.json';
 import po_supplier_addedSchema from './schemas/po_supplier_added.schema.json';
 import po_variance_foundSchema from './schemas/po_variance_found.schema.json';
@@ -474,6 +486,9 @@ export type { BillTicketChanged } from './bill_ticket_changed';
 export type { BillView } from './bill_view';
 export type { BooksCloseMonth } from './books_close_month';
 export type { BooksMonthClosed } from './books_month_closed';
+export type { CalendarAddLocalEvent } from './calendar_add_local_event';
+export type { CalendarLocalEventAdded } from './calendar_local_event_added';
+export type { CalendarView } from './calendar_view';
 export type { CapitalApplied } from './capital_applied';
 export type { CapitalApply } from './capital_apply';
 export type { CapitalOfferReceived } from './capital_offer_received';
@@ -554,6 +569,8 @@ export type { LedgerSetLimit } from './ledger_set_limit';
 export type { LedgerStatementView } from './ledger_statement_view';
 export type { MerchantBootstrap } from './merchant_bootstrap';
 export type { MerchantUpdateSettings } from './merchant_update_settings';
+export type { MessageIn } from './message_in';
+export type { MessagesReceive } from './messages_receive';
 export type { NotificationsView } from './notifications_view';
 export type { OfferCashbackRequested } from './offer_cashback_requested';
 export type { OfferClawedBack } from './offer_clawed_back';
@@ -606,6 +623,7 @@ export type { PaymentMatched } from './payment_matched';
 export type { PaymentPending } from './payment_pending';
 export type { PaymentReceived } from './payment_received';
 export type { PaymentRefunded } from './payment_refunded';
+export type { PeersView } from './peers_view';
 export type { PoChanged } from './po_changed';
 export type { PoSupplierAdded } from './po_supplier_added';
 export type { PoVarianceFound } from './po_variance_found';
@@ -704,6 +722,9 @@ export const SCHEMAS = [
   { name: 'bill_view', id: 'https://arth.local/contracts/bill_view.schema.json', schema: bill_viewSchema },
   { name: 'books_close_month', id: 'https://arth.local/contracts/commands/books_close_month.schema.json', schema: books_close_monthSchema },
   { name: 'books_month_closed', id: 'https://arth.local/contracts/events/books_month_closed.schema.json', schema: books_month_closedSchema },
+  { name: 'calendar_add_local_event', id: 'https://arth.local/contracts/commands/calendar_add_local_event.schema.json', schema: calendar_add_local_eventSchema },
+  { name: 'calendar_local_event_added', id: 'https://arth.local/contracts/events/calendar_local_event_added.schema.json', schema: calendar_local_event_addedSchema },
+  { name: 'calendar_view', id: 'https://arth.local/contracts/calendar_view.schema.json', schema: calendar_viewSchema },
   { name: 'capital_applied', id: 'https://arth.local/contracts/events/capital_applied.schema.json', schema: capital_appliedSchema },
   { name: 'capital_apply', id: 'https://arth.local/contracts/commands/capital_apply.schema.json', schema: capital_applySchema },
   { name: 'capital_offer_received', id: 'https://arth.local/contracts/events/capital_offer_received.schema.json', schema: capital_offer_receivedSchema },
@@ -784,6 +805,8 @@ export const SCHEMAS = [
   { name: 'ledger_statement_view', id: 'https://arth.local/contracts/ledger_statement_view.schema.json', schema: ledger_statement_viewSchema },
   { name: 'merchant_bootstrap', id: 'https://arth.local/contracts/commands/merchant_bootstrap.schema.json', schema: merchant_bootstrapSchema },
   { name: 'merchant_update_settings', id: 'https://arth.local/contracts/commands/merchant_update_settings.schema.json', schema: merchant_update_settingsSchema },
+  { name: 'message_in', id: 'https://arth.local/contracts/events/message_in.schema.json', schema: message_inSchema },
+  { name: 'messages_receive', id: 'https://arth.local/contracts/commands/messages_receive.schema.json', schema: messages_receiveSchema },
   { name: 'notifications_view', id: 'https://arth.local/contracts/notifications_view.schema.json', schema: notifications_viewSchema },
   { name: 'offer_cashback_requested', id: 'https://arth.local/contracts/events/offer_cashback_requested.schema.json', schema: offer_cashback_requestedSchema },
   { name: 'offer_clawed_back', id: 'https://arth.local/contracts/events/offer_clawed_back.schema.json', schema: offer_clawed_backSchema },
@@ -836,6 +859,7 @@ export const SCHEMAS = [
   { name: 'payment_pending', id: 'https://arth.local/contracts/events/payment_pending.schema.json', schema: payment_pendingSchema },
   { name: 'payment_received', id: 'https://arth.local/contracts/events/payment_received.schema.json', schema: payment_receivedSchema },
   { name: 'payment_refunded', id: 'https://arth.local/contracts/events/payment_refunded.schema.json', schema: payment_refundedSchema },
+  { name: 'peers_view', id: 'https://arth.local/contracts/peers_view.schema.json', schema: peers_viewSchema },
   { name: 'po_changed', id: 'https://arth.local/contracts/events/po_changed.schema.json', schema: po_changedSchema },
   { name: 'po_supplier_added', id: 'https://arth.local/contracts/events/po_supplier_added.schema.json', schema: po_supplier_addedSchema },
   { name: 'po_variance_found', id: 'https://arth.local/contracts/events/po_variance_found.schema.json', schema: po_variance_foundSchema },
@@ -936,6 +960,9 @@ export interface ContractTypes {
   bill_view: BillView;
   books_close_month: BooksCloseMonth;
   books_month_closed: BooksMonthClosed;
+  calendar_add_local_event: CalendarAddLocalEvent;
+  calendar_local_event_added: CalendarLocalEventAdded;
+  calendar_view: CalendarView;
   capital_applied: CapitalApplied;
   capital_apply: CapitalApply;
   capital_offer_received: CapitalOfferReceived;
@@ -1016,6 +1043,8 @@ export interface ContractTypes {
   ledger_statement_view: LedgerStatementView;
   merchant_bootstrap: MerchantBootstrap;
   merchant_update_settings: MerchantUpdateSettings;
+  message_in: MessageIn;
+  messages_receive: MessagesReceive;
   notifications_view: NotificationsView;
   offer_cashback_requested: OfferCashbackRequested;
   offer_clawed_back: OfferClawedBack;
@@ -1068,6 +1097,7 @@ export interface ContractTypes {
   payment_pending: PaymentPending;
   payment_received: PaymentReceived;
   payment_refunded: PaymentRefunded;
+  peers_view: PeersView;
   po_changed: PoChanged;
   po_supplier_added: PoSupplierAdded;
   po_variance_found: PoVarianceFound;

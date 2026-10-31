@@ -60,3 +60,4 @@ L2 and announce it.
      `summary_params` (supplier, amount, saving) so batch rows are not hand-written (J1 binding fix).
   5. *Customer picker.* `customer_search_view` with empty q → `recent[]` (`patron_id`, `display_name`, `phone_masked`,
      `khata_balance_paise`, `reward_stamps`).
+- Lane A (30 Oct): L2 done (CP-2). `python dev.py seed -- --pack kirana --days 30` gives the UI a populated shop; see issue #2.

@@ -1,0 +1,18 @@
+{
+  "pack": "kirana",
+  "status": "ready",
+  "n": 12,
+  "metrics": [
+    {
+      "metric": "daily_sales_paise",
+      "p10": 100000,
+      "p25": 200000,
+      "p50": 300000,
+      "p75": 400000,
+      "p90": 500000
+    }
+  ],
+  "invalidate_on": [
+    "x.changed"
+  ]
+}
