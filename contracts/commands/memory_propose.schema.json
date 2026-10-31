@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/memory_propose.schema.json",
+  "title": "MemoryPropose",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "subject": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "predicate": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "value": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "minItems": 0,
+      "maxItems": 20
+    }
+  },
+  "required": [
+    "subject",
+    "predicate",
+    "value",
+    "evidence"
+  ]
+}

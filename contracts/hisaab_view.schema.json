@@ -1,0 +1,355 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/hisaab_view.schema.json",
+  "title": "HisaabView",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "close": {
+      "anyOf": [
+        {
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "today": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "sales_paise": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "by_mode": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer"
+          }
+        },
+        "expenses_paise": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "refunds_paise": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "khata_given_paise": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "sales_paise",
+        "by_mode",
+        "expenses_paise",
+        "refunds_paise",
+        "khata_given_paise"
+      ]
+    },
+    "unmatched": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "payment_id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "amount_paise": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "received_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "khata_patron_id": {
+            "anyOf": [
+              {
+                "$ref": "./common.schema.json#/definitions/PrefixedId"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "suggestions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "bill_id": {
+                  "$ref": "./common.schema.json#/definitions/PrefixedId"
+                },
+                "total_paise": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "score_bp": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "bill_id",
+                "total_paise",
+                "score_bp"
+              ]
+            }
+          }
+        },
+        "required": [
+          "payment_id",
+          "amount_paise",
+          "received_at",
+          "khata_patron_id",
+          "suggestions"
+        ]
+      }
+    },
+    "exceptions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "kind": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "payment_id": {
+            "anyOf": [
+              {
+                "$ref": "./common.schema.json#/definitions/PrefixedId"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "bill_id": {
+            "anyOf": [
+              {
+                "$ref": "./common.schema.json#/definitions/PrefixedId"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "opened_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "payment_id",
+          "bill_id",
+          "status",
+          "opened_at"
+        ]
+      }
+    },
+    "settlements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "gross_paise": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "net_paise": {
+            "type": "integer"
+          },
+          "deductions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 200
+                },
+                "amount_paise": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "kind",
+                "amount_paise"
+              ]
+            }
+          },
+          "explained": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "date",
+          "gross_paise",
+          "net_paise",
+          "deductions",
+          "explained"
+        ]
+      }
+    },
+    "shifts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "staff_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "opened_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "closed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "float_paise": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "expected_paise": {
+            "type": "integer"
+          },
+          "counted_paise": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "variance_paise": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "staff_id",
+          "opened_at",
+          "closed_at",
+          "float_paise",
+          "expected_paise",
+          "counted_paise",
+          "variance_paise"
+        ]
+      }
+    },
+    "expenses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "category": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "amount_paise": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "paid_from": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "category",
+          "amount_paise",
+          "paid_from",
+          "occurred_at"
+        ]
+      }
+    },
+    "invalidate_on": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    }
+  },
+  "required": [
+    "date",
+    "close",
+    "today",
+    "unmatched",
+    "exceptions",
+    "settlements",
+    "shifts",
+    "expenses",
+    "invalidate_on"
+  ]
+}

@@ -20,6 +20,9 @@ from arth.governance.tables import staff
 class StaffService:
     def __init__(self, bus: CommandBus, signing_key: str) -> None:
         self.bus, self._key = bus, signing_key.encode()
+        self.step_up_until: dict[
+            str, str
+        ] = {}  # session id → expiry of a simulated OTP step-up (R4 on Console)
         self._register()
         bus.session_validator = self.validate
 
@@ -63,6 +66,7 @@ class StaffService:
                 channel=row["channel"],
                 device_id=row["device_id"],
                 session_id=sid,
+                step_up=self.step_up_until.get(sid, "") > iso_utc(self.bus.clock.now()),
             )
             await self.validate(repo, session)
             return session
@@ -118,6 +122,36 @@ class StaffService:
         await self.resolve(token)  # replay cannot revive an expired/revoked session
         return {"token": token, "staff_id": staff_id, "expires_at": result["data"]["expires_at"]}
 
+    async def issue(
+        self, merchant_id: str, staff_id: str, device_id: str, channel: str, key: str
+    ) -> dict[str, Any]:
+        """Presenter-only (director token checked by the API): a real session without a PIN, for the stage."""
+        if channel not in {"device", "console"}:
+            raise CommandError("auth.invalid_channel")
+        async with self.bus.db.read() as conn:
+            actors = await Repository(conn, merchant_id).select(staff, staff.c.id == staff_id)
+        if not actors:
+            raise CommandError("staff.invalid_login")
+        result = await self.bus.submit(
+            Session(merchant_id, staff_id, actors[0]["role"], channel=channel, device_id=device_id),
+            "staff.login",
+            {"staff_id": staff_id, "device_id": device_id, "channel": channel},
+            key,
+            private={"presenter_issued": True},
+        )
+        token = self._sign(merchant_id, result["data"]["session_id"], "session")
+        return {"token": token, "staff_id": staff_id, "expires_at": result["data"]["expires_at"]}
+
+    def step_up(self, session: Session, otp: str, *, expected: str = "123456", minutes: int = 10) -> str:
+        """CON-OTP (simulated): an owner's Console session gains step-up for R4 actions for a few minutes."""
+        if session.channel != "console" or session.role != "owner" or session.session_id is None:
+            raise CommandError("auth.step_up_console_owner_only")
+        if not hmac.compare_digest(otp, expected):
+            raise CommandError("auth.invalid_otp")
+        until = iso_utc(self.bus.clock.now() + timedelta(minutes=minutes))
+        self.step_up_until[session.session_id] = until
+        return until
+
     async def add(self, actor: Session, name: str, role: str, pin: str, key: str) -> dict[str, Any]:
         return await self.bus.submit(
             actor, "staff.add", {"name": name, "role": role}, key, private={"pin": pin}
@@ -142,7 +176,7 @@ class StaffService:
             if (
                 repo.session is None
                 or repo.session.actor_id != payload["staff_id"]
-                or "pin" not in repo.private
+                or ("pin" not in repo.private and not repo.private.get("presenter_issued"))
             ):
                 raise CommandError("staff.invalid_login")
             rows = await repo.select(staff_credentials, staff_credentials.c.staff_id == payload["staff_id"])
@@ -152,7 +186,8 @@ class StaffService:
             now = iso_utc(bus.clock.now())
             if row["locked_until"] and row["locked_until"] > now:
                 return {"authenticated": False, "code": "staff.locked"}
-            if not verify_pin(repo.private["pin"], row["pin_hash"]):
+            presenter = bool(repo.private.get("presenter_issued"))
+            if not presenter and not verify_pin(repo.private["pin"], row["pin_hash"]):
                 failed = (row["failed"] if not row["locked_until"] or row["locked_until"] > now else 0) + 1
                 await repo.update(
                     staff_credentials,
@@ -225,11 +260,16 @@ class StaffService:
             )
             if not rows:
                 raise CommandError("shift.not_open")
-            variance = payload["counted_paise"] - rows[0]["expected_paise"]
+            from arth.domains.treasury import shift_cash
+
+            now = iso_utc(bus.clock.now())
+            expected = await shift_cash(repo, rows[0], now)  # STF-3: float + cash in − cash out
+            variance = payload["counted_paise"] - expected
             await repo.update(
                 shifts,
                 {
-                    "closed_at": iso_utc(bus.clock.now()),
+                    "closed_at": now,
+                    "expected_paise": expected,
                     "counted_paise": payload["counted_paise"],
                     "variance_paise": variance,
                 },
@@ -241,6 +281,7 @@ class StaffService:
             return {
                 "shift_id": payload["shift_id"],
                 "staff_id": repo.session.actor_id,
+                "expected_paise": expected,
                 "variance_paise": variance,
             }
 

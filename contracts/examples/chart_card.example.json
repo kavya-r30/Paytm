@@ -1,0 +1,29 @@
+{
+  "type": "chart",
+  "chart_no": 6,
+  "kind": "bar",
+  "title_key": "chart.khata_aging",
+  "x": {
+    "field": "bucket"
+  },
+  "series": [
+    {
+      "name": "due",
+      "field": "amount_paise"
+    }
+  ],
+  "data": [
+    {
+      "bucket": "0-7",
+      "amount_paise": 5010
+    }
+  ],
+  "data_ref": "tool:chart.6",
+  "as_of": "2026-10-29T02:15:00Z",
+  "takeaway": {
+    "key": "takeaway.khata_total"
+  },
+  "invalidate_on": [
+    "x.changed"
+  ]
+}

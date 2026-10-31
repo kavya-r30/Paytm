@@ -1,0 +1,17 @@
+{
+  "event_id": "evt_01JBQ0Z7Y8K3M4N5P6Q7R8S9T0",
+  "type": "message.in",
+  "merchant_id": "merchant_01JBQ0Z7Y8K3M4N5P6Q7R8S9T0",
+  "occurred_at": "2026-10-30T04:00:00Z",
+  "actor": {
+    "kind": "owner",
+    "id": "staff_01JBQ0Z7Y8K3M4N5P6Q7R8S9T0"
+  },
+  "causation_id": "cmd_01JBQ0Z7Y8K3M4N5P6Q7R8S9T0",
+  "payload": {
+    "message_id": "msgin_01JBQ0Z7Y8K3M4N5P6Q7R8S9T0",
+    "persona_ref": "priya",
+    "patron_id": null,
+    "supplier_id": null
+  }
+}

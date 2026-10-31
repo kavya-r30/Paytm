@@ -1,3 +1,4 @@
+from conftest import seed_repo
 from fastapi.testclient import TestClient
 
 from arth.core.config import Settings
@@ -7,7 +8,6 @@ from arth.main import create_app
 
 def test_api_uses_server_session_not_body_or_headers(tmp_path):
     from arth.governance.policy import Session
-    from arth.governance.repository import Repository
     from arth.governance.tables import merchant_settings, merchants
 
     app = create_app(Settings(_env_file=None, mode="test", data_dir=tmp_path))
@@ -17,7 +17,7 @@ def test_api_uses_server_session_not_body_or_headers(tmp_path):
 
         async def seed():
             async with app.state.db.write() as conn:
-                await Repository(conn, "a").insert(merchants, {"id": "a", "name": "A", "pack": "kirana"})
+                await seed_repo(conn, "a").insert(merchants, {"id": "a", "name": "A", "pack": "kirana"})
 
         client.portal.call(seed)
         bus.policy.policies.tiers["test.write"] = "R1"

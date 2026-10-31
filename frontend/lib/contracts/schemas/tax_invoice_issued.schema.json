@@ -1,0 +1,104 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/events/tax_invoice_issued.schema.json",
+  "title": "TaxInvoiceIssued",
+  "description": "Event Spine topic tax.invoice_issued (spec Part C5).",
+  "type": "object",
+  "required": [
+    "event_id",
+    "type",
+    "merchant_id",
+    "occurred_at",
+    "actor",
+    "causation_id",
+    "payload"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "event_id": {
+      "type": "string",
+      "pattern": "^evt_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "type": {
+      "const": "tax.invoice_issued"
+    },
+    "merchant_id": {
+      "$ref": "../common.schema.json#/definitions/NonEmptyString"
+    },
+    "occurred_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "actor": {
+      "$ref": "#/definitions/Actor"
+    },
+    "causation_id": {
+      "anyOf": [
+        {
+          "$ref": "../common.schema.json#/definitions/PrefixedId"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Id of the command or event that caused this event; null means a root event with no cause (e.g. a clock tick)."
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "invoice_id": {
+          "$ref": "../common.schema.json#/definitions/PrefixedId"
+        },
+        "bill_id": {
+          "$ref": "../common.schema.json#/definitions/PrefixedId"
+        },
+        "kind": {
+          "enum": [
+            "receipt",
+            "bill_of_supply",
+            "tax_invoice"
+          ]
+        }
+      },
+      "required": [
+        "invoice_id",
+        "bill_id",
+        "kind"
+      ]
+    }
+  },
+  "definitions": {
+    "Actor": {
+      "type": "object",
+      "required": [
+        "kind"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "owner",
+            "staff",
+            "customer",
+            "supplier",
+            "agent",
+            "system",
+            "simulator"
+          ]
+        },
+        "id": {
+          "anyOf": [
+            {
+              "$ref": "../common.schema.json#/definitions/NonEmptyString"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

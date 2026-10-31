@@ -20,6 +20,12 @@ export interface StockView {
       recalled: boolean;
       qty_milli: number;
     }[];
+    name: string;
+    unit: string;
+    category: string;
+    target_qty_milli: number;
+    status: "ok" | "low" | "out" | "untracked";
+    supplier_name: string | null;
   }[];
   invalidate_on: string[];
 }

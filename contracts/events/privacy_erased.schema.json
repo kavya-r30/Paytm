@@ -1,0 +1,92 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/events/privacy_erased.schema.json",
+  "title": "PrivacyErased",
+  "description": "Event Spine topic privacy.erased (spec Part C5).",
+  "type": "object",
+  "required": [
+    "event_id",
+    "type",
+    "merchant_id",
+    "occurred_at",
+    "actor",
+    "causation_id",
+    "payload"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "event_id": {
+      "type": "string",
+      "pattern": "^evt_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "type": {
+      "const": "privacy.erased"
+    },
+    "merchant_id": {
+      "$ref": "../common.schema.json#/definitions/NonEmptyString"
+    },
+    "occurred_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "actor": {
+      "$ref": "#/definitions/Actor"
+    },
+    "causation_id": {
+      "anyOf": [
+        {
+          "$ref": "../common.schema.json#/definitions/PrefixedId"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Id of the command or event that caused this event; null means a root event with no cause (e.g. a clock tick)."
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "patron_id": {
+          "$ref": "../common.schema.json#/definitions/PrefixedId"
+        }
+      },
+      "required": [
+        "patron_id"
+      ]
+    }
+  },
+  "definitions": {
+    "Actor": {
+      "type": "object",
+      "required": [
+        "kind"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "owner",
+            "staff",
+            "customer",
+            "supplier",
+            "agent",
+            "system",
+            "simulator"
+          ]
+        },
+        "id": {
+          "anyOf": [
+            {
+              "$ref": "../common.schema.json#/definitions/NonEmptyString"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

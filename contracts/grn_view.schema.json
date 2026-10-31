@@ -1,0 +1,136 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/grn_view.schema.json",
+  "title": "GrnView",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "po_id": {
+      "$ref": "./common.schema.json#/definitions/PrefixedId"
+    },
+    "received": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "item_id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "qty_milli": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "batch_id": {
+            "anyOf": [
+              {
+                "$ref": "./common.schema.json#/definitions/PrefixedId"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "item_id",
+          "qty_milli",
+          "batch_id"
+        ]
+      }
+    },
+    "billed": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "item_id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "qty_milli": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "unit_price_paise": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "item_id",
+          "qty_milli",
+          "unit_price_paise"
+        ]
+      }
+    },
+    "variances": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "item_id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "kind": {
+            "enum": [
+              "price",
+              "qty"
+            ]
+          },
+          "expected": {
+            "type": "integer"
+          },
+          "actual": {
+            "type": "integer"
+          },
+          "delta_paise": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "item_id",
+          "kind",
+          "expected",
+          "actual",
+          "delta_paise",
+          "name"
+        ]
+      }
+    },
+    "claim_id": {
+      "anyOf": [
+        {
+          "$ref": "./common.schema.json#/definitions/PrefixedId"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "invalidate_on": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    "supplier_name": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "po_id",
+    "received",
+    "billed",
+    "variances",
+    "claim_id",
+    "invalidate_on",
+    "supplier_name"
+  ]
+}

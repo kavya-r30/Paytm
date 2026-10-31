@@ -1,0 +1,11 @@
+{
+  "lender": "Sandbox NBFC",
+  "amount_paise": 5000000,
+  "tenor_days": 90,
+  "apr_bp": 2400,
+  "edi_paise": 60000,
+  "processing_fee_paise": 50000,
+  "kfs_url": "https://lender.example/kfs/1",
+  "cooling_off_days": 3,
+  "expires_at": "2026-11-05T00:00:00Z"
+}

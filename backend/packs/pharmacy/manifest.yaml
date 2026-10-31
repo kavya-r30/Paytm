@@ -1,0 +1,26 @@
+pack: pharmacy
+version: 1
+names: { en: Pharmacy / chemist, hi: दवा की दुकान, hi-Latn: Dawai ki dukaan }
+catalog:
+  schema: medicine
+  fields: [mrp, price, cost, pack_size, unit, hsn, gst_rate, salt, strength, form, schedule, rx_required]
+  units: [strip, pcs, bottle, tube, pack]
+  loose_sale: false
+stock: { batches: required, expiry: required, bom: false }
+counter: { modes: [scan, tap, voice, search], tickets: false, appointments: false }
+khata: { enabled: true }
+levers:
+  winback: { lapsing_rule: default }
+  replenish: { categories: [chronic], cv_max: 0.3, variant: refill }
+  demand_capture: {}
+  welcome: { coupon_paise: 0, min_bill_paise: 0, valid_days: 0 }
+  offers: { types: [next_txn_cashback, payment_count] }
+  storefront: {}
+  feedback: {}
+calendar: [diwali, monsoon, salary_days]
+charts: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+policies: { margin_floor: 0.15, expiry_alert_days: 90, forbid_offers_on_flags: [rx_required] }
+templates: templates/
+generator: generator.yaml
+peer_cohort: pharmacy_by_city_tier_and_size
+scenarios: [pharmacy_batch_recall, pharmacy_refill_week]

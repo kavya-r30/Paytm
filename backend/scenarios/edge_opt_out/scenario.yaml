@@ -1,0 +1,21 @@
+scenario: edge_opt_out
+title: Edge - a customer says STOP
+pack: kirana
+world: {days: 2, seed: 26, size: micro, patrons: 6}
+scenes:
+  - id: "1"
+    title: After STOP, no reminder can be reserved
+    beats:
+      - id: "1.1"
+        cue: Priya replies STOP
+        input:
+          - persona_action: {persona: priya, action: stop}
+        expect:
+          - {view: "patron/${world.patrons.priya.id}", path: consent.receipts, equals: false}
+      - id: "1.2"
+        cue: A reminder to Priya is refused by policy
+        input:
+          - command: {type: ledger.send_reminder, payload: {account_id: "${world.patrons.priya.account}", template_key: reminder.gentle}}
+        expect:
+          - {result: code, equals: policy.consent}
+          - {invariants: true}

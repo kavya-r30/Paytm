@@ -1,0 +1,64 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/capital_record_offer.schema.json",
+  "title": "CapitalRecordOffer",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "lender": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "amount_paise": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "tenor_days": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 1095
+    },
+    "apr_bp": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 6000
+    },
+    "edi_paise": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "processing_fee_paise": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "kfs_url": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "cooling_off_days": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 30
+    },
+    "purpose_ref": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "lender",
+    "amount_paise",
+    "tenor_days",
+    "apr_bp",
+    "edi_paise",
+    "processing_fee_paise",
+    "kfs_url",
+    "cooling_off_days",
+    "expires_at"
+  ]
+}

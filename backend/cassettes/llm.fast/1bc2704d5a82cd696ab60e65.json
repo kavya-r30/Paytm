@@ -1,0 +1,1 @@
+{"provider": "groq", "model": "openai/gpt-oss-20b", "text": "{\"ok\":true}", "data": {"tool_calls": []}}

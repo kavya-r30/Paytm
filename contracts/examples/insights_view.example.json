@@ -1,0 +1,14 @@
+{
+  "sufficiency": [],
+  "alerts": [],
+  "actions": {
+    "proactive": [],
+    "queued": [],
+    "snoozed": []
+  },
+  "lifecycle": {},
+  "demand_clusters": [],
+  "invalidate_on": [
+    "x.changed"
+  ]
+}

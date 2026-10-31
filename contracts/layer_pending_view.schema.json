@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/layer_pending_view.schema.json",
+  "title": "LayerPendingView",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "screen": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "status": {
+      "enum": [
+        "needs_more_data",
+        "not_built_yet"
+      ]
+    },
+    "layer": {
+      "enum": [
+        "L3",
+        "L4",
+        "L5",
+        "L6"
+      ]
+    },
+    "reason_key": {
+      "$ref": "./common.schema.json#/definitions/MessageKey"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "invalidate_on": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    }
+  },
+  "required": [
+    "screen",
+    "status",
+    "layer",
+    "reason_key",
+    "items",
+    "invalidate_on"
+  ]
+}

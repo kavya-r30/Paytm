@@ -1,0 +1,213 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/trust_view.schema.json",
+  "title": "TrustView",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "tiers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "tier": {
+            "$ref": "./common.schema.json#/definitions/Tier"
+          },
+          "commands": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          },
+          "confirm_key": {
+            "$ref": "./common.schema.json#/definitions/MessageKey"
+          }
+        },
+        "required": [
+          "tier",
+          "commands",
+          "confirm_key"
+        ]
+      }
+    },
+    "roles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "role": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "max_tier": {
+            "$ref": "./common.schema.json#/definitions/Tier"
+          },
+          "approve": {
+            "type": "array",
+            "items": {
+              "$ref": "./common.schema.json#/definitions/Tier"
+            }
+          }
+        },
+        "required": [
+          "role",
+          "max_tier",
+          "approve"
+        ]
+      }
+    },
+    "activity": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "command_id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "type": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "tier": {
+            "$ref": "./common.schema.json#/definitions/Tier"
+          },
+          "status": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "actor_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "command_id",
+          "type",
+          "tier",
+          "status",
+          "actor_id",
+          "occurred_at"
+        ]
+      }
+    },
+    "audit": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ok": {
+          "type": "boolean"
+        },
+        "rows": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "ok",
+        "rows"
+      ]
+    },
+    "undo": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "command_id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "type": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "until": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "command_id",
+          "type",
+          "until"
+        ]
+      }
+    },
+    "data_sharing": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "peer_benchmarks": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "peer_benchmarks"
+      ]
+    },
+    "data_requests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "patron_id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "kind",
+          "patron_id",
+          "occurred_at"
+        ]
+      }
+    },
+    "invalidate_on": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    }
+  },
+  "required": [
+    "tiers",
+    "roles",
+    "activity",
+    "audit",
+    "undo",
+    "data_sharing",
+    "data_requests",
+    "invalidate_on"
+  ]
+}

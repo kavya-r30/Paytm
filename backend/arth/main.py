@@ -11,14 +11,36 @@ import asyncio
 import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from datetime import timedelta
+from typing import Any
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import select
 
-from arth.api import commerce, commerce_core, director, governance, health, stream
+from arth.agents.commands import register_agent_commands
+from arth.agents.playbooks import install as install_playbooks
+from arth.agents.runtime import Runtime
+from arth.agents.views import load_helpers
+from arth.ai.conductor import Conductor
+from arth.ai.router import ProviderRouter
+from arth.api import (
+    agents,
+    commerce,
+    commerce_core,
+    director,
+    governance,
+    growth,
+    health,
+    intel,
+    sim,
+    stream,
+    turns,
+    views,
+)
 from arth.api.problems import install_problem_handlers
 from arth.core.calendar import CalendarIndex, load_calendar
-from arth.core.clock import SimClock
+from arth.core.clock import SimClock, iso_utc
 from arth.core.config import (
     Settings,
     check_auth_tokens,
@@ -27,21 +49,23 @@ from arth.core.config import (
     load_providers,
 )
 from arth.core.db import Database
+from arth.core.ids import new_id
 from arth.core.migrate import upgrade
 from arth.core.packs import PackRegistry
 from arth.core.scheduler import Scheduler, tick_loop
 from arth.core.spans import SpanBus
-from arth.domains.catalog import register_catalog
-from arth.domains.ledger import register_ledger
+from arth.core.tables import jobs
 from arth.domains.merchants import register_merchants
-from arth.domains.patrons import PatronService
 from arth.domains.security import load_signing_key
-from arth.domains.staff import StaffService
-from arth.domains.stock import register_stock
+from arth.domains.wiring import register_commerce
 from arth.governance.commands import CommandBus
 from arth.governance.events import Dispatcher
-from arth.governance.policy import PolicyEngine
+from arth.governance.policy import PolicyEngine, Session
 from arth.governance.repository import Repository
+from arth.intel.commands import register_intel
+from arth.sim import peers
+from arth.sim.hub import Simulators
+from arth.sim.personas import PersonaEngine
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -74,14 +98,50 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         signing_key = settings.session_signing_key or load_signing_key(
             settings.data_dir / "session-signing.key"
         )
-        app.state.staff = StaffService(app.state.commands, signing_key.get_secret_value())
-        register_catalog(app.state.commands, app.state.packs)
-        register_stock(app.state.commands, app.state.packs)
-        app.state.patrons = PatronService(app.state.commands, signing_key.get_secret_value())
-        register_ledger(app.state.commands)
+        services = register_commerce(app.state.commands, app.state.packs, signing_key.get_secret_value())
+        app.state.staff, app.state.patrons = services.staff, services.patrons
         async with db.read() as conn:
             app.state.commands.merchant_ids = await Repository.merchant_directory(conn)
         app.state.events = Dispatcher(db, clock)
+        app.state.sim = Simulators(app.state.commands, app.state.events, signing_key.get_secret_value())
+        app.state.personas = PersonaEngine()
+        register_intel(app.state.commands, app.state.calendar)
+        app.state.router = ProviderRouter(settings, app.state.providers, spans)
+        app.state.conductor = Conductor(app.state.commands, app.state.router, app.state.calendar)
+        app.state.runtime = Runtime(app.state.commands, app.state.events)
+        install_playbooks(app.state.runtime, app.state.events)
+        register_agent_commands(app.state.commands, app.state.runtime)
+        app.state.helpers = load_helpers()
+        growth.install_guardrails(app.state.events, clock)
+
+        async def night_shift(job: Any) -> None:
+            stamp = clock.now_ist().date().isoformat()
+            for merchant_id in sorted(app.state.commands.merchant_ids):
+                await app.state.runtime.start(merchant_id, "night_shift", stamp)
+
+        scheduler.on("agents.night_shift", night_shift)
+        async with db.read() as conn:
+            pending = await conn.execute(
+                select(jobs.c.id).where(jobs.c.name == "agents.night_shift", jobs.c.status == "pending")
+            )
+            if not pending.first():
+                await scheduler.schedule_daily("agents.night_shift", "22:00")
+
+        async def hourly_alerts(job: Any) -> None:
+            stamp = iso_utc(clock.now())[:13]
+            for merchant_id in sorted(app.state.commands.merchant_ids):
+                actor = Session(merchant_id, new_id("system"), "system", actor_kind="system")
+                await app.state.commands.submit(actor, "alerts.scan", {}, f"alerts-{stamp}")
+
+        scheduler.on("intel.hourly", hourly_alerts)
+        async with db.read() as conn:
+            pending = await conn.execute(
+                select(jobs.c.id).where(jobs.c.name == "intel.hourly", jobs.c.status == "pending")
+            )
+            if not pending.first():
+                await scheduler.schedule("intel.hourly", clock.now() + timedelta(hours=1), every_seconds=3600)
+        async with db.write() as conn:
+            await peers.generate(conn)
         app.state.events.declare_view("trust", {"command.executed", "approval.decided"})
         app.state.events.declare_view("gates", {"approval.requested", "approval.decided"})
         for name, topics in {
@@ -99,6 +159,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             "statement": {"credit.changed", "credit.reminder_requested", "patron.merged"},
             "promises": {"credit.changed"},
             "payables": {"credit.payable_changed"},
+            **views.VIEW_TOPICS,
         }.items():
             app.state.events.declare_view(name, topics)
         stop = asyncio.Event()
@@ -112,6 +173,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                     try:
                         await app.state.commands.run_due(merchant_id)
                         await app.state.events.dispatch(merchant_id)
+                        await app.state.runtime.tick(merchant_id)
                     except Exception:
                         logging.getLogger(__name__).exception("governance delivery failed; retrying")
                 try:
@@ -143,6 +205,12 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(governance.router)
     app.include_router(commerce.router)
     app.include_router(commerce_core.router)
+    app.include_router(views.router)
+    app.include_router(sim.router)
+    app.include_router(intel.router)
+    app.include_router(turns.router)
+    app.include_router(agents.router)
+    app.include_router(growth.router)
     return app
 
 

@@ -1,0 +1,22 @@
+scenario: edge_provider_outage
+title: Edge - every AI provider is down
+pack: kirana
+world: {days: 2, seed: 23, size: micro, patrons: 6}
+scenes:
+  - id: "1"
+    title: The counter and grounded answers keep working
+    beats:
+      - id: "1.1"
+        cue: Providers down; "Aaj kitna aaya?" still answers (fast path + templates)
+        input:
+          - fault: {providers_down: true}
+          - say_for_me: "Aaj kitna aaya?"
+        expect_turn: {intent: "read:today_sales", speech_contains: aaya}
+      - id: "1.2"
+        cue: A free-form question degrades politely instead of failing
+        input:
+          - say_for_me: "mausam ke hisaab se kya rakhna chahiye"
+        expect_turn: {speech_contains: samjha}
+        expect:
+          - {view: health, path: providers.0.name, present: true}
+          - {invariants: true}

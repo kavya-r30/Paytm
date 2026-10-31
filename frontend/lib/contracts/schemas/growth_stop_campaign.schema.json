@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/growth_stop_campaign.schema.json",
+  "title": "GrowthStopCampaign",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "campaign_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "reason_key": {
+      "$ref": "../common.schema.json#/definitions/MessageKey"
+    }
+  },
+  "required": [
+    "campaign_id",
+    "reason_key"
+  ]
+}

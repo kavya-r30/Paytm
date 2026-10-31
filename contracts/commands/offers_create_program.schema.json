@@ -1,0 +1,117 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/offers_create_program.schema.json",
+  "title": "OffersCreateProgram",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "type": {
+      "enum": [
+        "next_txn_cashback",
+        "instant_cashback",
+        "first_time_coupon",
+        "payment_count",
+        "item_coupon"
+      ]
+    },
+    "rules": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "reward_paise": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "min_spend_paise": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "validity_days": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 365
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "combine_minutes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 60
+        },
+        "item_id": {
+          "$ref": "../common.schema.json#/definitions/PrefixedId"
+        }
+      },
+      "required": [
+        "reward_paise"
+      ]
+    },
+    "terms": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "amount_paise": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "min_spend_paise": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "expiry_days": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 365
+        }
+      },
+      "required": [
+        "amount_paise",
+        "min_spend_paise",
+        "expiry_days"
+      ]
+    },
+    "budget_paise": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "daily_budget_paise": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "funding": {
+      "enum": [
+        "merchant",
+        "platform"
+      ]
+    },
+    "holdout_bp": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 5000
+    },
+    "include_regulars": {
+      "type": "boolean"
+    },
+    "valid_from": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "valid_until": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "type",
+    "rules",
+    "terms",
+    "budget_paise",
+    "funding",
+    "holdout_bp",
+    "valid_from",
+    "valid_until"
+  ]
+}

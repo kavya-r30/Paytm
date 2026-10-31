@@ -1,0 +1,9 @@
+{
+  "goal_key": "goal.more_visits",
+  "levers": [
+    "winback",
+    "replenish"
+  ],
+  "budget_paise": 50000,
+  "holdout_bp": 2000
+}

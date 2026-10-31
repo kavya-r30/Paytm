@@ -1,6 +1,7 @@
 from datetime import timedelta
 
 import pytest
+from conftest import seed_repo
 from test_governance_commands import make_bus
 
 
@@ -52,7 +53,6 @@ async def test_pack_policy_is_used_by_bus(db):
     from arth.core.packs import PackRegistry
     from arth.governance.commands import CommandError
     from arth.governance.policy import PolicyContext, Session
-    from arth.governance.repository import Repository
     from arth.governance.tables import merchants
 
     bus = await make_bus(db)
@@ -65,7 +65,7 @@ async def test_pack_policy_is_used_by_bus(db):
     base = PackRegistry.load(PACKS_DIR, bus.policy.policies).get("kirana")
     bus.packs = PackRegistry({"cafe": base.model_copy(update={"pack": "cafe"})}, {"cafe": policies})
     async with db.write() as conn:
-        await Repository(conn, "a").insert(merchants, {"id": "a", "name": "Cafe", "pack": "cafe"})
+        await seed_repo(conn, "a").insert(merchants, {"id": "a", "name": "Cafe", "pack": "cafe"})
     schema, handler, _ = bus.registry["test.write"]
 
     async def context(repo, payload):

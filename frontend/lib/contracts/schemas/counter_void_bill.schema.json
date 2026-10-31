@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/commands/counter_void_bill.schema.json",
+  "title": "CounterVoidBill",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "bill_id": {
+      "$ref": "../common.schema.json#/definitions/PrefixedId"
+    },
+    "reason_key": {
+      "$ref": "../common.schema.json#/definitions/MessageKey"
+    }
+  },
+  "required": [
+    "bill_id",
+    "reason_key"
+  ]
+}

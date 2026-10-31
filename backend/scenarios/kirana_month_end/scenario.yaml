@@ -1,0 +1,25 @@
+scenario: kirana_month_end
+title: Month close - P&L, GST summary, CA export
+pack: kirana
+world: {days: 6, seed: 3, size: micro, patrons: 8}
+scenes:
+  - id: "1"
+    title: Close October in November
+    beats:
+      - id: "1.1"
+        who: P1
+        cue: The clock moves into the next month
+        input:
+          - clock: {jump_days: 4}
+        expect:
+          - {view: reports, path: month, present: true}
+      - id: "1.2"
+        who: P1
+        cue: Close the previous month; P&L and GST reproducible from tables
+        input:
+          - command: {type: books.close_month, payload: {month: "2026-10"}}
+        expect:
+          - {result: data.month, equals: "2026-10"}
+          - {view: "reports?month=2026-10", path: closed_months.0.month, equals: "2026-10"}
+          - {invariants: true}
+        focus: {device_screen: reports}

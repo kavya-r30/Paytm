@@ -1,0 +1,36 @@
+{
+  "diagnostics": {
+    "current": {
+      "customers": 40,
+      "visits": 120,
+      "sales_paise": 600000
+    },
+    "previous": {
+      "customers": 35,
+      "visits": 100,
+      "sales_paise": 500000
+    },
+    "change_paise": 100000,
+    "parts": {
+      "customers_paise": 71428,
+      "frequency_paise": 2858,
+      "basket_paise": 25714
+    }
+  },
+  "peers": {},
+  "levers": [
+    {
+      "name": "winback",
+      "enabled": true,
+      "eligible": 3,
+      "estimate_paise": 15000,
+      "label": "estimate",
+      "gate": "ready"
+    }
+  ],
+  "plans": [],
+  "advisor": [],
+  "invalidate_on": [
+    "x.changed"
+  ]
+}

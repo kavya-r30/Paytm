@@ -1,0 +1,41 @@
+{
+  "bill": {
+    "id": "bill_01JBQ0Z7Y8K3M4N5P6Q7R8S9T0",
+    "status": "open",
+    "patron_id": null,
+    "staff_id": "staff_01JBQ0Z7Y8K3M4N5P6Q7R8S9T0",
+    "opened_at": "2026-10-30T04:00:00Z",
+    "closed_at": null,
+    "total_paise": 9000,
+    "paid_paise": 0,
+    "khata_paise": 0,
+    "due_paise": 9000,
+    "lines": [
+      {
+        "id": "bline_01JBQ0Z7Y8K3M4N5P6Q7R8S9T0",
+        "item_id": "item_01JBQ0Z7Y8K3M4N5P6Q7R8S9T0",
+        "name": "Sugar",
+        "qty_milli": 2000,
+        "unit_price_paise": 4500,
+        "amount_paise": 9000,
+        "added_via": "voice",
+        "modifier_ids": [],
+        "price_override": false,
+        "batch_id": null
+      }
+    ],
+    "payments": [],
+    "ticket": null,
+    "upi": null,
+    "patron": null
+  },
+  "payee_vpa": "shop@paytm",
+  "alternatives": [
+    "cash",
+    "khata"
+  ],
+  "exception": null,
+  "invalidate_on": [
+    "x.changed"
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/demand_view.schema.json",
+  "title": "DemandView",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "unmet": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "item_id": {
+            "anyOf": [
+              {
+                "$ref": "./common.schema.json#/definitions/PrefixedId"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "text",
+          "item_id",
+          "occurred_at"
+        ]
+      }
+    },
+    "clusters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "label",
+          "count"
+        ]
+      }
+    },
+    "status": {
+      "enum": [
+        "needs_more_data",
+        "ready"
+      ]
+    },
+    "invalidate_on": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    }
+  },
+  "required": [
+    "unmet",
+    "clusters",
+    "status",
+    "invalidate_on"
+  ]
+}

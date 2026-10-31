@@ -1,0 +1,121 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://arth.local/contracts/rx_view.schema.json",
+  "title": "RxView",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "rx_sales": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "bill_id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "item_id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "staff_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "bill_id",
+          "item_id",
+          "name",
+          "staff_id",
+          "occurred_at"
+        ]
+      }
+    },
+    "refills_due": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "patron_id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "item_id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "due_on": {
+            "type": "string",
+            "format": "date"
+          },
+          "patron_name": {
+            "type": "string"
+          },
+          "item_name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "patron_id",
+          "item_id",
+          "due_on",
+          "patron_name",
+          "item_name"
+        ]
+      }
+    },
+    "recalls": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "batch_id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "item_id": {
+            "$ref": "./common.schema.json#/definitions/PrefixedId"
+          },
+          "buyer_ids": {
+            "type": "array",
+            "items": {
+              "$ref": "./common.schema.json#/definitions/PrefixedId"
+            }
+          },
+          "item_name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "batch_id",
+          "item_id",
+          "buyer_ids",
+          "item_name"
+        ]
+      }
+    },
+    "invalidate_on": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    }
+  },
+  "required": [
+    "rx_sales",
+    "refills_due",
+    "recalls",
+    "invalidate_on"
+  ]
+}

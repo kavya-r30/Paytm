@@ -1,0 +1,7 @@
+{
+  "bundles": [],
+  "preorders": [],
+  "invalidate_on": [
+    "x.changed"
+  ]
+}
