@@ -35,3 +35,25 @@ a live rehearsal. Timing budgets (`within_ms`) get a 5× headless margin.
 
 CP-8 (30 Oct 2026): 16 scenarios, each 10/10 green under `demo-check`; gen-check, lint and typecheck clean; full
 pytest and Vitest green (counts in the index).
+
+### Follow-up (31 Oct 2026, Lane A): live play in the Director, L7 bindings, T7.18
+
+Lane B's two open L7 items were done here so the demo does not wait on them:
+
+- **Live play (T8.7):** `POST /v1/director/play {scenario}` builds the scenario's world in the running server (a
+  fresh world each play), and `POST /v1/director/play/beat {beat_id}` runs one beat with the same `ScenarioRunner`
+  (driven from a worker thread through `LiveClient`). The first beat of a scene snapshots
+  `<scenario>-scene-<id>`. A failed beat returns `{ok: false, error, snapshot}`; it is never a 500.
+- **Director (T7.16):** the picker lists the backend library (local fallback without a backend). "Play" builds the
+  shop and stores presenter sessions. Each beat shows pass/fail with ms, and a failed beat shows **Restore scene
+  start**. The Stage (T7.15) follows each beat's title, cue and `focus` (device screen, phone persona, evidence
+  tab). Phones also match a persona by first name.
+- **T7.18:** `python dev.py e2e` starts the API (fresh data dir, :8010) and web (:3010). It runs the Playwright
+  screenshot matrix (66 surfaces × en/hi/ta/xx-LONG, fixture mode) and then a live Director run of `billing_smoke`.
+  It is green, and screenshots go to `frontend/e2e-output/`. `.github/workflows/ci.yml` runs the gates,
+  `demo-check` and `e2e`.
+- **Bugs found by the run:**
+  - Forecast/home chart ticks were fractional paise and crashed `money()`; they are now rounded.
+  - Sim UTRs collided after a server restart (the counter is per process); taken UTRs are now skipped.
+  - "1 days of history" is now pluralised.
+- **Verified live:** all 18 `gupta_diwali` beats pass when played through `/v1/director/play/beat`.

@@ -2,7 +2,8 @@
 """Arth task runner: a cross-platform replacement for make.
 
 Usage: python dev.py <target> [<target> ...]
-Targets: setup, gen, gen-check, lint, typecheck, test, check, build-web, api, web, seed, scenario, demo-check, ai-smoke
+Targets: setup, gen, gen-check, lint, typecheck, test, check, build-web, api, web, seed, scenario, demo-check, ai-smoke,
+e2e
 (check = gen-check, lint, typecheck, test; gen-check fails when generated contract code is stale)
 """
 from __future__ import annotations
@@ -116,6 +117,55 @@ def ai_smoke() -> None:
     run("uv", "run", "python", "-m", "arth.ai.smoke", cwd=BACKEND)
 
 
+def e2e() -> None:
+    """T7.18: API (fresh data dir, :8010) + web (:3010), then the Playwright matrix and live Director run.
+
+    One-time on a new machine: pnpm --filter frontend exec playwright install chromium"""
+    import os
+    import tempfile
+    import time
+    import urllib.request
+
+    extra = sys.argv[sys.argv.index("--") + 1 :] if "--" in sys.argv else []
+    env = {
+        **os.environ,
+        "ARTH_DATA_DIR": tempfile.mkdtemp(prefix="arth-e2e-"),
+        "ARTH_CORS_ORIGINS": '["http://localhost:3010"]',
+        "NEXT_PUBLIC_API_URL": "http://localhost:8010",
+    }
+    # each server in its own process group, so stopping it also stops uvicorn / next-server under uv and pnpm
+    group: dict[str, object] = (
+        {"creationflags": subprocess.CREATE_NEW_PROCESS_GROUP} if os.name == "nt" else {"start_new_session": True}
+    )
+    servers = [
+        subprocess.Popen(
+            _exe("uv") + ["run", "uvicorn", "arth.main:app", "--port", "8010"], cwd=BACKEND, env=env, **group
+        ),
+        subprocess.Popen(_exe("pnpm") + ["exec", "next", "dev", "--port", "3010"], cwd=FRONTEND, env=env, **group),
+    ]
+    try:
+        for url in ("http://localhost:8010/healthz", "http://localhost:3010/director"):
+            for _ in range(120):
+                try:
+                    urllib.request.urlopen(url, timeout=30)
+                    break
+                except OSError:
+                    time.sleep(2)
+            else:
+                sys.exit(f"e2e: {url} did not come up")
+        code = _call("node", "scripts/e2e.mjs", "--web", "http://localhost:3010", *extra, cwd=FRONTEND)
+    finally:
+        for server in servers:
+            if os.name == "nt":
+                subprocess.run(["taskkill", "/F", "/T", "/PID", str(server.pid)], capture_output=True)
+            else:
+                import signal
+
+                os.killpg(server.pid, signal.SIGTERM)
+    if code:
+        sys.exit(code)
+
+
 def web() -> None:
     run("pnpm", "--filter", "frontend", "run", "dev")
 
@@ -135,6 +185,7 @@ TARGETS: dict[str, Callable[[], None]] = {
     "scenario": scenario,
     "demo-check": demo_check,
     "ai-smoke": ai_smoke,
+    "e2e": e2e,
 }
 
 if __name__ == "__main__":

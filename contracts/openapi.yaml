@@ -1130,6 +1130,41 @@ paths:
               schema: {type: object}
         '401': {$ref: '#/components/responses/Problem'}
         '404': {$ref: '#/components/responses/Problem'}
+  /v1/director/play:
+    post:
+      operationId: directorPlay
+      security: [{director: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        '200':
+          description: The scenario's world is built in this server; returns its merchant and beat ids
+          content:
+            application/json:
+              schema: {type: object}
+        '401': {$ref: '#/components/responses/Problem'}
+        '404': {$ref: '#/components/responses/Problem'}
+  /v1/director/play/beat:
+    post:
+      operationId: directorPlayBeat
+      security: [{director: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        '200':
+          description: One beat ran; ok with its ms, or the failed expectation and the scene snapshot to restore
+          content:
+            application/json:
+              schema: {type: object}
+        '401': {$ref: '#/components/responses/Problem'}
+        '404': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
   /v1/director/scenarios:
     get:
       operationId: directorScenarios

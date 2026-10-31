@@ -1,5 +1,6 @@
 // Simulator and director calls (L2): persona threads, inbound messages, the UPI pay page, world/clock/faults.
 // These are presenter tools, authenticated with the director surface token (never shipped to a real device).
+import type { Scenario } from '../contracts/scenario';
 import { API_BASE, directorGet, directorPost, sessionToken, setSessionToken } from './client';
 
 /** Session tokens are `merchant.session.kind.signature`; the merchant id is the first segment. */
@@ -135,6 +136,39 @@ export type StageFocus = {
   table?: string;
   edition?: 'display' | 'voice';
   paused?: boolean;
+  /** Library beats carry their own text; local beats are looked up by index. */
+  scenario_title?: string;
+  title?: string;
+  cue?: string;
+  total?: number;
 };
+
+/** L8 library and live play: the backend runner plays each beat in the running server. */
+export async function scenarioLibrary(): Promise<Scenario[]> {
+  return ((await directorGet('/v1/director/scenarios')) as { scenarios: Scenario[] }).scenarios;
+}
+
+export function playScenario(scenario: string) {
+  return directorPost('/v1/director/play', { scenario }) as Promise<{
+    scenario: string;
+    merchant_id: string;
+    beats: string[];
+  }>;
+}
+
+export type BeatResult = { beat_id: string; ok: boolean; ms?: number; error?: string; snapshot: string };
+
+export function playBeat(beatId: string) {
+  return directorPost('/v1/director/play/beat', { beat_id: beatId }) as Promise<BeatResult>;
+}
+
+/** Recovery button: back to the snapshot taken at the scene's first beat (DB + clock, < 3 s). */
+export function restoreSnapshot(name: string) {
+  return directorPost('/v1/director/restore', { name }) as Promise<{
+    name: string;
+    clock: string;
+    ms: number;
+  }>;
+}
 
 export const STAGE_CHANNEL = 'arth-stage';

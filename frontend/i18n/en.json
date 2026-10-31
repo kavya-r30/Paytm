@@ -83,7 +83,7 @@
   "home.legend_today": "Today",
   "home.legend_typical": "Usual Thursday",
   "home.legend_forecast": "Forecast",
-  "home.cold_start": "Arth has {days} days of history. The chart and forecast appear after 14 days.",
+  "home.cold_start": "Arth has {days, plural, one {# day} other {# days}} of history. The chart and forecast appear after 14 days.",
   "home.kpi_mix": "How money came",
   "home.kpi_customers": "Customers",
   "home.kpi_new": "+{n} new",
@@ -925,7 +925,7 @@
   "dir.fault_drop": "Drop webhook",
   "dir.fault_delay": "Delay webhook",
   "dir.fault_wrong_amount": "Wrong amount",
-  "dir.snapshot_note": "Snapshot restore arrives with L8.",
+  "dir.snapshot_note": "Each scene is snapshotted at its first beat; a failed beat offers Restore scene (under 3 s).",
   "scenario.gupta": "Gupta General Store · Diwali week",
   "beat.morning": "Morning brief",
   "beat.bill": "Priya's bill",
@@ -963,5 +963,10 @@
   "pay.upi_qr": "UPI QR",
   "pay.upi_static": "Static QR",
   "pay.upi_link": "Pay link",
-  "pay.upi_collect": "UPI request"
+  "pay.upi_collect": "UPI request",
+  "dir.play": "Play this scenario (builds its shop)",
+  "dir.replay": "Start over",
+  "dir.restore": "Restore scene start",
+  "dir.restored": "Restored {name} in {ms} ms",
+  "dir.pass_ms": "pass ({ms} ms)"
 }

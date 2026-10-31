@@ -22,7 +22,7 @@
 | L4 AI platform | `2026-10-30-arth-L4-ai-platform.md` | T4.1–T4.16 | CP-4 | **Offline gates green (30 Oct 2026): 1246 pytest + 414 Vitest. Live provider evals pending: hosts blocked in the cloud session; `python dev.py ai-smoke` on a laptop** |
 | L5 Agentic layer | `2026-10-30-arth-L5-agents.md` | T5.1–T5.14 | CP-5 | **Done: CP-5 green (30 Oct 2026); Arena pass^4** |
 | L6 Growth layer | `2026-10-30-arth-L6-growth.md` | T6.1–T6.12 | CP-6 | **Done: CP-6 green (30 Oct 2026)** |
-| L7 Frontend | `…-arth-L7-frontend.md` (likely split: 7a shell + design system, 7b existing screens, 7c new screens, 7d other surfaces, 7e stage) | T7.1–T7.18 | CP-7 | **Parallel lane (second Claude account), started after CP-1 against the L1 contracts; coordinated in GitHub issues** |
+| L7 Frontend | `…-arth-L7-frontend.md` (Lane B) | T7.1–T7.18 | CP-7 | **T7.1–T7.16 by Lane B; Director/Stage bound to the L8 library + T7.18 (`python dev.py e2e`, CI) by Lane A (31 Oct 2026): e2e green** |
 | L8 Scenario library and demo | `2026-10-30-arth-L8-scenarios-demo.md` | T8.1–T8.7 | CP-8 | **Done: CP-8 green (30 Oct 2026): 16 scenarios × 10 runs green under `demo-check`; 1350+ pytest. Screens bound by Lane B (L7)** |
 
 **Deviations from the spec, adopted in the L0 plan.** The spec has been updated to match:

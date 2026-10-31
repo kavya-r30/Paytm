@@ -1,9 +1,22 @@
 'use client';
 
-// Director (I2 STG-DIRECTOR, T7.16): the presenter's phone. Scenario picker, beats with cues, "Next beat",
-// "Say it for me", persona replies, clock, fault injection and assertion status per beat. Uses the director
-// token; beats reach the stage over a BroadcastChannel (same browser) and the shared API.
-import { CircleCheck, CircleDashed, CircleX, Clock, FastForward, Megaphone, Send, Zap } from 'lucide-react';
+// Director (I2 STG-DIRECTOR, T7.16 + T8.7): the presenter's phone. Scenario picker over the backend library
+// (`GET /v1/director/scenarios`, local fallback without a backend), "Play" builds the scenario's world, each
+// beat runs live in the server with its expectations, a failed beat offers "Restore scene" (snapshot < 3 s).
+// Also "Say it for me", persona replies, clock and faults. Beats reach the stage over a BroadcastChannel.
+import { useQuery } from '@tanstack/react-query';
+import {
+  CircleCheck,
+  CircleDashed,
+  CircleX,
+  Clock,
+  FastForward,
+  Megaphone,
+  Play,
+  RotateCcw,
+  Send,
+  Zap,
+} from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Button, Card, Chip, Pill, SectionTitle, cx } from '@/components/ui/kit';
 import { apiGet } from '@/lib/api/client';
@@ -15,20 +28,30 @@ import {
   injectFault,
   merchantId,
   moveClock,
+  playBeat,
+  playScenario,
   presenterSessions,
+  restoreSnapshot,
+  scenarioLibrary,
   staticPay,
   type StageFocus,
 } from '@/lib/api/sim';
 import { useI18n } from '@/lib/i18n/react';
-import { SCENARIOS, holds, type Beat } from '@/lib/scenarios';
+import { SCENARIOS, fromLibrary, fromLocal, holds, type Beat, type PlayScenario } from '@/lib/scenarios';
 
 type Status = 'todo' | 'running' | 'pass' | 'fail';
 
 export function DirectorApp() {
   const { t } = useI18n();
   const mode = useDataMode();
-  const [scenarioId, setScenarioId] = useState(SCENARIOS[0]!.id);
-  const scenario = SCENARIOS.find((s) => s.id === scenarioId)!;
+  const library = useQuery({ queryKey: ['director', 'scenarios'], queryFn: scenarioLibrary, retry: false });
+  const all: PlayScenario[] = library.data?.length
+    ? library.data.map(fromLibrary)
+    : SCENARIOS.map((s) => fromLocal(s, t));
+  const [scenarioId, setScenarioId] = useState('gupta_diwali');
+  const scenario = all.find((s) => s.id === scenarioId) ?? all[0]!;
+  const [playing, setPlaying] = useState<string | null>(null);
+  const [recover, setRecover] = useState<string | null>(null);
   const [beat, setBeat] = useState(-1);
   const [status, setStatus] = useState<Record<number, Status>>({});
   const [log, setLog] = useState<string[]>([]);
@@ -46,6 +69,19 @@ export function DirectorApp() {
 
   const say = (s: string) => setLog((l) => [`${new Date().toLocaleTimeString()} ${s}`, ...l].slice(0, 30));
   const send = (focus: StageFocus) => channel.current?.postMessage(focus);
+
+  const focusOf = (i: number, extra: Partial<StageFocus> = {}): StageFocus => {
+    const b = scenario.beats[i];
+    return {
+      beat: i,
+      scene: scenario.id,
+      paused,
+      scenario_title: scenario.title,
+      total: scenario.beats.length,
+      ...(b ? { title: b.title, cue: b.cue, ...b.focus } : {}),
+      ...extra,
+    };
+  };
 
   const runAction = async (b: Beat) => {
     if (!b.action || !merchant) return;
@@ -70,15 +106,52 @@ export function DirectorApp() {
     if (!b) return;
     setBeat(i);
     setStatus((s) => ({ ...s, [i]: 'running' }));
-    send({ beat: i, scene: scenario.id, paused, ...b.focus });
+    send(focusOf(i));
     try {
-      await runAction(b);
-      const ok = await check(b);
+      if (scenario.library && playing === scenario.id) {
+        const r = await playBeat(b.id);
+        setStatus((s) => ({ ...s, [i]: r.ok ? 'pass' : 'fail' }));
+        setRecover(r.ok ? null : r.snapshot);
+        say(`${b.id} ${b.title} → ${r.ok ? t('dir.pass_ms', { ms: r.ms ?? 0 }) : r.error}`);
+        return;
+      }
+      if (b.local) await runAction(b.local);
+      const ok = b.local ? await check(b.local) : true;
       setStatus((s) => ({ ...s, [i]: ok ? 'pass' : 'fail' }));
-      say(`${t(b.title_key)} → ${ok ? 'pass' : 'fail'}`);
+      say(`${b.title} → ${ok ? 'pass' : 'fail'}`);
     } catch (e) {
       setStatus((s) => ({ ...s, [i]: 'fail' }));
-      say(`${t(b.title_key)} → ${String(e)}`);
+      say(`${b.title} → ${String(e)}`);
+    }
+  };
+
+  const play = async () => {
+    try {
+      say(t('dir.building', { pack: scenario.pack }));
+      const started = await playScenario(scenario.id);
+      await presenterSessions(started.merchant_id);
+      setMerchant(started.merchant_id);
+      setPlaying(scenario.id);
+      setStatus({});
+      setBeat(-1);
+      setRecover(null);
+      say(t('dir.ready', { id: started.merchant_id }));
+    } catch (e) {
+      say(`${t('dir.failed')}: ${String(e)}`);
+    }
+  };
+
+  const restore = async (name: string) => {
+    try {
+      const r = await restoreSnapshot(name);
+      await presenterSessions(merchant ?? undefined);
+      setRecover(null);
+      const first = scenario.beats.findIndex((b) => name.endsWith(`-scene-${b.scene}`));
+      setStatus((s) => Object.fromEntries(Object.entries(s).filter(([k]) => Number(k) < Math.max(first, 0))));
+      setBeat(Math.max(first, 0) - 1);
+      say(t('dir.restored', { name, ms: r.ms }));
+    } catch (e) {
+      say(`${t('dir.failed')}: ${String(e)}`);
     }
   };
 
@@ -104,8 +177,8 @@ export function DirectorApp() {
     }
   };
 
-  const sayForMe = (b: Beat) => {
-    const u = new SpeechSynthesisUtterance(t(b.cue_key));
+  const sayForMe = (b: { cue: string }) => {
+    const u = new SpeechSynthesisUtterance(b.cue);
     u.lang = 'hi-IN';
     window.speechSynthesis?.speak(u);
   };
@@ -155,13 +228,34 @@ export function DirectorApp() {
             onChange={(e) => setScenarioId(e.target.value)}
             className="bg-transparent font-bold"
           >
-            {SCENARIOS.map((s) => (
+            {all.map((s) => (
               <option key={s.id} value={s.id}>
-                {t(s.title_key)}
+                {s.title}
               </option>
             ))}
           </select>
         </SectionTitle>
+        {scenario.library && (
+          <Button
+            variant={playing === scenario.id ? 'ghost' : 'tint'}
+            size="sm"
+            icon={<Play size={16} />}
+            onClick={() => void play()}
+          >
+            {t(playing === scenario.id ? 'dir.replay' : 'dir.play')}
+          </Button>
+        )}
+        {recover && (
+          <Button
+            variant="tint"
+            size="sm"
+            className="text-red"
+            icon={<RotateCcw size={16} />}
+            onClick={() => void restore(recover)}
+          >
+            {t('dir.restore')}
+          </Button>
+        )}
         {scenario.beats.map((b, i) => (
           <button
             key={b.id}
@@ -172,9 +266,10 @@ export function DirectorApp() {
             <Icon s={status[i]} />
             <span className="min-w-0 flex-1">
               <span className="block text-body font-bold">
-                {i + 1}. {t(b.title_key)}
+                {b.id} · {b.title}
+                {b.who ? ` · ${b.who}` : ''}
               </span>
-              <span className="block text-meta text-ink-3">{t(b.cue_key)}</span>
+              <span className="block text-meta text-ink-3">{b.cue}</span>
             </span>
           </button>
         ))}
@@ -248,12 +343,7 @@ export function DirectorApp() {
             size="sm"
             onClick={() => {
               setPaused(!paused);
-              send({
-                beat: Math.max(beat, 0),
-                scene: scenario.id,
-                paused: !paused,
-                ...(scenario.beats[Math.max(beat, 0)]?.focus ?? {}),
-              });
+              send(focusOf(Math.max(beat, 0), { paused: !paused }));
             }}
           >
             {t(paused ? 'dir.resume' : 'dir.pause')}
@@ -276,10 +366,7 @@ export function DirectorApp() {
         </div>
         <div className="flex flex-wrap gap-1.5">
           {['home', 'bill/new', 'khata', 'stock', 'grow', 'hisaab', 'trust'].map((s) => (
-            <Chip
-              key={s}
-              onClick={() => send({ beat: Math.max(beat, 0), scene: scenario.id, device_screen: s })}
-            >
+            <Chip key={s} onClick={() => send(focusOf(Math.max(beat, 0), { device_screen: s }))}>
               {s}
             </Chip>
           ))}

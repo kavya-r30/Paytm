@@ -362,6 +362,73 @@ async def scenarios() -> dict[str, Any]:
     return {"scenarios": [load(path) for path in sorted(SCENARIOS_DIR.glob("*/scenario.yaml"))]}
 
 
+class PlayBody(BaseModel):
+    scenario: str = Field(pattern=r"^[a-z0-9_]{1,60}$")
+
+
+class BeatBody(BaseModel):
+    beat_id: str = Field(min_length=1, max_length=20)
+
+
+@router.post("/v1/director/play", dependencies=director)
+async def play(request: Request, body: PlayBody) -> dict[str, Any]:
+    """T8.7 live play: build the scenario's world here; the Director then runs it one beat at a time."""
+    import anyio.to_thread
+
+    from arth.sim.scenario import SCENARIOS_DIR, LiveClient, ScenarioRunner, load
+
+    path = SCENARIOS_DIR / body.scenario / "scenario.yaml"
+    if not path.exists():
+        raise refused(CommandError("director.scenario_not_found"), 404)
+    scenario = load(path)
+    runner = ScenarioRunner(LiveClient(request.app))
+    import time
+
+    await anyio.to_thread.run_sync(runner.setup, scenario, f"-play{time.time_ns()}")
+    request.app.state.director_play = {"scenario": scenario, "runner": runner}
+    return {
+        "scenario": body.scenario,
+        "merchant_id": runner.saved["merchant_id"],
+        "beats": [b["id"] for scene in scenario["scenes"] for b in scene["beats"]],
+    }
+
+
+@router.post("/v1/director/play/beat", dependencies=director)
+async def play_beat(request: Request, body: BeatBody) -> dict[str, Any]:
+    """Run one beat of the playing scenario: snapshot at a scene's first beat (the recovery point), then its
+    inputs and expectations. A failed expectation is reported, not raised, so the presenter can recover."""
+    import anyio.to_thread
+
+    from arth.sim.scenario import BeatFailed
+
+    playing = getattr(request.app.state, "director_play", None)
+    if playing is None:
+        raise refused(CommandError("director.not_playing"), 409)
+    scenario, runner = playing["scenario"], playing["runner"]
+    found = next(
+        (
+            (scene, i)
+            for scene in scenario["scenes"]
+            for i, b in enumerate(scene["beats"])
+            if b["id"] == body.beat_id
+        ),
+        None,
+    )
+    if found is None:
+        raise refused(CommandError("director.beat_not_found"), 404)
+    scene, index = found
+    snapshot = f"{scenario['scenario']}-scene-{scene['id']}"
+    if index == 0:
+        await anyio.to_thread.run_sync(runner.snapshot, snapshot)
+    try:
+        ms = await anyio.to_thread.run_sync(runner.play_beat, scene["beats"][index])
+    except (BeatFailed, AssertionError, KeyError, TypeError, ValueError) as exc:
+        # e.g. a beat replayed out of order (its bill is already closed): report it so the presenter restores
+        error = str(exc) if isinstance(exc, AssertionError) else f"{type(exc).__name__}: {exc}"
+        return {"beat_id": body.beat_id, "ok": False, "error": error[:500], "snapshot": snapshot}
+    return {"beat_id": body.beat_id, "ok": True, "ms": ms, "snapshot": snapshot}
+
+
 @router.get("/v1/peers/{pack}")
 async def peers(request: Request, pack: str, session: Actor) -> dict[str, Any]:
     async with request.app.state.db.read() as conn:

@@ -85,7 +85,10 @@ export function StageApp() {
     if (focus.phone_persona) setPersona(focus.phone_persona);
   }, [focus]);
 
-  const beat = scenario.beats[focus.beat];
+  // Library beats (L8) carry their own title and cue; the local fallback looks them up by index.
+  const local = focus.title ? undefined : scenario.beats[focus.beat];
+  const beatTitle = focus.title ?? (local ? t(local.title_key) : '');
+  const beatCue = focus.cue ?? (local ? t(local.cue_key) : '');
   const voice = focus.edition === 'voice';
   const providers = health.data?.providers ?? [];
   const replay = providers.some((p) => p.mode !== 'live');
@@ -94,10 +97,9 @@ export function StageApp() {
     <FixedCanvas width={1920} height={1080} className="bg-ground" letterbox="bg-ink">
       <header className="flex h-14 items-center gap-6 bg-midnight px-6 text-white">
         <MiniOrb />
-        <span className="text-body font-bold">{t(scenario.title_key)}</span>
+        <span className="text-body font-bold">{focus.scenario_title ?? t(scenario.title_key)}</span>
         <span className="text-meta text-white/70">
-          {t('stage.beat', { n: focus.beat + 1, total: scenario.beats.length })} ·{' '}
-          {beat ? t(beat.title_key) : ''}
+          {t('stage.beat', { n: focus.beat + 1, total: focus.total ?? scenario.beats.length })} · {beatTitle}
         </span>
         <span className="num text-meta">
           {t('stage.clock', { time: clock.data?.clock ? time(clock.data.clock) : '—' })}
@@ -127,10 +129,10 @@ export function StageApp() {
               title="device"
             />
           )}
-          {beat && (
+          {beatCue && (
             <p className="rounded-ground bg-white px-4 py-2 text-body text-ink-2 shadow-1">
               <span className="font-bold text-midnight">{t('stage.cue')} </span>
-              {t(beat.cue_key)}
+              {beatCue}
             </p>
           )}
         </div>

@@ -24,11 +24,36 @@ from arth.governance.policy import Session
 
 CONSOLE, DEVICE = "scenario-console", "scenario-device"
 SCENARIOS_DIR = Path(__file__).resolve().parents[2] / "scenarios"
-DIRECTOR = {"Authorization": "Bearer dev-director"}
 
 
 class BeatFailed(AssertionError):
     pass
+
+
+class LiveClient:
+    """The runner's client inside the running server (Director live play, T8.7): a worker thread drives the
+    app over ASGI and calls services on the server's own event loop."""
+
+    def __init__(self, app: Any) -> None:
+        import httpx
+
+        self.app = app
+        self.http = httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://director")
+        self.portal = self
+
+    def call(self, fn: Any) -> Any:
+        import anyio.from_thread
+
+        async def run() -> Any:
+            return await fn()
+
+        return anyio.from_thread.run(run)
+
+    def post(self, url: str, **kwargs: Any) -> Any:
+        return self.call(lambda: self.http.post(url, **kwargs))
+
+    def get(self, url: str, **kwargs: Any) -> Any:
+        return self.call(lambda: self.http.get(url, **kwargs))
 
 
 def isolated_settings(**overrides: Any) -> Settings:
@@ -70,9 +95,9 @@ def load(path: Path) -> dict[str, Any]:
 
 
 class ScenarioRunner:
-    def __init__(self, client: TestClient) -> None:
+    def __init__(self, client: TestClient | LiveClient) -> None:
         self.client = client
-        self.state = client.app.state  # type: ignore[attr-defined]
+        self.state = client.app.state  # type: ignore[attr-defined,union-attr]
         self.saved: dict[str, Any] = {}
         self.n = 0
         self.last: Any = None
@@ -80,16 +105,20 @@ class ScenarioRunner:
     def call(self, fn: Any, *args: Any, **kwargs: Any) -> Any:
         return self.client.portal.call(lambda: fn(*args, **kwargs))  # type: ignore[union-attr]
 
+    def director(self) -> dict[str, str]:
+        return {"Authorization": "Bearer " + self.state.settings.director_token.get_secret_value()}
+
     def auth(self, surface: str = "console") -> dict[str, str]:
         return {"Authorization": "Bearer " + (CONSOLE if surface == "console" else DEVICE)}
 
     # setup -------------------------------------------------------------------------------------------
-    def setup(self, scenario: dict[str, Any]) -> None:
+    def setup(self, scenario: dict[str, Any], run: str = "") -> None:
+        """Build the scenario's world; `run` makes the world keys unique when one server plays it again."""
         from arth.domains.merchants import provision_shop
         from arth.sim.world import WorldBuilder, WorldSpec
 
         world = scenario.get("world", {})
-        key = scenario["scenario"] + "-" + str(world.get("seed", 1))
+        key = scenario["scenario"] + "-" + str(world.get("seed", 1)) + run
         if world.get("cold_start"):
             shop = self.call(
                 provision_shop,
@@ -176,7 +205,9 @@ class ScenarioRunner:
         return result
 
     def clock_minutes(self, minutes: int) -> None:
-        response = self.client.post("/v1/director/clock", json={"advance_minutes": minutes}, headers=DIRECTOR)
+        response = self.client.post(
+            "/v1/director/clock", json={"advance_minutes": minutes}, headers=self.director()
+        )
         assert response.status_code == 200, response.text
 
     def persona(self, name: str) -> dict[str, Any]:
@@ -346,6 +377,19 @@ class ScenarioRunner:
             )
 
     # run --------------------------------------------------------------------------------------------------
+    def play_beat(self, beat: dict[str, Any]) -> int:
+        """Inputs, saves and expectations of one beat; returns its wall time in ms (raises BeatFailed)."""
+        started = time.monotonic()
+        for action in beat.get("input", []):
+            self.act(action, beat)
+        for name, path in beat.get("save", {}).items():
+            self.saved[name] = dig(self.last, path)
+        if beat.get("expect_turn"):
+            self.expect_turn(beat["expect_turn"], beat)
+        for check in beat.get("expect", []):
+            self.expect(check, beat)
+        return int((time.monotonic() - started) * 1000)
+
     def run(self, scenario: dict[str, Any], cut: str | None = None) -> dict[str, Any]:
         self.setup(scenario)
         if scenario.get("locale"):
@@ -357,16 +401,7 @@ class ScenarioRunner:
                 continue
             self.snapshot(f"{scenario['scenario']}-scene-{scene['id']}")
             for beat in scene["beats"]:
-                started = time.monotonic()
-                for action in beat.get("input", []):
-                    self.act(action, beat)
-                for name, path in beat.get("save", {}).items():
-                    self.saved[name] = dig(self.last, path)
-                if beat.get("expect_turn"):
-                    self.expect_turn(beat["expect_turn"], beat)
-                for check in beat.get("expect", []):
-                    self.expect(check, beat)
-                elapsed = int((time.monotonic() - started) * 1000)
+                elapsed = self.play_beat(beat)
                 if beat.get("within_ms") and elapsed > beat["within_ms"] * 5:  # generous headless margin
                     raise BeatFailed(f"{beat['id']}: {elapsed} ms > {beat['within_ms']} ms budget")
                 report.append({"scene": scene["id"], "beat": beat["id"], "ok": True, "ms": elapsed})

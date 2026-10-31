@@ -157,7 +157,9 @@ function SalesChart({ home }: { home: HomeView }) {
           high={intraday.band_high}
           pinIndex={pinIndex}
           height={120}
-          yFormat={(v) => (v === 0 ? '0' : money(v, true).replace('.00', '').replace(/,000$/, 'k'))}
+          yFormat={(v) =>
+            v === 0 ? '0' : money(Math.round(v), true).replace('.00', '').replace(/,000$/, 'k')
+          }
         />
       </div>
     </Card>
@@ -417,7 +419,7 @@ function ForecastBody({ f }: { f: ForecastView }) {
               ...f.days.map((d) => d.p50_paise),
             ]}
             height={170}
-            yFormat={(v) => money(v, true)}
+            yFormat={(v) => money(Math.round(v), true)}
           />
         </Card>
         <p className="text-meta text-ink-3">
