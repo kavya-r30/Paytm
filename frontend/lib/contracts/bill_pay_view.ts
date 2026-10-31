@@ -68,4 +68,8 @@ export interface BillPayView {
   alternatives: ("cash" | "khata" | "regenerate")[];
   exception: string | null;
   invalidate_on: string[];
+  /**
+   * Rails-simulator token of the current dynamic QR: the customer's UPI app opens /pay/<token> (null before a QR is requested).
+   */
+  pay_token: string | null;
 }

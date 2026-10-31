@@ -3,9 +3,10 @@
 
 Usage: python dev.py <target> [<target> ...]
 Targets: setup, gen, gen-check, lint, typecheck, test, check, build-web, api, web, seed, scenario, demo-check, ai-smoke,
-e2e
+e2e, demo (kirana stage demo: restore the saved shop in seconds, or build and save it once)
 (check = gen-check, lint, typecheck, test; gen-check fails when generated contract code is stale)
 """
+
 from __future__ import annotations
 
 import shutil
@@ -54,7 +55,15 @@ def gen() -> None:
 def gen_check() -> None:
     """Fail if generated contract code differs from a fresh `gen` (checks both sides, then exits)."""
     codes = [
-        _call("uv", "run", "python", "-m", "arth.tools.gen_contracts", "--check", cwd=BACKEND),
+        _call(
+            "uv",
+            "run",
+            "python",
+            "-m",
+            "arth.tools.gen_contracts",
+            "--check",
+            cwd=BACKEND,
+        ),
         _call("pnpm", "--filter", "frontend", "run", "gen:check"),
     ]
     if any(codes):
@@ -89,7 +98,19 @@ def build_web() -> None:
 
 
 def api() -> None:
-    run("uv", "run", "uvicorn", "arth.main:app", "--reload", "--port", "8000", cwd=BACKEND)
+    # open SSE streams (every live surface holds one) would block a reload forever without a shutdown cap
+    run(
+        "uv",
+        "run",
+        "uvicorn",
+        "arth.main:app",
+        "--reload",
+        "--port",
+        "8000",
+        "--timeout-graceful-shutdown",
+        "3",
+        cwd=BACKEND,
+    )
 
 
 def seed() -> None:
@@ -135,13 +156,23 @@ def e2e() -> None:
     }
     # each server in its own process group, so stopping it also stops uvicorn / next-server under uv and pnpm
     group: dict[str, object] = (
-        {"creationflags": subprocess.CREATE_NEW_PROCESS_GROUP} if os.name == "nt" else {"start_new_session": True}
+        {"creationflags": subprocess.CREATE_NEW_PROCESS_GROUP}
+        if os.name == "nt"
+        else {"start_new_session": True}
     )
     servers = [
         subprocess.Popen(
-            _exe("uv") + ["run", "uvicorn", "arth.main:app", "--port", "8010"], cwd=BACKEND, env=env, **group
+            _exe("uv") + ["run", "uvicorn", "arth.main:app", "--port", "8010"],
+            cwd=BACKEND,
+            env=env,
+            **group,
         ),
-        subprocess.Popen(_exe("pnpm") + ["exec", "next", "dev", "--port", "3010"], cwd=FRONTEND, env=env, **group),
+        subprocess.Popen(
+            _exe("pnpm") + ["exec", "next", "dev", "--port", "3010"],
+            cwd=FRONTEND,
+            env=env,
+            **group,
+        ),
     ]
     try:
         for url in ("http://localhost:8010/healthz", "http://localhost:3010/director"):
@@ -153,11 +184,21 @@ def e2e() -> None:
                     time.sleep(2)
             else:
                 sys.exit(f"e2e: {url} did not come up")
-        code = _call("node", "scripts/e2e.mjs", "--web", "http://localhost:3010", *extra, cwd=FRONTEND)
+        code = _call(
+            "node",
+            "scripts/e2e.mjs",
+            "--web",
+            "http://localhost:3010",
+            *extra,
+            cwd=FRONTEND,
+        )
     finally:
         for server in servers:
             if os.name == "nt":
-                subprocess.run(["taskkill", "/F", "/T", "/PID", str(server.pid)], capture_output=True)
+                subprocess.run(
+                    ["taskkill", "/F", "/T", "/PID", str(server.pid)],
+                    capture_output=True,
+                )
             else:
                 import signal
 
@@ -168,6 +209,48 @@ def e2e() -> None:
 
 def web() -> None:
     run("pnpm", "--filter", "frontend", "run", "dev")
+
+
+def demo() -> None:
+    """Kirana stage demo, ready in seconds: restore the saved Gupta Diwali shop, or build and save it once.
+
+    Needs `python dev.py api` and `python dev.py web` running. `-- --fresh` rebuilds the saved shop."""
+    import json
+    import time
+    import urllib.error
+    import urllib.request
+
+    api, name = "http://localhost:8000", "kirana-demo"
+
+    def post(path: str, body: dict[str, object], timeout: float = 30) -> dict[str, object]:
+        request = urllib.request.Request(
+            api + path,
+            data=json.dumps(body).encode(),
+            headers={"Content-Type": "application/json", "Authorization": "Bearer dev-director"},
+        )
+        with urllib.request.urlopen(request, timeout=timeout) as response:
+            return dict(json.loads(response.read()))
+
+    try:
+        urllib.request.urlopen(api + "/healthz", timeout=5)
+    except OSError:
+        sys.exit("demo: the API is not running; start `python dev.py api` (and `python dev.py web`) first")
+    started = time.monotonic()
+    restored = None
+    if "--fresh" not in sys.argv:
+        try:
+            restored = post("/v1/director/restore", {"name": name})
+        except urllib.error.HTTPError as exc:
+            if exc.code != 404:
+                raise
+    if restored is None:
+        print("demo: building the Gupta Diwali kirana shop once (about a minute)...")
+        post("/v1/director/play", {"scenario": "gupta_diwali"}, timeout=900)
+        post("/v1/director/snapshot", {"name": name})
+    print(f"demo: kirana shop ready in {time.monotonic() - started:.1f} s ({'restored' if restored else 'built and saved'})")
+    print("  Stage (device + phones + logs): http://localhost:3000/stage")
+    print("  Director (beats, clock, faults): http://localhost:3000/director  -> press Next beat")
+    print("  Device alone:                    http://localhost:3000/device/home")
 
 
 TARGETS: dict[str, Callable[[], None]] = {
@@ -186,12 +269,17 @@ TARGETS: dict[str, Callable[[], None]] = {
     "demo-check": demo_check,
     "ai-smoke": ai_smoke,
     "e2e": e2e,
+    "demo": demo,
 }
 
 if __name__ == "__main__":
-    names = (sys.argv[1 : sys.argv.index("--")] if "--" in sys.argv else sys.argv[1:]) or ["check"]
+    names = (
+        sys.argv[1 : sys.argv.index("--")] if "--" in sys.argv else sys.argv[1:]
+    ) or ["check"]
     unknown = [n for n in names if n not in TARGETS]
     if unknown:
-        sys.exit(f"unknown target(s): {', '.join(unknown)}; choose from {', '.join(TARGETS)}")
+        sys.exit(
+            f"unknown target(s): {', '.join(unknown)}; choose from {', '.join(TARGETS)}"
+        )
     for name in names:
         TARGETS[name]()

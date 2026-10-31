@@ -7,13 +7,14 @@ for overdue khata, Expiry clearance, and the pack playbooks.
 
 import json
 from datetime import timedelta
+from statistics import median
 from typing import Any
 
 from arth.agents.runtime import Done, Fail, Next, Playbook, Run, Runtime, Wait
 from arth.agents.tables import briefs
 from arth.ai.guards import injection
 from arth.ai.perception import extract_order
-from arth.core.clock import iso_utc
+from arth.core.clock import iso_utc, parse_iso
 from arth.core.ids import new_id
 from arth.domains.commerce_tables import appointments, daily_closes, price_history, purchase_orders, suppliers
 from arth.domains.ledger_projection import account_view, statement
@@ -84,8 +85,7 @@ async def night_spawn(rt: Runtime, run: Run) -> Next:
         if row["status"] in {"low", "out"}:
             await rt.start(run.merchant_id, "reorder", row["item_id"])
     for account in await read(rt, run, lambda repo: repo.select(credit_accounts)):
-        balance = (await read(rt, run, statement, account["id"], clock))["balance_paise"]
-        if balance > 0:
+        if await read(rt, run, collections_due, account, clock):
             await rt.start(run.merchant_id, "collections", account["id"])
     for batch in (await read(rt, run, expiry_view, clock, 30))["batches"]:
         if batch["qty_milli"] > 0 and not batch["recalled"]:
@@ -185,6 +185,24 @@ async def reorder_closed(rt: Runtime, run: Run) -> Done:
 
 
 # ---- Collections (Khata) --------------------------------------------------------------------------------
+async def collections_due(repo: Repository, account: dict[str, Any], clock: Any) -> bool:
+    """E7.2 trigger: the oldest unpaid entry is older than max(the patron's pay cycle x 1.5, 7 days), the
+    patron consented to reminders and nothing on the account is disputed. Others get no run at all."""
+    view = await account_view(repo, account["id"], clock)
+    if view["balance_paise"] <= 0 or any(e["status"] == "disputed" for e in view["entries"]):
+        return False
+    if not await has_consent(repo, account["patron_id"], "reminders"):
+        return False
+    unpaid = [e for e in view["entries"] if e["amount_paise"] > e["allocated_paise"]]
+    if not unpaid:
+        return False
+    paid_on = sorted({parse_iso(p["occurred_at"]).date() for p in view["payments"]})
+    gaps = [(b - a).days for a, b in zip(paid_on, paid_on[1:], strict=False)]
+    threshold = max(7, int(median(gaps) * 1.5) if gaps else 0)
+    oldest = min(parse_iso(e["occurred_at"]) for e in unpaid)
+    return (clock.now() - oldest).days >= threshold
+
+
 async def collect_start(rt: Runtime, run: Run) -> Next | Done | Wait:
     account = (
         await read(rt, run, lambda repo: repo.select(credit_accounts, credit_accounts.c.id == run.subject))

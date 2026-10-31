@@ -434,6 +434,10 @@ class WorldBuilder:
                 entry["account"] = (
                     await self.run("ledger.open_account", {"patron_id": patron, "limit_paise": 300000})
                 )["data"]["account_id"]
+                if i % 8 == 0:  # half the khata customers agreed to reminders (Collections needs it, E7.2)
+                    await self.patron_service.record_customer_instruction(
+                        self.mid, patron, "reminders", True, new_id("evt")
+                    )
             await self.sim.thread(self.mid, "p-" + patron, name, lang=str(profile["lang"]), patron_id=patron)
             self.patrons.append(entry)
         lapsing = [p for p in self.patrons if p["regular"]][:2]

@@ -37,5 +37,6 @@
   "exception": null,
   "invalidate_on": [
     "x.changed"
-  ]
+  ],
+  "pay_token": null
 }

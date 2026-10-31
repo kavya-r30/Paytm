@@ -11,6 +11,10 @@ from typing import Any
 from arth.ai.language import money, quantity
 
 FILLER = r"\b(aur|ek aur|bhi|add|karo|kar do|daal do|dena|de do|please|plz|ji)\b"
+QUESTION = re.compile(
+    r"\?|\b(kya|kyun|kyon|kaise|kaisa|kitna|kitni|kitne|kab|kaun|kaunsa|kahan|chahiye"
+    r"|what|why|how|when|which|should)\b"
+)
 
 
 @dataclass
@@ -21,13 +25,38 @@ class Intent:
 
 
 READS = [
-    (r"\b(aaj|today)\b.*\b(kitna|kitni|how much)\b|\bkitna aaya\b|\baaj ki bikri\b|सेल|बिक्री", "today_sales"),
+    (
+        r"\b(aaj|today)\b.*\b(kitna|kitni|kitne|how much|how many)\b"
+        r"|\bkitna aaya\b|\baaj ki bikri\b|सेल|बिक्री",
+        "today_sales",
+    ),
     (r"\b(khata|udhaar|udhar)\b.*\b(kitna|baaki|total)\b|\bkitna udhaar\b", "khata_total"),
     (r"\b(kya pending|pending kya|kitne kaam|needs you)\b", "pending"),
     (r"\b(kal|tomorrow)\b.*\b(bikri|sale)\b.*\b(hogi|hoga)\b|\bandaaza\b|\bforecast\b", "forecast"),
     (r"\b(stock|maal)\b.*\b(kam|khatam|low)\b|\bkya khatam\b", "low_stock"),
     (r"\bsabse zyada\b.*\b(bika|bikta)\b|\btop items?\b", "top_items"),
 ]
+# Questions about one item or one customer: the subject is the words before "ka/ki/ke …" or "kitna bacha".
+ENTITY_READS = [
+    (r"^(.+?)\s+(?:ka|ki|ke)\s+(?:khata|udhaar|udhar|baaki)\b", "patron_khata", "who"),
+    (r"^(.+?)\s+(?:kitna|kitni|kitne)\s+(?:bacha|bachi|bache)\b", "item_stock", "item"),
+    (r"^(.+?)\s+(?:ka|ki|ke)\s+(?:stock|maal)\b", "item_stock", "item"),
+    (r"^(.+?)\s+(?:ka|ki|ke)\s+(?:rate|daam|dam|price|keemat|kimat|bhav)\b", "item_price", "item"),
+]
+NOT_A_SUBJECT = {
+    "kul",
+    "sab",
+    "sabka",
+    "sabhi",
+    "total",
+    "aaj",
+    "mera",
+    "meri",
+    "dukaan",
+    "shop",
+    "kitna",
+    "kya",
+}
 NAV = [
     (r"\bkhata (dikhao|kholo)\b|\bkhata screen\b", "khata"),
     (r"\b(stock|maal) (dikhao|kholo)\b", "stock"),
@@ -71,12 +100,20 @@ def parse(text: str) -> Intent | None:
             {"who": match.group(1).replace(" ji", "").strip(), "amount_paise": money(match.group(3))},
             0.9,
         )
+    if not re.search(r"\b(dikhao|kholo)\b", lowered):  # "Priya ka khata dikhao" is navigation
+        for pattern, tool, key in ENTITY_READS:
+            match = re.search(pattern, lowered)
+            subject = match.group(1).strip() if match else ""
+            if subject and subject.split()[0] not in NOT_A_SUBJECT:
+                return Intent("read", {"tool": tool, key: subject})
     for pattern, screen in NAV:
         if re.search(pattern, lowered):
             return Intent("nav", {"screen": screen})
     for pattern, tool in READS:
         if re.search(pattern, lowered):
             return Intent("read", {"tool": tool})
+    if QUESTION.search(text.lower()):
+        return None  # a question is never bill lines ("kal kya order karna chahiye aur kyun")
     lines = []
     for part in re.split(r"\s+(?:aur|and|,)\s+|,", lowered):
         part = re.sub(FILLER, " ", part).strip()

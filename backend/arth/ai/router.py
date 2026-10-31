@@ -1,6 +1,7 @@
 """Provider Router (T4.1): roles → provider chains with timeouts, token buckets, data tags, cassettes, spans.
 
-Live adapters call Mistral, Groq and Sarvam over HTTPS with keys from `Settings` (SecretStr, never logged).
+Live adapters call Azure OpenAI, Mistral, Groq and Sarvam over HTTPS (one pooled client) with keys from
+`Settings` (SecretStr, never logged).
 When a hop fails (no key, timeout, HTTP error, network blocked) the next hop runs; the `cassette` hop replays
 a recorded response keyed by a hash of the request. Live successes are recorded in dev/demo for exact replay.
 Data tags (AIQ-3): a request tagged `merchant` never goes to a provider tagged `synthetic_only_*`.
@@ -27,7 +28,7 @@ ENDPOINTS = {
     "groq": "https://api.groq.com/openai/v1",
     "sarvam": "https://api.sarvam.ai",
 }
-PRICE_PAISE_PER_1K_TOKENS = {"mistral": 20, "groq": 5, "sarvam": 10}
+PRICE_PAISE_PER_1K_TOKENS = {"azure": 25, "mistral": 20, "groq": 5, "sarvam": 10}
 
 
 class ProviderUnavailable(RuntimeError):
@@ -88,6 +89,16 @@ class ProviderRouter:
         self.spend_paise = 0
         self.offline = False  # Director fault: every live hop fails, cassettes and templates take over
         self.last_errors: dict[str, list[str]] = {}  # role → per-hop failures of the last call (diagnostics)
+        self._client: httpx.AsyncClient | None = None  # pooled: a TLS handshake per call ate the LLM timeout
+
+    def client(self) -> httpx.AsyncClient:
+        if self._client is None or self._client.is_closed:
+            self._client = httpx.AsyncClient(transport=self.transport, timeout=20)
+        return self._client
+
+    async def aclose(self) -> None:
+        if self._client is not None:
+            await self._client.aclose()
 
     # public API -------------------------------------------------------------------------------
     async def chat(
@@ -146,6 +157,7 @@ class ProviderRouter:
                             request,
                             payload or {},
                             key.get_secret_value(),
+                            hop.speaker,
                         ),
                         timeout=hop.timeout_ms / 1000 if hop.timeout_ms else 10,
                     )
@@ -201,97 +213,112 @@ class ProviderRouter:
         )
 
     # adapters ---------------------------------------------------------------------------------
+    def _chat_target(self, provider: str, model: str, key: str) -> tuple[str, dict[str, str]]:
+        """OpenAI-compatible chat URL and auth header; Azure puts the deployment (= model) in the path."""
+        if provider == "azure":
+            base = (self.settings.azure_openai_endpoint or "").rstrip("/")
+            version = self.settings.azure_openai_api_version
+            url = f"{base}/openai/deployments/{model}/chat/completions?api-version={version}"
+            return url, {"api-key": key}
+        return f"{ENDPOINTS[provider]}/chat/completions", {"Authorization": f"Bearer {key}"}
+
     async def _live(
-        self, provider: str, model: str, role: str, request: dict[str, Any], payload: dict[str, Any], key: str
+        self,
+        provider: str,
+        model: str,
+        role: str,
+        request: dict[str, Any],
+        payload: dict[str, Any],
+        key: str,
+        speaker: str | None = None,
     ) -> Result:
-        async with httpx.AsyncClient(transport=self.transport, timeout=20) as client:
-            if provider in {"mistral", "groq"} and role not in {"ocr", "stt"}:
-                body: dict[str, Any] = {"model": model, "messages": request["messages"], "temperature": 0.2}
-                if request.get("json"):
-                    body["response_format"] = {"type": "json_object"}
-                if request.get("tools"):
-                    body["tools"] = request["tools"]
+        client = self.client()
+        if provider in {"azure", "mistral", "groq"} and role not in {"ocr", "stt"}:
+            body: dict[str, Any] = {"messages": request["messages"], "temperature": 0.2}
+            if provider != "azure":
+                body["model"] = model
+            if request.get("json"):
+                body["response_format"] = {"type": "json_object"}
+            if request.get("tools"):
+                body["tools"] = request["tools"]
+            url, auth = self._chat_target(provider, model, key)
+            response = await client.post(url, json=body, headers=auth)
+            response.raise_for_status()
+            data = response.json()
+            message = data["choices"][0]["message"]
+            tokens = data.get("usage", {}).get("total_tokens", 0)
+            return Result(
+                role,
+                provider,
+                model,
+                "live",
+                message.get("content") or "",
+                {"tool_calls": message.get("tool_calls") or []},
+                cost_paise=tokens * PRICE_PAISE_PER_1K_TOKENS[provider] // 1000,
+            )
+        if provider == "mistral" and role == "ocr":
+            image = base64.b64encode(payload["image"]).decode()
+            response = await client.post(
+                f"{ENDPOINTS['mistral']}/ocr",
+                headers={"Authorization": f"Bearer {key}"},
+                json={
+                    "model": model,
+                    "document": {
+                        "type": "image_url",
+                        "image_url": f"data:{request['mime']};base64,{image}",
+                    },
+                },
+            )
+            response.raise_for_status()
+            pages = response.json().get("pages", [])
+            return Result(role, provider, model, "live", "\n".join(p.get("markdown", "") for p in pages))
+        if provider == "groq" and role == "stt":
+            files = {"file": ("audio.wav", payload["audio"], "audio/wav")}
+            response = await client.post(
+                f"{ENDPOINTS['groq']}/audio/transcriptions",
+                files=files,
+                data={"model": model},
+                headers={"Authorization": f"Bearer {key}"},
+            )
+            response.raise_for_status()
+            return Result(role, provider, model, "live", response.json().get("text", ""))
+        if provider == "sarvam":
+            headers = {"api-subscription-key": key}
+            if role == "stt":
+                files = {"file": ("audio.wav", payload["audio"], "audio/wav")}
                 response = await client.post(
-                    f"{ENDPOINTS[provider]}/chat/completions",
-                    json=body,
-                    headers={"Authorization": f"Bearer {key}"},
+                    f"{ENDPOINTS['sarvam']}/speech-to-text",
+                    files=files,
+                    data={"model": model, "language_code": request["lang"]},
+                    headers=headers,
                 )
                 response.raise_for_status()
-                data = response.json()
-                message = data["choices"][0]["message"]
-                tokens = data.get("usage", {}).get("total_tokens", 0)
-                return Result(
-                    role,
-                    provider,
-                    model,
-                    "live",
-                    message.get("content") or "",
-                    {"tool_calls": message.get("tool_calls") or []},
-                    cost_paise=tokens * PRICE_PAISE_PER_1K_TOKENS[provider] // 1000,
-                )
-            if provider == "mistral" and role == "ocr":
-                image = base64.b64encode(payload["image"]).decode()
+                return Result(role, provider, model, "live", response.json().get("transcript", ""))
+            if role == "tts":
                 response = await client.post(
-                    f"{ENDPOINTS['mistral']}/ocr",
-                    headers={"Authorization": f"Bearer {key}"},
+                    f"{ENDPOINTS['sarvam']}/text-to-speech",
+                    headers=headers,
                     json={
+                        "text": request["text"],
+                        "target_language_code": request["lang"],
+                        "speaker": speaker or request["speaker"],
                         "model": model,
-                        "document": {
-                            "type": "image_url",
-                            "image_url": f"data:{request['mime']};base64,{image}",
-                        },
                     },
                 )
                 response.raise_for_status()
-                pages = response.json().get("pages", [])
-                return Result(role, provider, model, "live", "\n".join(p.get("markdown", "") for p in pages))
-            if provider == "groq" and role == "stt":
-                files = {"file": ("audio.wav", payload["audio"], "audio/wav")}
+                return Result(role, provider, model, "live", data=response.json().get("audios", [""])[0])
+            if role == "translate":
                 response = await client.post(
-                    f"{ENDPOINTS['groq']}/audio/transcriptions",
-                    files=files,
-                    data={"model": model},
-                    headers={"Authorization": f"Bearer {key}"},
+                    f"{ENDPOINTS['sarvam']}/translate",
+                    headers=headers,
+                    json={
+                        "input": request["text"],
+                        "source_language_code": request["source"],
+                        "target_language_code": request["target"],
+                    },
                 )
                 response.raise_for_status()
-                return Result(role, provider, model, "live", response.json().get("text", ""))
-            if provider == "sarvam":
-                headers = {"api-subscription-key": key}
-                if role == "stt":
-                    files = {"file": ("audio.wav", payload["audio"], "audio/wav")}
-                    response = await client.post(
-                        f"{ENDPOINTS['sarvam']}/speech-to-text",
-                        files=files,
-                        data={"model": model, "language_code": request["lang"]},
-                        headers=headers,
-                    )
-                    response.raise_for_status()
-                    return Result(role, provider, model, "live", response.json().get("transcript", ""))
-                if role == "tts":
-                    response = await client.post(
-                        f"{ENDPOINTS['sarvam']}/text-to-speech",
-                        headers=headers,
-                        json={
-                            "text": request["text"],
-                            "target_language_code": request["lang"],
-                            "speaker": request["speaker"],
-                            "model": model,
-                        },
-                    )
-                    response.raise_for_status()
-                    return Result(role, provider, model, "live", data=response.json().get("audios", [""])[0])
-                if role == "translate":
-                    response = await client.post(
-                        f"{ENDPOINTS['sarvam']}/translate",
-                        headers=headers,
-                        json={
-                            "input": request["text"],
-                            "source_language_code": request["source"],
-                            "target_language_code": request["target"],
-                        },
-                    )
-                    response.raise_for_status()
-                    return Result(role, provider, model, "live", response.json().get("translated_text", ""))
+                return Result(role, provider, model, "live", response.json().get("translated_text", ""))
         raise ProviderUnavailable(f"{provider} cannot serve {role}")
 
     def health(self) -> dict[str, Any]:

@@ -15,6 +15,7 @@ import { IDS } from '@/lib/fixtures/gupta';
 import { qty } from '@/lib/i18n/core';
 import { useI18n } from '@/lib/i18n/react';
 import { ViewGate, field, type ScreenProps } from './common';
+import { useGateText } from './today';
 
 function Name({ id, className }: { id: string | null | undefined; className?: string }) {
   return <span className={className}>{useName(id)}</span>;
@@ -37,7 +38,11 @@ export function StockScreen(_: ScreenProps) {
           : undefined
       }
       right={
-        <Button variant="dark" icon={<PackageCheck size={18} />} onClick={() => nav(`grn/${IDS.PO_ID}`)}>
+        <Button
+          variant="dark"
+          icon={<PackageCheck size={18} />}
+          onClick={() => nav(state.mode === 'fixture' ? `grn/${IDS.PO_ID}` : 'grn')}
+        >
           {t('stock.goods_in')}
         </Button>
       }
@@ -246,7 +251,7 @@ export function SuppliersScreen(_: ScreenProps) {
               <Card
                 key={s.id}
                 className="flex flex-col gap-2 p-5"
-                onClick={() => s.open_pos && nav(`po/${IDS.PO_ID}`)}
+                onClick={() => s.open_pos && nav(state.mode === 'fixture' ? `po/${IDS.PO_ID}` : 'po')}
               >
                 <p className="text-arth font-bold">{s.name}</p>
                 <p className="text-meta text-ink-3">
@@ -343,6 +348,7 @@ export function GateScreen({ param }: ScreenProps) {
   const { t, time, money } = useI18n();
   const nav = useDeviceNav();
   const decide = useDecide();
+  const gateText = useGateText();
   const state = useView(views.gate(param ?? IDS.GATES.po.gate));
   return (
     <Screen
@@ -358,7 +364,14 @@ export function GateScreen({ param }: ScreenProps) {
         {(v) => {
           const payload = field<Record<string, unknown>>(v.gate.scope, 'payload', {});
           const quotes = field<Quote[]>(payload, 'quotes', []);
-          const lines = field<ScopeLine[]>(payload, 'lines', []);
+          // only priced item lines (a PO, a credit entry) are listed; other scopes read from the summary
+          const lines = field<ScopeLine[]>(payload, 'lines', []).filter(
+            (l) =>
+              typeof l?.item_id === 'string' &&
+              Number.isFinite(l.unit_price_paise) &&
+              Number.isFinite(l.qty_milli),
+          );
+          const summary = gateText(v.gate);
           const note = field(payload, 'note', '');
           const draft = field(payload, 'draft', '');
           const budget = field(payload, 'budget_left_paise', 0);
@@ -368,6 +381,10 @@ export function GateScreen({ param }: ScreenProps) {
           return (
             <div className="grid grid-cols-[1fr_340px] gap-5">
               <div className="flex flex-col gap-4">
+                <Card className="flex flex-col gap-1 p-5">
+                  <p className="text-arth font-bold">{summary.title}</p>
+                  <p className="text-body text-ink-3">{summary.sub}</p>
+                </Card>
                 {quotes.length > 0 && (
                   <div className="grid grid-cols-2 gap-4">
                     {quotes.map((q) => (
@@ -399,9 +416,9 @@ export function GateScreen({ param }: ScreenProps) {
                 {lines.length > 0 && (
                   <Card className="p-5">
                     <SectionTitle>{t('gate.whats_in_it')}</SectionTitle>
-                    {lines.map((l) => (
+                    {lines.map((l, i) => (
                       <div
-                        key={l.item_id}
+                        key={`${l.item_id}-${i}`}
                         className="flex justify-between border-b border-line py-2 text-body"
                       >
                         <span>

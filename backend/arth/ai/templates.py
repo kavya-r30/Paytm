@@ -39,6 +39,31 @@ T: dict[str, dict[str, str]] = {
         "hi": "{count} चीज़ें कम हैं: {names}।",
         "en": "{count} items are low: {names}.",
     },
+    "item_stock": {
+        "hi-Latn": "{name}: {qty} {unit} bacha hai.",
+        "hi": "{name}: {qty} {unit} बचा है।",
+        "en": "{name}: {qty} {unit} in stock.",
+    },
+    "item_price": {
+        "hi-Latn": "{name} ka daam {money} ({unit}).",
+        "hi": "{name} का दाम {money} ({unit})।",
+        "en": "{name} sells at {money} ({unit}).",
+    },
+    "item_unknown": {
+        "hi-Latn": '"{text}" naam ki cheez catalog mein nahi mili.',
+        "hi": '"{text}" नाम की चीज़ कैटलॉग में नहीं मिली।',
+        "en": 'No item called "{text}" in the catalog.',
+    },
+    "patron_khata": {
+        "hi-Latn": "{name} ka khata {money} baaki hai.",
+        "hi": "{name} का खाता {money} बाकी है।",
+        "en": "{name} owes {money} on khata.",
+    },
+    "patron_unknown": {
+        "hi-Latn": '"{text}" naam ka khata nahi mila. Poora naam boliye.',
+        "hi": '"{text}" नाम का खाता नहीं मिला। पूरा नाम बोलिए।',
+        "en": 'No khata found for "{text}". Please say the full name.',
+    },
     "top_items": {
         "hi-Latn": "Is hafte sabse zyada: {names}.",
         "hi": "इस हफ्ते सबसे ज़्यादा: {names}।",

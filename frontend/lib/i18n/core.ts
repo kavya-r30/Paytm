@@ -129,10 +129,27 @@ export function lookup(locale: UiLocale, key: string): string | undefined {
 export type Params = Record<string, string | number | boolean | null | undefined>;
 const compiled = new Map<string, IntlMessageFormat>();
 
+/**
+ * A backend refusal without its own message (`error.<domain>.<reason>`) still reads as a sentence: the
+ * localised "Arth stopped this" lead plus the reason in words, never a raw key on the owner's screen.
+ */
+/** A label still missing from every catalogue reads as words ("order_status.on_credit" → "On credit"). */
+function humanize(key: string): string {
+  if (!/^[a-z_]+(\.[a-z0-9_]+)+$/.test(key)) return key; // not a key shape: free text passed through t()
+  const words = key.split('.').slice(1).join(' ').replace(/_/g, ' ');
+  return words.charAt(0).toUpperCase() + words.slice(1);
+}
+
+function refusal(locale: UiLocale, key: string): string {
+  const lead = lookup(locale, 'error.refused') ?? 'Not done';
+  const reason = key.split('.').slice(-1)[0]!.replace(/_/g, ' ');
+  return `${lead}: ${reason}`;
+}
+
 /** Translate a key. Unknown keys render as the key itself so gaps are visible, never blank. */
 export function translate(locale: UiLocale, key: string, params?: Params): string {
   const source = lookup(locale, key);
-  if (source === undefined) return key;
+  if (source === undefined) return key.startsWith('error.') ? refusal(locale, key) : humanize(key);
   if (!params && !source.includes('{')) return source;
   const cacheKey = `${locale}\u0000${key}`;
   let fmt = compiled.get(cacheKey);

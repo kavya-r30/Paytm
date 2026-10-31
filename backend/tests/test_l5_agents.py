@@ -136,8 +136,17 @@ async def test_night_shift_brief_and_spawned_runs(db):
     async with db.read() as conn:
         brief = await latest_brief(Repository(conn, mid))
     assert brief and "sales_paise" in brief and "khata_due_paise" in brief
-    runs = {r["playbook"] for r in await select(db, mid, playbook_runs)}
-    assert "night_shift" in runs and runs & {"collections", "reorder"}
+    runs = await select(db, mid, playbook_runs)
+    assert "night_shift" in {r["playbook"] for r in runs}
+    # E7.2: Collections only for consented, undisputed, overdue accounts, so none fails on consent
+    from arth.domains.ledger_tables import credit_accounts
+    from arth.domains.patron_identity import has_consent
+
+    accounts = {r["id"]: r for r in await select(db, mid, credit_accounts)}
+    async with db.read() as conn:
+        repo = Repository(conn, mid)
+        for run in (r for r in runs if r["playbook"] == "collections"):
+            assert await has_consent(repo, accounts[run["subject"]]["patron_id"], "reminders")
 
 
 async def test_concierge_orders_own_balance_only_injection_and_partial_yes(db):

@@ -42,6 +42,12 @@ class DoneItem(BaseModel):
     tier: common.Tier
     occurred_at: AwareDatetime
     undo_until: AwareDatetime | None
+    bill_id: constr(pattern=r'^[a-z][a-z0-9]{1,9}_[0-9A-HJKMNP-TV-Z]{26}$') | None = (
+        Field(
+            ...,
+            description='Bill of an undoable line command (counter.undo takes the bill); null for everything else.',
+        )
+    )
 
 
 class SnoozedItem(BaseModel):

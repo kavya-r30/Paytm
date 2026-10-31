@@ -5,13 +5,21 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { cx } from '../ui/kit';
 
+/**
+ * The UI shows at 80% of the window on desktop: a top-level fixed canvas fills 80% of its fit; inside the
+ * stage's iframes it keeps filling its slot (I2 geometry). Flow-layout surfaces get the same 80% from the
+ * `zoom` rule in globals.css.
+ */
+export const UI_ZOOM = 0.8;
+
 export function useFitScale(width: number, height: number) {
   const ref = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const update = () => setScale(Math.min(el.clientWidth / width, el.clientHeight / height));
+    const zoom = window.self === window.top ? UI_ZOOM : 1;
+    const update = () => setScale(zoom * Math.min(el.clientWidth / width, el.clientHeight / height));
     update();
     const ro = new ResizeObserver(update);
     ro.observe(el);

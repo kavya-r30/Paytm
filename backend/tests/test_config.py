@@ -14,7 +14,13 @@ from arth.core.config import (
 from arth.core.paths import CONFIG_DIR, DATA_DIR
 
 CONFIG = CONFIG_DIR
-KEY_VARS = ("MISTRAL_API_KEY", "GROQ_API_KEY", "SARVAM_API_KEY")
+KEY_VARS = (
+    "AZURE_OPENAI_API_KEY",
+    "AZURE_OPENAI_ENDPOINT",
+    "MISTRAL_API_KEY",
+    "GROQ_API_KEY",
+    "SARVAM_API_KEY",
+)
 TOKEN_VARS = ("ARTH_DIRECTOR_TOKEN", "ARTH_DEVICE_TOKEN", "ARTH_CONSOLE_TOKEN")
 
 
@@ -68,9 +74,12 @@ def test_repo_providers_structure() -> None:
 
 
 def test_repo_providers_use_the_decided_stack() -> None:
-    # Team decisions, pinned on purpose: Mistral primary LLM, Groq backup, Sarvam STT/TTS models.
+    # Team decisions, pinned on purpose: Azure OpenAI primary LLM (user, 31 Oct 2026: the Mistral key is
+    # rate-limited), Groq backup, Mistral OCR, Sarvam STT/TTS models.
     providers = load_providers(CONFIG / "providers.yaml")
-    assert providers.roles["llm.fast"].chain[0].provider == "mistral"
+    assert providers.roles["llm.fast"].chain[0].provider == "azure"
+    assert providers.roles["llm.fast"].chain[0].model == "renaiscent-gpt-5.4-mini"
+    assert providers.roles["ocr"].chain[0].provider == "mistral"
     assert providers.roles["llm.fast"].chain[1].provider == "groq"
     assert providers.roles["stt"].chain[0].model == "saaras:v4"
     assert providers.roles["tts"].chain[0].model == "bulbul:v4-flash"
@@ -150,7 +159,7 @@ def test_prod_accepts_real_tokens_and_dev_accepts_defaults(tmp_path: Path, no_ke
 
 def test_prod_refuses_to_boot_without_keys(no_key_env: None) -> None:
     providers = load_providers(CONFIG / "providers.yaml")
-    with pytest.raises(ConfigError, match="MISTRAL_API_KEY.*SARVAM_API_KEY"):
+    with pytest.raises(ConfigError, match="AZURE_OPENAI_API_KEY.*MISTRAL_API_KEY.*SARVAM_API_KEY"):
         check_provider_keys(Settings(_env_file=None, mode="prod"), providers)
 
 
@@ -159,11 +168,17 @@ def test_prod_boots_when_all_keys_are_present(tmp_path: Path, no_key_env: None) 
     env = write(
         tmp_path,
         ".env",
-        "ARTH_MODE=prod\nMISTRAL_API_KEY=fake-m\nGROQ_API_KEY=fake-g\nSARVAM_API_KEY=fake-s\n",
+        "ARTH_MODE=prod\nMISTRAL_API_KEY=fake-m\nGROQ_API_KEY=fake-g\nSARVAM_API_KEY=fake-s\n"
+        "AZURE_OPENAI_API_KEY=fake-a\nAZURE_OPENAI_ENDPOINT=https://x.example.azure.com/\n",
     )
     settings = Settings(_env_file=env)
     check_provider_keys(settings, providers)
-    assert provider_status(settings, providers) == {"mistral": True, "groq": True, "sarvam": True}
+    assert provider_status(settings, providers) == {
+        "azure": True,
+        "mistral": True,
+        "groq": True,
+        "sarvam": True,
+    }
 
 
 def test_config_errors_never_contain_key_text(tmp_path: Path, no_key_env: None) -> None:

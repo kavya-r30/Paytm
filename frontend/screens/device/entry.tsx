@@ -130,7 +130,8 @@ export function PinScreen(_: ScreenProps) {
   const { t } = useI18n();
   const nav = useDeviceNav();
   const mode = useDataMode();
-  const state = useView(views.staffLogin());
+  // the login view needs the device credential header; a live session reads its own shop's staff instead
+  const state = useView(mode === 'live' ? views.staff() : views.staffLogin());
   const [who, setWho] = useState<string | null>(null);
   const [pin, setPin] = useState('');
   const [credential, setCredential] = useState(() =>
@@ -304,6 +305,7 @@ function Who({ id }: { id: string | null }) {
 }
 
 const KOT_COLUMNS = ['new', 'preparing', 'ready', 'served'] as const;
+const KOT_NEXT = { new: 'preparing', preparing: 'ready', ready: 'served' } as const;
 
 export function KotScreen(_: ScreenProps) {
   const { t } = useI18n();
@@ -342,7 +344,9 @@ export function KotScreen(_: ScreenProps) {
                           variant="tint"
                           size="sm"
                           className="mt-2 w-full"
-                          onClick={() => void run('counter.advance_ticket', { ticket_id: tk.id })}
+                          onClick={() =>
+                            void run('counter.advance_ticket', { ticket_id: tk.id, to: KOT_NEXT[col] })
+                          }
                         >
                           {t(`kot.next_${col}`)}
                         </Button>

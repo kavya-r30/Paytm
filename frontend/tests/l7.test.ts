@@ -89,7 +89,8 @@ describe('i18n (T7.2)', () => {
   it('formats ICU params and leaves unknown keys visible', () => {
     expect(translate('en', 'home.batch_title', { n: 3 })).toBe('One yes, 3 jobs');
     expect(translate('hi-Latn', 'home.batch_title', { n: 3 })).toBe('Aapka ek haan, 3 kaam');
-    expect(translate('en', 'no.such_key')).toBe('no.such_key');
+    expect(translate('en', 'no.such_key')).toBe('Such key'); // a gap reads as words, never a raw key
+    expect(translate('en', 'error.policy.consent')).toMatch(/agreed/); // refusals read as sentences
   });
   it('pseudo-locale is ≥40% longer, accented, and keeps placeholders', () => {
     const p = translate('xx-LONG', 'home.batch_title', { n: 3 });

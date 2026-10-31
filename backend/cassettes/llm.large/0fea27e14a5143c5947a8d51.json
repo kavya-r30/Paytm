@@ -1,0 +1,1 @@
+{"provider": "azure", "model": "renaiscent-gpt-5.4-mini", "text": "", "data": {"tool_calls": [{"function": {"arguments": "{\"item\":\"white sugar\"}", "name": "start_reorder"}, "id": "call_KR3L4Q6IY8Nr9loSZ2gBJBMG", "type": "function"}]}}

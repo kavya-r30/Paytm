@@ -1,0 +1,1 @@
+{"provider": "azure", "model": "renaiscent-gpt-5.4-mini", "text": "", "data": {"tool_calls": [{"function": {"arguments": "{\"item\":\"colgate\",\"qty\":10}", "name": "receive_stock"}, "id": "call_RbOlbAx8g8UE3ViY1XB0paH1", "type": "function"}]}}

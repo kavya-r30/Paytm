@@ -97,6 +97,17 @@
                 "type": "null"
               }
             ]
+          },
+          "bill_id": {
+            "description": "Bill of an undoable line command (counter.undo takes the bill); null for everything else.",
+            "anyOf": [
+              {
+                "$ref": "./common.schema.json#/definitions/PrefixedId"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
@@ -104,7 +115,8 @@
           "type",
           "tier",
           "occurred_at",
-          "undo_until"
+          "undo_until",
+          "bill_id"
         ]
       }
     },

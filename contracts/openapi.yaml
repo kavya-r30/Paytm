@@ -56,6 +56,21 @@ paths:
               schema: {$ref: './patron_view.schema.json'}
         '401': {$ref: '#/components/responses/Problem'}
         '409': {$ref: '#/components/responses/Problem'}
+  /v1/views/latest/{kind}:
+    get:
+      operationId: getLatestRef
+      description: Newest record of a kind, so a detail screen opened without an id shows real data.
+      security: [{device: []}, {console: []}]
+      parameters:
+        - {name: kind, in: path, required: true, schema: {type: string}}
+      responses:
+        '200':
+          description: The newest id, or null when the shop has none yet
+          content:
+            application/json:
+              schema: {$ref: './latest_ref_view.schema.json'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '422': {$ref: '#/components/responses/Problem'}
   /v1/views/khata:
     get:
       operationId: getKhataView
@@ -1131,6 +1146,16 @@ paths:
         '401': {$ref: '#/components/responses/Problem'}
         '404': {$ref: '#/components/responses/Problem'}
   /v1/director/play:
+    get:
+      operationId: directorCurrentPlay
+      description: The scenario played or restored on this server (python dev.py demo), so the Director continues it.
+      security: [{director: []}]
+      responses:
+        '200':
+          description: Scenario id and merchant, or nulls
+          content:
+            application/json:
+              schema: {type: object}
     post:
       operationId: directorPlay
       security: [{director: []}]

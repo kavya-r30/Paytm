@@ -1,0 +1,1 @@
+{"provider": "azure", "model": "renaiscent-gpt-5.4-mini", "text": "", "data": {"tool_calls": [{"function": {"arguments": "{\"action\":\"pay_qr\"}", "name": "bill_action"}, "id": "call_b5pJrR0Td863q8eYt7PkV4Oq", "type": "function"}]}}

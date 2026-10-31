@@ -107,6 +107,11 @@ export async function presenterSessions(merchant?: string) {
   return { device: device.token, console: console.token };
 }
 
+/** STG-DIRECTOR clock control: freeze the shop's clock or let it run at real time. */
+export function setClockRunning(running: boolean) {
+  return directorPost('/v1/director/clock', { running }) as Promise<{ clock: string; running: boolean }>;
+}
+
 export function moveClock(advanceMinutes: number) {
   return directorPost('/v1/director/clock', { advance_minutes: advanceMinutes }) as Promise<{
     clock: string;
@@ -154,6 +159,11 @@ export function playScenario(scenario: string) {
     merchant_id: string;
     beats: string[];
   }>;
+}
+
+/** A scenario already played or restored on the server (`python dev.py demo`): the Director continues it. */
+export function currentPlay() {
+  return directorGet('/v1/director/play') as Promise<{ scenario: string | null; merchant_id: string | null }>;
 }
 
 export type BeatResult = { beat_id: string; ok: boolean; ms?: number; error?: string; snapshot: string };

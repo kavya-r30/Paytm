@@ -9,6 +9,7 @@ import { useCommand } from '@/lib/api/commands';
 import { useView } from '@/lib/api/hooks';
 import { useName } from '@/lib/api/names';
 import { views } from '@/lib/api/views';
+import { addItemPayload } from '@/lib/catalog';
 import type { CampaignView, GrowView } from '@/lib/contracts';
 import { IDS } from '@/lib/fixtures/gupta';
 import { useI18n } from '@/lib/i18n/react';
@@ -427,11 +428,17 @@ export function BundleScreen(_: ScreenProps) {
                       variant="tint"
                       size="sm"
                       onClick={() =>
-                        void run('catalog.add_item', {
-                          names: { en: b.names.join(' + ') },
-                          unit: 'pcs',
-                          price_paise: b.price_paise,
-                        })
+                        void run(
+                          'catalog.add_item',
+                          addItemPayload({
+                            name: b.names.join(' + '),
+                            pricePaise: b.price_paise,
+                            costPaise: Math.round((b.price_paise * (10000 - b.margin_bp)) / 10000),
+                            category: 'bundles',
+                            recipe: b.items.map((item_id) => ({ item_id, qty_milli: 1000 })),
+                          }),
+                          { label: b.names.join(' + ') },
+                        )
                       }
                     >
                       {t('bundle.set_price')}

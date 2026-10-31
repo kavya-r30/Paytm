@@ -138,7 +138,7 @@ function line(id: number, item: FixtureItem, qtyMilli: number, via: string) {
 }
 
 const openLines = [
-  line(1, ITEMS.maggi, 2000, 'scanned'),
+  line(1, ITEMS.maggi, 2000, 'scan'),
   line(2, ITEMS.sugar, 500, 'voice'),
   line(3, ITEMS.parle, 1000, 'voice'),
 ];
@@ -168,7 +168,7 @@ const openBill: BillView['bill'] = {
   },
 };
 
-const paidLines = [...openLines, line(4, ITEMS.amul, 1000, 'tapped')];
+const paidLines = [...openLines, line(4, ITEMS.amul, 1000, 'tap')];
 const paidTotal = paidLines.reduce((s, l) => s + l.amount_paise, 0);
 
 /** Gate summaries as the backend computes them: title_key = "gate." + type, params from the scope. */
@@ -274,10 +274,11 @@ export const notifications: NotificationsView = {
   done: [
     {
       command_id: fid('cmd', 1),
-      type: 'ledger.send_statement',
+      type: 'counter.add_lines',
       tier: 'R1',
       occurred_at: minutesAgo(1),
       undo_until: minutesAhead(0.4),
+      bill_id: BILL_ID,
     },
     {
       command_id: fid('cmd', 2),
@@ -285,6 +286,7 @@ export const notifications: NotificationsView = {
       tier: 'R1',
       occurred_at: minutesAgo(45),
       undo_until: null,
+      bill_id: null,
     },
     {
       command_id: fid('cmd', 3),
@@ -292,6 +294,7 @@ export const notifications: NotificationsView = {
       tier: 'R0',
       occurred_at: minutesAgo(130),
       undo_until: null,
+      bill_id: null,
     },
   ],
   snoozed: [
@@ -434,6 +437,7 @@ export const billPay: BillPayView = {
     upi: { order_ref: 'UPI-1042', amount_paise: openTotal, status: 'waiting', expires_at: minutesAhead(4) },
   },
   payee_vpa: 'guptastore@paytm',
+  pay_token: null,
   alternatives: ['cash', 'khata'],
   exception: null,
   invalidate_on: INV('payment.received', 'bill.paid'),
