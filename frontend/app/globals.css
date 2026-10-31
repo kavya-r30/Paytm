@@ -1,9 +1,146 @@
 @import 'tailwindcss';
 @import './tokens.css';
 
+/* Every colour, radius, shadow and type size comes from tokens.css (spec I3); lint-design.mjs enforces it. */
 html,
 body {
   background: var(--color-ground);
   color: var(--color-ink);
   font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Tabular figures for every number (I3). */
+.num {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Orb: idle float, listening breathe, thinking arc, speaking mouth, needs-you dashed ring, done, alert. */
+@keyframes arth-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3%);
+  }
+}
+@keyframes arth-breathe {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-paytm-blue) 55%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 14px color-mix(in srgb, var(--color-paytm-blue) 0%, transparent);
+  }
+}
+@keyframes arth-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes arth-bar {
+  0%,
+  100% {
+    transform: scaleY(0.35);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+@keyframes arth-blink {
+  0%,
+  92%,
+  100% {
+    transform: scaleY(1);
+  }
+  95% {
+    transform: scaleY(0.1);
+  }
+}
+@keyframes arth-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes arth-segment {
+  0% {
+    left: -30%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+@keyframes arth-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+.orb-float {
+  animation: arth-float 4s ease-in-out infinite;
+}
+.orb-breathe {
+  animation: arth-breathe 1.6s ease-out infinite;
+}
+.orb-spin {
+  animation: arth-spin 1.1s linear infinite;
+}
+.orb-eye {
+  animation: arth-blink 5s ease-in-out infinite;
+  transform-origin: center;
+}
+.wave-bar {
+  animation: arth-bar 0.9s ease-in-out infinite;
+  transform-origin: center;
+}
+.fade-up {
+  animation: arth-fade-up 0.25s ease-out both;
+}
+.segment {
+  animation: arth-segment 1.4s ease-in-out infinite;
+}
+.pulse {
+  animation: arth-pulse 1.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orb-float,
+  .orb-breathe,
+  .orb-spin,
+  .orb-eye,
+  .wave-bar,
+  .segment,
+  .pulse {
+    animation: none;
+  }
+}
+
+/* Discreet mode (LED-6): balances blur until tapped. */
+.discreet {
+  filter: blur(7px);
+  cursor: pointer;
+}
+
+/* Dot-matrix type for the customer display. */
+.dot-type {
+  font-family: 'Courier New', ui-monospace, monospace;
+  letter-spacing: 0.06em;
 }

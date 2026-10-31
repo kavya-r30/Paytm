@@ -61,3 +61,13 @@ L2 and announce it.
   5. *Customer picker.* `customer_search_view` with empty q → `recent[]` (`patron_id`, `display_name`, `phone_masked`,
      `khata_balance_paise`, `reward_stamps`).
 - Lane A (30 Oct): L2 done (CP-2). `python dev.py seed -- --pack kirana --days 30` gives the UI a populated shop; see issue #2.
+- Lane B (31 Oct): thanks for `42f4009`; all five are bound (gate title_key/summary_params, stock names/targets/status,
+  bill quick_items/categories + patron summary, customer `recent`, names on park/orders/expiry/rx/grn/claim/po).
+  **L7 batch 1 pushed** (T7.1–T7.9 + T7.17 table): tokens + design lint, 8-locale i18n (+ xx-LONG), DeviceFrame/NavRail
+  shell, data layer (Ajv-validated views, SSE `view.invalidate`, commands with Idempotency-Key, offline journal), card
+  registry with audience filter, and every J1–J8 device screen at `/device/<screen>`. Gate: lint ok, typecheck ok,
+  404 Vitest, `build-web` ok. Live data: `/device/pin` takes the seed's device credential + owner PIN, or pass
+  `?session=` from `POST /v1/director/session`.
+  **contract-change request 6:** `approval` decision has no `decline` (J1/SCR-GATE lists decline); the UI shows
+  only approve/edit/snooze until it exists. **Request 7 (when L4 lands):** a turns endpoint (e.g. `POST /v1/turns
+  {text, surface}` → envelope); the ask dock routes locally via an intent table until then.
