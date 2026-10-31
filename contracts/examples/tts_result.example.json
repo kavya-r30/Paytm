@@ -1,0 +1,10 @@
+{
+  "text": "Kul ₹62",
+  "spoken_text": "Kul baasath rupaye",
+  "lang": "hi-IN",
+  "audio_b64": null,
+  "mode": "unavailable",
+  "invalidate_on": [
+    "x.changed"
+  ]
+}

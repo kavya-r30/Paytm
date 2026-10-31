@@ -20,6 +20,7 @@ dependencies = [
   # jsonschema's format_checker skips date-time / uri-reference silently without these two
   "rfc3339-validator>=0.1.4",
   "rfc3986-validator>=0.1.1",
+  "httpx>=0.27",
 ]
 
 [dependency-groups]
@@ -53,6 +54,11 @@ extend-exclude = ["arth/contracts", "migrations/versions"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "DTZ"]
+
+[tool.ruff.lint.per-file-ignores]
+# Message catalogues and prompt text: one entry per line reads better than wrapped strings.
+"arth/ai/prompts.py" = ["E501"]
+"arth/ai/templates.py" = ["E501"]
 
 [tool.mypy]
 python_version = "3.12"

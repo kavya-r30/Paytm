@@ -19,7 +19,7 @@
 | L1 Commerce Core and governance | `2026-10-30-arth-L1a-foundation.md`, `2026-10-30-arth-L1b-identity-catalog.md`, `2026-10-30-arth-L1c-stock-patrons-ledger.md`, `2026-10-30-arth-L1d-commerce-completion.md` (T1.12, T1.13, T1.16–T1.23 in one pass) | T1.1–T1.23 | CP-1 | **Done: CP-1 green (30 Oct 2026): 1175 pytest + 340 Vitest; fixture shop per pack through the API, every J9 view schema-valid, audit verifies** |
 | L2 Simulators | `2026-10-30-arth-L2-simulators.md` | T2.1–T2.11 | CP-2 | **Done: CP-2 green (30 Oct 2026): 1206 pytest + 346 Vitest; 4 pack worlds, billing scenario headless** |
 | L3 Intelligence | `2026-10-30-arth-L3-intelligence.md` | T3.1–T3.13 | CP-3 | **Done: CP-3 green (30 Oct 2026): 1229 pytest + 353 Vitest** |
-| L4 AI platform | `…-arth-L4-ai-platform.md` | T4.1–T4.16 | CP-4 | Write after CP-3 |
+| L4 AI platform | `2026-10-30-arth-L4-ai-platform.md` | T4.1–T4.16 | CP-4 | **Offline gates green (30 Oct 2026): 1246 pytest + 414 Vitest. Live provider evals pending: hosts blocked in the cloud session; `python dev.py ai-smoke` on a laptop** |
 | L5 Agentic layer | `…-arth-L5-agents.md` | T5.1–T5.14 | CP-5 | Write after CP-4 |
 | L6 Growth layer | `…-arth-L6-growth.md` | T6.1–T6.12 | CP-6 | Write after CP-5 |
 | L7 Frontend | `…-arth-L7-frontend.md` (likely split: 7a shell + design system, 7b existing screens, 7c new screens, 7d other surfaces, 7e stage) | T7.1–T7.18 | CP-7 | **Parallel lane (second Claude account), started after CP-1 against the L1 contracts; coordinated in GitHub issues** |

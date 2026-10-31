@@ -161,22 +161,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/views/ask": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["getAskView"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/v1/views/notifications": {
         parameters: {
             query?: never;
@@ -1137,6 +1121,54 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/views/ask": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getAskView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/turns": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["postTurn"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/tts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getTts"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/patrons": {
         parameters: {
             query?: never;
@@ -1707,17 +1739,6 @@ export interface components {
             };
             invalidate_on: string[];
         };
-        /** LayerPendingView */
-        "layer_pending_view.schema": {
-            screen: string;
-            /** @enum {unknown} */
-            status: "needs_more_data" | "not_built_yet";
-            /** @enum {unknown} */
-            layer: "L3" | "L4" | "L5" | "L6";
-            reason_key: components["schemas"]["MessageKey"];
-            items: Record<string, never>[];
-            invalidate_on: string[];
-        };
         /** NotificationsView */
         "notifications_view.schema": {
             needs_you: {
@@ -2135,6 +2156,17 @@ export interface components {
             }[];
             invalidate_on: string[];
             supplier_name: string;
+        };
+        /** LayerPendingView */
+        "layer_pending_view.schema": {
+            screen: string;
+            /** @enum {unknown} */
+            status: "needs_more_data" | "not_built_yet";
+            /** @enum {unknown} */
+            layer: "L3" | "L4" | "L5" | "L6";
+            reason_key: components["schemas"]["MessageKey"];
+            items: Record<string, never>[];
+            invalidate_on: string[];
         };
         /** DemandView */
         "demand_view.schema": {
@@ -2736,20 +2768,33 @@ export interface components {
             takeaway: Record<string, never>;
             invalidate_on: string[];
         };
+        /** AskView */
+        "ask_view.schema": {
+            session: string | null;
+            turns: {
+                id: components["schemas"]["PrefixedId"];
+                surface: string;
+                heard: string;
+                intent: string;
+                said: string;
+                /** Format: date-time */
+                created_at: string;
+            }[];
+            invalidate_on: string[];
+        };
         /**
          * @description UI (screen) locale.
          * @enum {string}
          */
         Locale: "hi" | "en" | "hi-Latn" | "mr" | "ta" | "bn" | "gu" | "te";
-        /** PatronsAdd */
-        "patrons_add.schema": {
-            display_name: string;
-            lang: components["schemas"]["Locale"];
-            identities?: {
-                /** @enum {unknown} */
-                kind: "vpa" | "phone" | "spoken_name" | "payer_name";
-                value: string;
-            }[];
+        /** TurnRequest */
+        "turn_request.schema": {
+            text?: string;
+            audio_b64?: string;
+            /** @enum {unknown} */
+            surface: "device" | "console" | "whatsapp" | "voice";
+            bill_id?: components["schemas"]["PrefixedId"];
+            lang?: components["schemas"]["Locale"];
         };
         /**
          * @description Speech locale. Speech engines take language-REGION codes, so Hinglish (hi-Latn on screen) is spoken as hi-IN.
@@ -2839,6 +2884,26 @@ export interface components {
             /** @enum {string} */
             sensitivity: "normal" | "discreet";
             fallback?: components["schemas"]["Fallback"] | null;
+        };
+        /** TtsResult */
+        "tts_result.schema": {
+            text: string;
+            spoken_text: string;
+            lang: string;
+            audio_b64: string | null;
+            /** @enum {unknown} */
+            mode: "live" | "replay" | "unavailable";
+            invalidate_on: string[];
+        };
+        /** PatronsAdd */
+        "patrons_add.schema": {
+            display_name: string;
+            lang: components["schemas"]["Locale"];
+            identities?: {
+                /** @enum {unknown} */
+                kind: "vpa" | "phone" | "spoken_name" | "payer_name";
+                value: string;
+            }[];
         };
         /** CommandResult */
         "command_result.schema": {
@@ -3327,30 +3392,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["home_view.schema"];
-                };
-            };
-            401: components["responses"]["Problem"];
-            409: components["responses"]["Problem"];
-        };
-    };
-    getAskView: {
-        parameters: {
-            query?: {
-                session?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Scoped merchant read model */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["layer_pending_view.schema"];
                 };
             };
             401: components["responses"]["Problem"];
@@ -4820,6 +4861,82 @@ export interface operations {
             401: components["responses"]["Problem"];
             404: components["responses"]["Problem"];
             422: components["responses"]["Problem"];
+        };
+    };
+    getAskView: {
+        parameters: {
+            query?: {
+                session?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The shared turn log (session memory) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ask_view.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+        };
+    };
+    postTurn: {
+        parameters: {
+            query?: never;
+            header: {
+                "idempotency-key": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["turn_request.schema"];
+            };
+        };
+        responses: {
+            /** @description Response envelope v2 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["envelope.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
+            422: components["responses"]["Problem"];
+            503: components["responses"]["Problem"];
+        };
+    };
+    getTts: {
+        parameters: {
+            query: {
+                text: string;
+                lang?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Normalised spoken text and audio when a provider is reachable */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["tts_result.schema"];
+                };
+            };
+            401: components["responses"]["Problem"];
         };
     };
     patronsadd: {

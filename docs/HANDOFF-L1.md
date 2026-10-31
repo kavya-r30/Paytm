@@ -1,6 +1,12 @@
 # Arth: Handoff for L1 (continue in a fresh Claude Code / Codex session)
 
-## Current checkpoint (30 Oct 2026, CP-3) — L3 DONE
+## Current checkpoint (30 Oct 2026, CP-4 offline) — L4 DONE (live evals pending)
+
+L4 is in `backend/arth/ai/` (plan: `docs/superpowers/plans/2026-10-30-arth-L4-ai-platform.md`). `POST /v1/turns`
+works on device/console/WhatsApp; providers fall back to cassettes/templates when unreachable (they are blocked in
+cloud sessions; run `python dev.py ai-smoke` on a laptop to record cassettes). Migration 0008 is frozen.
+
+## Checkpoint CP-3 — L3 DONE
 
 L3 intelligence is in `backend/arth/intel/` (plan: `docs/superpowers/plans/2026-10-30-arth-L3-intelligence.md`):
 analytics tools, 12 charts, forecasts with accuracy, cash flow, lifecycle, alerts, decisions. Migration 0007 is frozen.

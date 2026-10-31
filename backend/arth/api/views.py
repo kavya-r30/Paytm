@@ -91,7 +91,6 @@ VIEW_TOPICS: dict[str, set[str]] = {
     "trust": {"command.executed", "approval.decided", "privacy.erased", "privacy.sharing_changed"},
 }
 PENDING = {
-    "ask": ("L4", "sufficiency.ask_pending"),
     "grow": ("L6", "sufficiency.growth_pending"),
     "grow/plans": ("L6", "sufficiency.plan_pending"),
     "grow/bundles": ("L6", "sufficiency.bundles_pending"),
@@ -208,13 +207,6 @@ async def home(request: Request, session: Actor) -> dict[str, Any]:
         }
 
     return await read(request, session, build)
-
-
-@router.get("/v1/views/ask")
-async def ask(
-    request: Request, session: Actor, session_id: Annotated[str | None, Query(alias="session")] = None
-) -> dict[str, Any]:
-    return pending("ask", ["turn.completed"])
 
 
 @router.get("/v1/views/notifications")

@@ -12,6 +12,7 @@ import type { AppointmentsWalkIn } from './appointments_walk_in';
 import type { ApprovalRequest } from './approval';
 import type { ApprovalDecided } from './approval_decided';
 import type { ApprovalRequested } from './approval_requested';
+import type { AskView } from './ask_view';
 import type { AuditVerification } from './audit_verification';
 import type { AuditVerified } from './audit_verified';
 import type { BatchRecalled } from './batch_recalled';
@@ -237,6 +238,8 @@ import type { TreasuryRecordSettlement } from './treasury_record_settlement';
 import type { TreasuryRefund } from './treasury_refund';
 import type { TreasuryResolveException } from './treasury_resolve_exception';
 import type { TrustView } from './trust_view';
+import type { TtsResult } from './tts_result';
+import type { TurnRequest } from './turn_request';
 import type { VerdictView } from './verdict_view';
 import type { ViewInvalidate } from './view_invalidate';
 import action_snoozedSchema from './schemas/action_snoozed.schema.json';
@@ -251,6 +254,7 @@ import appointments_walk_inSchema from './schemas/appointments_walk_in.schema.js
 import approvalSchema from './schemas/approval.schema.json';
 import approval_decidedSchema from './schemas/approval_decided.schema.json';
 import approval_requestedSchema from './schemas/approval_requested.schema.json';
+import ask_viewSchema from './schemas/ask_view.schema.json';
 import audit_verificationSchema from './schemas/audit_verification.schema.json';
 import audit_verifiedSchema from './schemas/audit_verified.schema.json';
 import batch_recalledSchema from './schemas/batch_recalled.schema.json';
@@ -476,6 +480,8 @@ import treasury_record_settlementSchema from './schemas/treasury_record_settleme
 import treasury_refundSchema from './schemas/treasury_refund.schema.json';
 import treasury_resolve_exceptionSchema from './schemas/treasury_resolve_exception.schema.json';
 import trust_viewSchema from './schemas/trust_view.schema.json';
+import tts_resultSchema from './schemas/tts_result.schema.json';
+import turn_requestSchema from './schemas/turn_request.schema.json';
 import verdict_viewSchema from './schemas/verdict_view.schema.json';
 import view_invalidateSchema from './schemas/view_invalidate.schema.json';
 
@@ -491,6 +497,7 @@ export type { AppointmentsWalkIn } from './appointments_walk_in';
 export type { ApprovalRequest } from './approval';
 export type { ApprovalDecided } from './approval_decided';
 export type { ApprovalRequested } from './approval_requested';
+export type { AskView } from './ask_view';
 export type { AuditVerification } from './audit_verification';
 export type { AuditVerified } from './audit_verified';
 export type { BatchRecalled } from './batch_recalled';
@@ -716,6 +723,8 @@ export type { TreasuryRecordSettlement } from './treasury_record_settlement';
 export type { TreasuryRefund } from './treasury_refund';
 export type { TreasuryResolveException } from './treasury_resolve_exception';
 export type { TrustView } from './trust_view';
+export type { TtsResult } from './tts_result';
+export type { TurnRequest } from './turn_request';
 export type { VerdictView } from './verdict_view';
 export type { ViewInvalidate } from './view_invalidate';
 export type * from './common'; // shared definitions: Locale, SpeechLocale, Audience, Tier, ...
@@ -734,6 +743,7 @@ export const SCHEMAS = [
   { name: 'approval', id: 'https://arth.local/contracts/approval.schema.json', schema: approvalSchema },
   { name: 'approval_decided', id: 'https://arth.local/contracts/events/approval_decided.schema.json', schema: approval_decidedSchema },
   { name: 'approval_requested', id: 'https://arth.local/contracts/events/approval_requested.schema.json', schema: approval_requestedSchema },
+  { name: 'ask_view', id: 'https://arth.local/contracts/ask_view.schema.json', schema: ask_viewSchema },
   { name: 'audit_verification', id: 'https://arth.local/contracts/audit_verification.schema.json', schema: audit_verificationSchema },
   { name: 'audit_verified', id: 'https://arth.local/contracts/events/audit_verified.schema.json', schema: audit_verifiedSchema },
   { name: 'batch_recalled', id: 'https://arth.local/contracts/events/batch_recalled.schema.json', schema: batch_recalledSchema },
@@ -959,6 +969,8 @@ export const SCHEMAS = [
   { name: 'treasury_refund', id: 'https://arth.local/contracts/commands/treasury_refund.schema.json', schema: treasury_refundSchema },
   { name: 'treasury_resolve_exception', id: 'https://arth.local/contracts/commands/treasury_resolve_exception.schema.json', schema: treasury_resolve_exceptionSchema },
   { name: 'trust_view', id: 'https://arth.local/contracts/trust_view.schema.json', schema: trust_viewSchema },
+  { name: 'tts_result', id: 'https://arth.local/contracts/tts_result.schema.json', schema: tts_resultSchema },
+  { name: 'turn_request', id: 'https://arth.local/contracts/turn_request.schema.json', schema: turn_requestSchema },
   { name: 'verdict_view', id: 'https://arth.local/contracts/verdict_view.schema.json', schema: verdict_viewSchema },
   { name: 'view_invalidate', id: 'https://arth.local/contracts/events/view_invalidate.schema.json', schema: view_invalidateSchema },
 ] as const;
@@ -979,6 +991,7 @@ export interface ContractTypes {
   approval: ApprovalRequest;
   approval_decided: ApprovalDecided;
   approval_requested: ApprovalRequested;
+  ask_view: AskView;
   audit_verification: AuditVerification;
   audit_verified: AuditVerified;
   batch_recalled: BatchRecalled;
@@ -1204,6 +1217,8 @@ export interface ContractTypes {
   treasury_refund: TreasuryRefund;
   treasury_resolve_exception: TreasuryResolveException;
   trust_view: TrustView;
+  tts_result: TtsResult;
+  turn_request: TurnRequest;
   verdict_view: VerdictView;
   view_invalidate: ViewInvalidate;
 }
