@@ -1,9 +1,11 @@
 // Device screen registry: /device/<screen>/<param?> → component. Names match envelope `nav.screen` (C3).
 import type { ComponentType } from 'react';
+import * as Agents from './agents';
 import * as Bill from './bill';
 import type { ScreenProps } from './common';
 import * as Entry from './entry';
 import * as Grow from './grow';
+import * as Growth from './growth';
 import * as Khata from './khata';
 import * as More from './more';
 import * as Stock from './stock';
@@ -34,19 +36,19 @@ export const SCREENS: Record<string, ComponentType<ScreenProps>> = {
   gate: Stock.GateScreen,
   grn: Stock.GrnScreen,
   claim: Stock.ClaimScreen,
-  grow: Grow.GrowScreen,
-  plan: Grow.PlanScreen,
+  grow: Growth.GrowScreen,
+  plan: Growth.PlanScreen,
   demand: Grow.DemandScreen,
-  bundle: Grow.BundleScreen,
+  bundle: Growth.BundleScreen,
   offers: Grow.OffersScreen,
   offer: Grow.OfferDetailScreen,
-  campaign: Grow.CampaignScreen,
-  ledger: Grow.LedgerScreen,
+  campaign: Growth.CampaignScreen,
+  ledger: Growth.LedgerScreen,
   storefront: Grow.StorefrontScreen,
   menu: More.MenuScreen,
-  team: More.TeamScreen,
-  run: More.RunScreen,
-  memory: More.MemoryScreen,
+  team: Agents.TeamScreen,
+  run: Agents.RunScreen,
+  memory: Agents.MemoryScreen,
   hisaab: More.HisaabScreen,
   reports: More.ReportsScreen,
   feedback: More.FeedbackScreen,

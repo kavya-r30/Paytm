@@ -1,19 +1,7 @@
 'use client';
 
-// J5 · Badhao: SCR-GROW, SCR-PLAN, SCR-DEMAND, SCR-BUNDLE, SCR-OFFERS, SCR-OFFER-D, SCR-CAMPAIGN, SCR-LEDGER,
-// SCR-STOREFRONT. Growth screens fill in with L6; until then the API returns layer_pending_view.
-import {
-  Gift,
-  Link2,
-  Megaphone,
-  Package,
-  Percent,
-  Printer,
-  Stamp,
-  Target,
-  TrendingUp,
-  Wallet,
-} from 'lucide-react';
+// J5 · Badhao: SCR-DEMAND, SCR-OFFERS, SCR-OFFER-D, SCR-STOREFRONT (the L6 growth screens are in growth.tsx).
+import { Gift, Megaphone, Percent, Printer, Stamp, Wallet } from 'lucide-react';
 import { ArthNote } from '@/components/arth/orb';
 import { Screen, useDeviceNav } from '@/components/shell/device';
 import { FakeQr } from './bill';
@@ -25,77 +13,6 @@ import { views } from '@/lib/api/views';
 import type { OffersView } from '@/lib/contracts';
 import { useI18n } from '@/lib/i18n/react';
 import { ViewGate, type ScreenProps } from './common';
-
-const ICON_RING = (Icon: typeof Target) => (
-  <span className="flex h-24 w-24 items-center justify-center rounded-chip bg-sky text-midnight">
-    <Icon size={44} />
-  </span>
-);
-
-export function GrowScreen(_: ScreenProps) {
-  const { t } = useI18n();
-  const nav = useDeviceNav();
-  const state = useView(views.grow());
-  return (
-    <Screen
-      title={t('grow.title')}
-      sub={t('grow.sub')}
-      chips={[
-        { label: t('grow.chip_how'), text: 'Bikri kaise badhayein?' },
-        { label: t('grow.chip_goal'), text: 'Diwali tak do lakh' },
-      ]}
-    >
-      <div className="grid h-full grid-cols-[1fr_320px] gap-5">
-        <Card className="p-2">
-          <ViewGate state={state} pendingIcon={ICON_RING(Target)}>
-            {() => null}
-          </ViewGate>
-        </Card>
-        <div className="flex flex-col gap-3">
-          {[
-            ['offers', Gift],
-            ['demand', TrendingUp],
-            ['storefront', Link2],
-            ['capital', Wallet],
-          ].map(([id, Icon]) => {
-            const I = Icon as typeof Gift;
-            return (
-              <Card
-                key={id as string}
-                onClick={() => nav(id as string)}
-                className="flex items-center gap-4 p-5"
-              >
-                <span className="flex h-11 w-11 items-center justify-center rounded-ground bg-sky text-midnight">
-                  <I size={22} />
-                </span>
-                <span className="flex-1">
-                  <span className="block text-body font-bold">{t(`grow.tile_${id as string}`)}</span>
-                  <span className="text-meta text-ink-3">{t(`grow.tile_${id as string}_sub`)}</span>
-                </span>
-              </Card>
-            );
-          })}
-        </div>
-      </div>
-    </Screen>
-  );
-}
-
-export function PlanScreen({ param }: ScreenProps) {
-  const { t } = useI18n();
-  const state = useView(views.plan(param ?? 'current'));
-  return (
-    <Screen
-      title={t('plan.title')}
-      sub={t('plan.sub')}
-      chips={[{ label: t('plan.chip_first_two'), text: 'Sirf pehle do' }]}
-    >
-      <ViewGate state={state} pendingIcon={ICON_RING(Target)}>
-        {() => null}
-      </ViewGate>
-    </Screen>
-  );
-}
 
 export function DemandScreen(_: ScreenProps) {
   const { t, date } = useI18n();
@@ -145,18 +62,6 @@ export function DemandScreen(_: ScreenProps) {
             </div>
           )
         }
-      </ViewGate>
-    </Screen>
-  );
-}
-
-export function BundleScreen(_: ScreenProps) {
-  const { t } = useI18n();
-  const state = useView(views.bundles());
-  return (
-    <Screen title={t('bundle.title')} sub={t('bundle.sub')}>
-      <ViewGate state={state} pendingIcon={ICON_RING(Package)}>
-        {() => null}
       </ViewGate>
     </Screen>
   );
@@ -274,30 +179,6 @@ export function OfferDetailScreen({ param }: ScreenProps) {
             </div>
           );
         }}
-      </ViewGate>
-    </Screen>
-  );
-}
-
-export function CampaignScreen({ param }: ScreenProps) {
-  const { t } = useI18n();
-  const state = useView(views.campaign(param ?? 'current'));
-  return (
-    <Screen title={t('campaign.title')} sub={t('campaign.sub')}>
-      <ViewGate state={state} pendingIcon={ICON_RING(Megaphone)}>
-        {() => null}
-      </ViewGate>
-    </Screen>
-  );
-}
-
-export function LedgerScreen(_: ScreenProps) {
-  const { t } = useI18n();
-  const state = useView(views.ledger());
-  return (
-    <Screen title={t('ledger.title')} sub={t('ledger.sub')}>
-      <ViewGate state={state} pendingIcon={ICON_RING(TrendingUp)}>
-        {() => null}
       </ViewGate>
     </Screen>
   );

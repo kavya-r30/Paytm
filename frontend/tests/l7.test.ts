@@ -59,6 +59,11 @@ describe('fixtures (T7.4): every fixture view is valid against its contract', ()
     views.grow(),
     views.team(),
     views.memory(),
+    views.plan('p'),
+    views.campaign('c'),
+    views.ledger(),
+    views.bundles(),
+    views.run('r'),
   ];
   for (const spec of specs) {
     it(`${spec.path} → ${spec.schema}`, () => {
