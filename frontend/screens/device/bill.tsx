@@ -29,11 +29,13 @@ import {
   Toggle,
   cx,
 } from '@/components/ui/kit';
-import { apiGet } from '@/lib/api/client';
-import { useCommand } from '@/lib/api/commands';
+import { apiGet, dataMode } from '@/lib/api/client';
+import { useCommand, type CommandOutcome } from '@/lib/api/commands';
 import { useDataMode, useView } from '@/lib/api/hooks';
 import { useName } from '@/lib/api/names';
 import { views } from '@/lib/api/views';
+import { useTurn } from '@/lib/store/turn';
+import { addItemPayload } from '@/lib/catalog';
 import type { BillView, CatalogSearchView } from '@/lib/contracts';
 import { IDS, ITEMS, PATRONS } from '@/lib/fixtures/gupta';
 import { qty } from '@/lib/i18n/core';
@@ -254,6 +256,7 @@ function BillPanel({ view }: { view: BillView }) {
   const run = useCommand();
   const [picker, setPicker] = useState(false);
   const [mode, setMode] = useState<'upi' | 'cash' | 'khata'>('upi');
+  const toast = useTurn((st) => st.toast);
   const bill = view.bill;
   // GRW-4: the counter hint is owner-only and absent for holdout bills; never shown on the customer display.
   const hint = view.hint && !bill.lines.some((l) => l.item_id === view.hint!.item_id) ? view.hint : null;
@@ -269,11 +272,29 @@ function BillPanel({ view }: { view: BillView }) {
           payments: [{ mode: 'cash', amount_paise: bill.due_paise, tendered_paise: bill.due_paise }],
         });
         if (r.kind === 'done' || r.kind === 'offline') nav(`bill/${bill.id}/paid`);
+      } else if (!bill.patron_id) {
+        setPicker(true); // udhaar needs to know whose khata (LED-1)
+      } else if (dataMode() === 'fixture') {
+        nav(`khata/${bill.patron_id}`);
       } else {
-        nav(`khata/${bill.patron_id ?? ''}`);
+        // LED-2/CTR-5: the due amount goes on the customer's khata, read back at R2 before it applies
+        let account: string | null = null;
+        try {
+          account = ((await apiGet(`/v1/views/khata/${bill.patron_id}`)) as { account_id: string })
+            .account_id;
+        } catch {
+          toast({ textKey: 'bill.no_khata_account', until: null, tone: 'error' });
+          return;
+        }
+        const r = await run(
+          'counter.checkout_khata',
+          { bill_id: bill.id, account_id: account, khata_paise: bill.due_paise, payments: [] },
+          { label: t('bill.to_khata', { total: money(bill.due_paise) }) },
+        );
+        if (r.kind === 'done') nav(`bill/${bill.id}/paid`);
       }
     },
-    [bill, nav, run],
+    [bill, money, nav, run, t, toast],
   );
   useAction(
     useCallback(
@@ -377,6 +398,9 @@ function BillPanel({ view }: { view: BillView }) {
   );
 }
 
+/** One `counter.open_bill` per visit: React runs effects twice in dev, and each run used to open a bill. */
+let opening: Promise<CommandOutcome> | null = null;
+
 function NewBill() {
   const run = useCommand();
   const nav = useDeviceNav();
@@ -386,7 +410,10 @@ function NewBill() {
       nav(`bill/${IDS.BILL_ID}`);
       return;
     }
-    void run('counter.open_bill', {}).then((r) => {
+    const pending = (opening ??= run('counter.open_bill', {}).finally(() => {
+      window.setTimeout(() => (opening = null), 1000);
+    }));
+    void pending.then((r) => {
       const id = r.kind === 'done' ? (r.result.data?.bill_id as string | undefined) : undefined;
       if (id) nav(`bill/${id}`);
     });
@@ -475,7 +502,7 @@ export function BillScreen({ param }: ScreenProps) {
                         'counter.add_lines',
                         {
                           bill_id: view.bill.id,
-                          lines: [{ item_id: item.id, qty_milli: 1000, added_via: 'tapped' }],
+                          lines: [{ item_id: item.id, qty_milli: 1000, added_via: 'tap' }],
                         },
                         {
                           label: 'counter.add_lines',
@@ -569,9 +596,16 @@ export function PayScreen({ param }: ScreenProps) {
           <div className="grid grid-cols-2 gap-5">
             <Card className="flex flex-col items-center gap-4 p-8">
               <Money paise={v.bill.due_paise} className="text-amount font-extrabold" />
-              <div className="rounded-card border-4 border-line p-3">
+              {/* the QR is the rails simulator's dynamic QR: opening it is the customer scanning with UPI */}
+              <a
+                href={v.pay_token ? `/pay/${v.pay_token}` : undefined}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={t('pay.sub')}
+                className="rounded-card border-4 border-line p-3"
+              >
                 <FakeQr seed={v.bill.upi?.order_ref ?? v.bill.id} size={240} />
-              </div>
+              </a>
               <p className="text-body font-semibold text-ink-2">{v.payee_vpa}</p>
               <p className="flex items-center gap-2 text-meta text-ink-3">
                 <Smartphone size={16} /> {t('pay.on_display')}
@@ -731,10 +765,38 @@ function PatronName({ id }: { id: string }) {
   return <p className="text-body font-semibold text-ink">{useName(id)}</p>;
 }
 
+/** SCR-LEARN: a new item from a label. The fields are the owner's to confirm or type (a scan prefills them
+ * once label OCR is wired); saving is `catalog.add_item` at R2, read back before it applies. */
 export function LearnScreen(_: ScreenProps) {
   const { t, money } = useI18n();
   const run = useCommand();
-  const [price, setPrice] = useState(5500);
+  const nav = useDeviceNav();
+  const mode = useDataMode();
+  const stock = useView(views.stock());
+  const demo = mode === 'fixture';
+  const asked =
+    typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('name');
+  const [name, setName] = useState(asked ?? (demo ? 'Haldiram Bhujia 200 g' : ''));
+  const [netQty, setNetQty] = useState(demo ? '200 g' : '');
+  const [mrp, setMrp] = useState(demo ? 5500 : 0);
+  const [price, setPrice] = useState(demo ? 5500 : 0);
+  const [cost, setCost] = useState(0);
+  const categories = [...new Set((stock.data?.items ?? []).map((i) => i.category))];
+  const [category, setCategory] = useState('');
+  const chosen = category || categories[0] || 'general';
+  const ready = name.trim().length > 1 && price > 0;
+  const rupees = (value: number, set: (v: number) => void, label: string) => (
+    <label className="flex items-center justify-between border-b border-line pb-1">
+      <span className="text-body text-ink-3">{t(label)}</span>
+      <input
+        type="number"
+        min={0}
+        value={value ? value / 100 : ''}
+        onChange={(e) => set(Math.round(Number(e.target.value) * 100))}
+        className="num h-9 w-32 rounded-ground border border-line px-3 text-right text-arth font-bold"
+      />
+    </label>
+  );
   return (
     <Screen
       title={t('learn.title')}
@@ -746,42 +808,59 @@ export function LearnScreen(_: ScreenProps) {
           <Camera size={48} />
           <p className="text-body">{t('learn.camera')}</p>
         </Card>
-        <Card className="flex flex-col gap-4 p-6">
-          <SectionTitle action={<Pill tone="green">{t('learn.confidence', { pct: 92 })}</Pill>}>
+        <Card className="flex flex-col gap-2 p-5">
+          <SectionTitle
+            action={demo ? <Pill tone="green">{t('learn.confidence', { pct: 92 })}</Pill> : undefined}
+          >
             {t('learn.extracted')}
           </SectionTitle>
-          {[
-            ['learn.name', 'Haldiram Bhujia 200 g'],
-            ['learn.net_qty', '200 g'],
-            ['learn.mrp', money(5500)],
-          ].map(([k, v]) => (
-            <div key={k} className="flex justify-between border-b border-line pb-2">
-              <span className="text-body text-ink-3">{t(k!)}</span>
-              <span className="text-body font-bold">{v}</span>
-            </div>
-          ))}
-          <label className="flex items-center justify-between">
-            <span className="text-body text-ink-3">{t('learn.price')}</span>
+          <label className="flex items-center justify-between gap-3 border-b border-line pb-1">
+            <span className="text-body text-ink-3">{t('learn.name')}</span>
             <input
-              type="number"
-              value={price / 100}
-              onChange={(e) => setPrice(Math.round(Number(e.target.value) * 100))}
-              className="num h-11 w-32 rounded-ground border border-line px-3 text-right text-arth font-bold"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="h-9 min-w-0 flex-1 rounded-ground border border-line px-3 text-right text-body font-bold"
             />
           </label>
+          <label className="flex items-center justify-between gap-3 border-b border-line pb-1">
+            <span className="text-body text-ink-3">{t('learn.net_qty')}</span>
+            <input
+              value={netQty}
+              onChange={(e) => setNetQty(e.target.value)}
+              className="h-9 w-32 rounded-ground border border-line px-3 text-right text-body"
+            />
+          </label>
+          {rupees(mrp, setMrp, 'learn.mrp')}
+          {rupees(price, setPrice, 'learn.price')}
+          {rupees(cost, setCost, 'learn.cost')}
+          {categories.length > 0 && (
+            <div className="no-scrollbar flex gap-2 overflow-x-auto">
+              {categories.map((c) => (
+                <Chip key={c} active={chosen === c} onClick={() => setCategory(c)}>
+                  {c}
+                </Chip>
+              ))}
+            </div>
+          )}
           <div className="flex items-center gap-2">
             <TierChip tier="R2" />
             <span className="text-meta text-ink-3">{t('learn.readback', { price: money(price) })}</span>
           </div>
           <Button
-            size="lg"
+            disabled={!ready}
             onClick={() =>
-              void run('catalog.add_item', {
-                names: { en: 'Haldiram Bhujia 200 g' },
-                unit: 'pcs',
-                price_paise: price,
-                mrp_paise: 5500,
-              })
+              void run(
+                'catalog.add_item',
+                addItemPayload({
+                  name,
+                  pricePaise: price,
+                  mrpPaise: mrp || price,
+                  costPaise: cost || undefined,
+                  category: chosen,
+                  details: netQty ? { net_qty: netQty } : undefined,
+                }),
+                { label: name },
+              ).then((r) => r.kind === 'done' && nav('stock'))
             }
           >
             {t('learn.save')}
@@ -852,7 +931,11 @@ export function ReturnScreen({ param }: ScreenProps) {
   const nav = useDeviceNav();
   const run = useCommand();
   const state = useView(views.billPaid(param ?? IDS.PAID_BILL_ID));
+  // UI 'credit' is the contract's store_credit; quantities are whole units of each line, sent as milli
   const [refund, setRefund] = useState<'cash' | 'credit' | 'upi'>('cash');
+  const [back, setBack] = useState<Record<string, number>>({});
+  const [reason, setReason] = useState('return.changed_mind');
+  const picked = Object.entries(back).filter(([, n]) => n > 0);
   return (
     <Screen title={t('return.title')} sub={t('return.sub')}>
       <ViewGate state={state}>
@@ -865,8 +948,12 @@ export function ReturnScreen({ param }: ScreenProps) {
                   <span className="num text-meta text-ink-3">× {qty(l.qty_milli)}</span>
                   <input
                     type="number"
-                    defaultValue={0}
+                    value={back[l.id] ?? 0}
                     min={0}
+                    max={l.qty_milli / 1000}
+                    onChange={(e) =>
+                      setBack({ ...back, [l.id]: Math.min(Number(e.target.value), l.qty_milli / 1000) })
+                    }
                     className="num h-10 w-20 rounded-ground border border-line px-2 text-right"
                     aria-label={t('return.qty')}
                   />
@@ -880,14 +967,26 @@ export function ReturnScreen({ param }: ScreenProps) {
                   {t(`return.mode_${m}`)} <TierChip tier={m === 'upi' ? 'R4' : 'R2'} />
                 </Chip>
               ))}
+              <SectionTitle>{t('return.reason')}</SectionTitle>
+              <div className="flex flex-wrap gap-2">
+                {['return.changed_mind', 'return.damaged', 'return.wrong_item'].map((r) => (
+                  <Chip key={r} active={reason === r} onClick={() => setReason(r)}>
+                    {t(`${r}_label`)}
+                  </Chip>
+                ))}
+              </div>
               {refund === 'upi' ? (
                 <ArthNote>{t('return.console_pointer')}</ArthNote>
               ) : (
                 <Button
+                  disabled={picked.length === 0}
                   onClick={() =>
-                    void run('counter.return', { bill_id: v.bill.id, lines: [], refund_mode: refund }).then(
-                      () => nav('home'),
-                    )
+                    void run('counter.return', {
+                      bill_id: v.bill.id,
+                      lines: picked.map(([line_id, n]) => ({ line_id, qty_milli: Math.round(n * 1000) })),
+                      reason_key: reason,
+                      refund_mode: refund === 'credit' ? 'store_credit' : refund,
+                    }).then((r) => r.kind !== 'refused' && nav('home'))
                   }
                 >
                   {t('return.confirm')}
@@ -982,9 +1081,100 @@ export function OrdersScreen(_: ScreenProps) {
   );
 }
 
+/** ORD-2: the next step for the order's state; illegal moves are never offered (the server rejects them). */
+function OrderActions({ order }: { order: { id: string; status: string } }) {
+  const { t } = useI18n();
+  const run = useCommand();
+  const go = (type: string, payload: Record<string, unknown> = {}) =>
+    void run(type, { order_id: order.id, ...payload }, { label: type });
+  const decline = (
+    <Button
+      variant="ghost"
+      className="text-red"
+      onClick={() => go('orders.decline', { reason_key: 'order.out_of_stock' })}
+    >
+      {t('order.decline')}
+    </Button>
+  );
+  switch (order.status) {
+    case 'draft':
+      return (
+        <>
+          <Button size="lg" onClick={() => go('orders.place')}>
+            {t('order.place')}
+          </Button>
+          {decline}
+        </>
+      );
+    case 'placed':
+      return (
+        <>
+          <Button size="lg" onClick={() => go('orders.accept')}>
+            {t('order.accept')}
+          </Button>
+          {decline}
+        </>
+      );
+    case 'accepted':
+      return (
+        <Button size="lg" onClick={() => go('orders.advance', { to: 'packed' })}>
+          {t('order.pack')}
+        </Button>
+      );
+    case 'packed':
+      return (
+        <Button size="lg" onClick={() => go('orders.advance', { to: 'delivered' })}>
+          {t('order.deliver')}
+        </Button>
+      );
+    case 'delivered':
+      return (
+        <Button size="lg" onClick={() => go('orders.settle', { mode: 'paid' })}>
+          {t('order.settle_paid')}
+        </Button>
+      );
+    default:
+      return <Pill tone="green">{t(`order.status_${order.status}`)}</Pill>;
+  }
+}
+
+/** Catalog search for a substitute item (the same search the bill uses). */
+function SubstitutePicker({ onPick }: { onPick: (itemId: string) => void }) {
+  const { t } = useI18n();
+  const [q, setQ] = useState('');
+  const found = useQuery({
+    queryKey: ['catalog-search', q],
+    enabled: q.trim().length > 1,
+    queryFn: async () =>
+      (await apiGet(`/v1/catalog/search?q=${encodeURIComponent(q.trim())}`)) as CatalogSearchView,
+  });
+  return (
+    <div className="mt-3 flex flex-col gap-2 rounded-card bg-sky p-3">
+      <input
+        autoFocus
+        value={q}
+        onChange={(e) => setQ(e.target.value)}
+        placeholder={t('bill.search')}
+        className="h-11 rounded-ground border border-line bg-white px-3 text-body"
+      />
+      {(found.data?.items ?? []).slice(0, 5).map((item) => (
+        <button
+          key={item.id}
+          type="button"
+          onClick={() => onPick(item.id)}
+          className="rounded-ground bg-white px-3 py-2 text-left text-body"
+        >
+          {item.names.en ?? Object.values(item.names)[0]}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 export function OrderScreen({ param }: ScreenProps) {
   const { t } = useI18n();
   const run = useCommand();
+  const [swap, setSwap] = useState<string | null>(null);
   const state = useView(views.order(param ?? 'latest'));
   return (
     <Screen title={t('order.title')} sub={t('order.sub')}>
@@ -1004,8 +1194,27 @@ export function OrderScreen({ param }: ScreenProps) {
                   </span>
                   <span className="num text-meta text-ink-3">× {qty(l.qty_milli)}</span>
                   <Money paise={l.amount_paise} className="w-24 text-right font-bold" />
+                  {['draft', 'placed', 'accepted'].includes(v.order.status) && (
+                    <Button variant="ghost" size="sm" onClick={() => setSwap(l.id)}>
+                      {t('order.substitute')}
+                    </Button>
+                  )}
                 </div>
               ))}
+              {swap && (
+                <SubstitutePicker
+                  onPick={(item) => {
+                    const line = v.order.lines.find((x) => x.id === swap)!;
+                    setSwap(null);
+                    void run('orders.substitute', {
+                      order_id: v.order.id,
+                      line_id: line.id,
+                      item_id: item,
+                      qty_milli: line.qty_milli,
+                    });
+                  }}
+                />
+              )}
               <div className="mt-3 flex justify-between text-arth font-bold">
                 <span>{t('paid.total')}</span>
                 <Money paise={v.order.total_paise} />
@@ -1024,21 +1233,7 @@ export function OrderScreen({ param }: ScreenProps) {
                 <TierChip tier="R3" />
                 <span className="text-meta text-ink-3">{t('order.standing_note')}</span>
               </div>
-              <Button size="lg" onClick={() => void run('orders.accept', { order_id: v.order.id })}>
-                {t('order.accept')}
-              </Button>
-              <Button variant="ghost" onClick={() => void run('orders.substitute', { order_id: v.order.id })}>
-                {t('order.substitute')}
-              </Button>
-              <Button
-                variant="ghost"
-                className="text-red"
-                onClick={() =>
-                  void run('orders.decline', { order_id: v.order.id, reason_key: 'order.out_of_stock' })
-                }
-              >
-                {t('order.decline')}
-              </Button>
+              <OrderActions order={v.order} />
             </div>
           </div>
         )}

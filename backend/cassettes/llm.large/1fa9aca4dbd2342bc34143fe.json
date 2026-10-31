@@ -1,0 +1,1 @@
+{"provider": "azure", "model": "renaiscent-gpt-5.4-mini", "text": "", "data": {"tool_calls": [{"function": {"arguments": "{\"items\":[{\"name\":\"haldiram bhujia\",\"qty\":1},{\"name\":\"amul doodh\",\"qty\":2}]}", "name": "add_to_bill"}, "id": "call_a2ELPQ01JNocubOHXBNpaHLj", "type": "function"}]}}

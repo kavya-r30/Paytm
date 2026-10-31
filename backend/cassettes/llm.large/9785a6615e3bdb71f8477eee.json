@@ -1,0 +1,1 @@
+{"provider": "azure", "model": "renaiscent-gpt-5.4-mini", "text": "", "data": {"tool_calls": [{"function": {"arguments": "{\"item\":\"cheeni\"}", "name": "start_reorder"}, "id": "call_qq5x9mIylmyFsLvaA9vhfuni", "type": "function"}]}}

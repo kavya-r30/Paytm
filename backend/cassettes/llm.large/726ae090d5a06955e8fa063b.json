@@ -1,0 +1,1 @@
+{"provider": "azure", "model": "renaiscent-gpt-5.4-mini", "text": "", "data": {"tool_calls": [{"function": {"arguments": "{\"action\":\"put_on_khata\"}", "name": "bill_action"}, "id": "call_zl89sxOHVfj6uvUKoHS016SO", "type": "function"}]}}

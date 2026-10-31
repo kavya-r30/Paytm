@@ -30,6 +30,8 @@
   "toast.needs_network": "इसके लिए नेटवर्क चाहिए",
   "toast.decision_approve": "हाँ हो गया",
   "state.pending_body": "यह स्क्रीन {layer} लेयर के बाद भरेगी। कुछ गलत नहीं है।",
+  "state.none_title": "अभी यहाँ कुछ नहीं",
+  "state.none_body": "इस दुकान में अभी ऐसा कोई रिकॉर्ड नहीं है। जैसे ही Arth या आप बनाएँगे, यहाँ दिखेगा।",
   "home.greeting_morning": "सुप्रभात, {name} जी",
   "home.greeting_midday": "नमस्ते, {name} जी",
   "home.greeting_evening": "शुभ संध्या, {name} जी",
@@ -64,6 +66,7 @@
   "bill.show_qr": "QR दिखाओ · {total}",
   "bill.take_cash": "कैश लो · {total}",
   "bill.to_khata": "खाते में · {total}",
+  "bill.no_khata_account": "इस ग्राहक का खाता अभी नहीं है: पहले खाता में खोलिए।",
   "bill.park": "बिल रोक दो",
   "bill.via_voice": "बोला गया",
   "pay.upi": "UPI",
@@ -100,5 +103,12 @@
   "lang.en": "अंग्रेज़ी",
   "pin.title": "कौन बिल कर रहा है?",
   "trust.title": "भरोसा",
-  "hisaab.title": "हिसाब"
+  "hisaab.title": "हिसाब",
+  "learn.cost": "खरीद दाम",
+  "return.reason": "क्यों",
+  "return.changed_mind_label": "मन बदल गया",
+  "return.damaged_label": "खराब माल",
+  "return.wrong_item_label": "गलत चीज़",
+  "khata.amount": "कितने मिले",
+  "patron.consent_by_customer": "ग्राहक WhatsApp पर हाँ बोलेगा"
 }

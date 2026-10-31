@@ -1,0 +1,1 @@
+{"provider": "azure", "model": "renaiscent-gpt-5.4-mini", "text": "", "data": {"tool_calls": [{"function": {"arguments": "{\"item\":\"parle g\",\"qty\":20,\"unit\":\"packet\"}", "name": "receive_stock"}, "id": "call_94vOEoS7EBwUFwCXT42rZxxl", "type": "function"}]}}

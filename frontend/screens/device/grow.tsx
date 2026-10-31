@@ -16,7 +16,7 @@ import { ViewGate, type ScreenProps } from './common';
 
 export function DemandScreen(_: ScreenProps) {
   const { t, date } = useI18n();
-  const run = useCommand();
+  const nav = useDeviceNav();
   const state = useView(views.demand());
   return (
     <Screen title={t('demand.title')} sub={t('demand.sub')}>
@@ -39,9 +39,8 @@ export function DemandScreen(_: ScreenProps) {
                     <Button
                       variant="tint"
                       size="sm"
-                      onClick={() =>
-                        void run('catalog.add_item', { names: { en: c.label }, unit: 'pcs', price_paise: 0 })
-                      }
+                      // a demanded item has no price yet: the owner sets it on the Learn form (R2 read-back)
+                      onClick={() => nav(`learn?name=${encodeURIComponent(c.label)}`)}
                     >
                       {t('demand.add_catalog')} · R2
                     </Button>

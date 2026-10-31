@@ -1,0 +1,7 @@
+# Generated contracts are byte-compared by `python dev.py gen-check` and Prettier/ruff enforce LF: keep LF on
+# every checkout (Windows autocrlf turned the tree into CRLF and failed the gate).
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.db binary
+*.wav binary

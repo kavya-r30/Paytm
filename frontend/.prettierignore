@@ -3,3 +3,4 @@ node_modules
 lib/contracts
 app/tokens.css
 next-env.d.ts
+e2e-output

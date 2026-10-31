@@ -1,0 +1,1 @@
+{"provider": "azure", "model": "renaiscent-gpt-5.4-mini", "text": "", "data": {"tool_calls": [{"function": {"arguments": "{\"customer\":\"प्रिया जी\"}", "name": "customer_khata"}, "id": "call_DeZC3ehWrg1IgoKLGPLcECay", "type": "function"}]}}

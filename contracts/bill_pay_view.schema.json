@@ -356,6 +356,18 @@
         "minLength": 1,
         "maxLength": 200
       }
+    },
+    "pay_token": {
+      "description": "Rails-simulator token of the current dynamic QR: the customer's UPI app opens /pay/<token> (null before a QR is requested).",
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[0-9a-z]{26}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
     }
   },
   "required": [
@@ -363,6 +375,7 @@
     "payee_vpa",
     "alternatives",
     "exception",
-    "invalidate_on"
+    "invalidate_on",
+    "pay_token"
   ]
 }

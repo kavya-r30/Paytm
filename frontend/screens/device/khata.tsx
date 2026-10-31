@@ -2,6 +2,7 @@
 
 // J3 · Khata: SCR-KHATA, SCR-PATRON, SCR-PROMISE.
 import { CalendarClock, Eye, MessageCircle, Plus, Wallet } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { MemoryCard } from '@/components/arth/memory';
 import { ArthNote } from '@/components/arth/orb';
@@ -19,12 +20,15 @@ import {
   Toggle,
   cx,
 } from '@/components/ui/kit';
+import { apiPatch } from '@/lib/api/client';
 import { useCommand } from '@/lib/api/commands';
 import { useView } from '@/lib/api/hooks';
 import { useName } from '@/lib/api/names';
 import { views } from '@/lib/api/views';
 import type { KhataAccountView } from '@/lib/contracts';
+import { LOCALES } from '@/lib/format';
 import { qty } from '@/lib/i18n/core';
+import { newId } from '@/lib/ids';
 import { useI18n } from '@/lib/i18n/react';
 import { ViewGate, type ScreenProps } from './common';
 
@@ -86,6 +90,7 @@ function AccountPanel({ patronId }: { patronId: string }) {
   const run = useCommand();
   const nav = useDeviceNav();
   const state = useView(views.khataAccount(patronId));
+  const [received, setReceived] = useState<number | null>(null); // rupees typed; null = full balance
   return (
     <ViewGate state={state}>
       {(a) => (
@@ -136,20 +141,34 @@ function AccountPanel({ patronId }: { patronId: string }) {
             ))}
           </ul>
           {a.balance_paise > 0 && <ReminderDraft account={a} />}
-          <Button
-            variant="ghost"
-            icon={<Wallet size={18} />}
-            onClick={() =>
-              void run('ledger.record_payment', {
-                account_id: a.account_id,
-                amount_paise: a.balance_paise,
-                payment_ref: `cash-${Date.now()}`,
-                mode: 'cash',
-              })
-            }
-          >
-            {t('khata.money_received')} · <TierChip tier="R2" />
-          </Button>
+          {a.balance_paise > 0 && (
+            <div className="grid grid-cols-[96px_1fr] items-center gap-2">
+              <input
+                type="number"
+                min={1}
+                value={received ?? a.balance_paise / 100}
+                onChange={(e) => setReceived(Number(e.target.value))}
+                aria-label={t('khata.amount')}
+                className="num h-11 w-full rounded-ground border border-line px-2 text-right text-arth font-bold"
+              />
+              <Button
+                variant="ghost"
+                icon={<Wallet size={18} />}
+                disabled={(received ?? 1) <= 0}
+                onClick={() =>
+                  // LED-5: cash against the khata, read back at R2; extra money becomes an advance, never debt
+                  void run('ledger.record_payment', {
+                    account_id: a.account_id,
+                    amount_paise: Math.round((received ?? a.balance_paise / 100) * 100),
+                    payment_ref: newId('payment'),
+                    mode: 'cash',
+                  }).then(() => setReceived(null))
+                }
+              >
+                {t('khata.money_received')} · <TierChip tier="R2" />
+              </Button>
+            </div>
+          )}
         </Card>
       )}
     </ViewGate>
@@ -198,9 +217,9 @@ export function KhataScreen({ param }: ScreenProps) {
     >
       <ViewGate state={state}>
         {(k) => (
-          <div className="grid h-full grid-cols-[1fr_440px] gap-5">
+          <div className="grid h-full grid-cols-[minmax(0,1fr)_420px] gap-5">
             <div className="flex min-h-0 flex-col gap-4">
-              <Card className="flex items-center justify-between p-6">
+              <Card className="flex flex-col items-start gap-3 p-6">
                 <div>
                   <p className="text-body text-ink-3">{t('khata.total')}</p>
                   <Money
@@ -208,7 +227,8 @@ export function KhataScreen({ param }: ScreenProps) {
                     className={cx('text-amount font-extrabold text-red', blur && 'discreet')}
                   />
                 </div>
-                <Button variant="dark" icon={<Plus size={18} />}>
+                {/* LED-1: udhaar is written with its items, from a bill put on khata */}
+                <Button variant="dark" icon={<Plus size={18} />} onClick={() => nav('bill')}>
                   {t('khata.new_entry')}
                 </Button>
               </Card>
@@ -256,6 +276,7 @@ export function KhataScreen({ param }: ScreenProps) {
 }
 
 export function PatronScreen({ param }: ScreenProps) {
+  const client = useQueryClient();
   const { t, money } = useI18n();
   const nav = useDeviceNav();
   const run = useCommand();
@@ -287,25 +308,45 @@ export function PatronScreen({ param }: ScreenProps) {
             <Card className="p-5">
               <SectionTitle>{t('patron.language')}</SectionTitle>
               <p className="text-arth font-bold">{t(`lang.${p.lang}`)}</p>
-              <Button
-                variant="text"
-                onClick={() => void run('patrons.update_profile', { patron_id: p.patron_id, lang: 'hi' })}
+              <select
+                value={p.lang}
+                aria-label={t('patron.language')}
+                onChange={(e) =>
+                  // PII-safe profile route (not a bus payload): PATCH /v1/patrons
+                  void apiPatch('/v1/patrons', { patron_id: p.patron_id, lang: e.target.value }).then(() =>
+                    client.invalidateQueries({ queryKey: ['view'] }),
+                  )
+                }
+                className="mt-1 h-10 rounded-ground border border-line bg-white px-2 text-body"
               >
-                {t('common.change')}
-              </Button>
+                {LOCALES.map((l) => (
+                  <option key={l} value={l}>
+                    {t(`lang.${l}`)}
+                  </option>
+                ))}
+              </select>
             </Card>
             <Card className="col-span-2 p-5">
               <SectionTitle>{t('patron.consent')}</SectionTitle>
               {(['receipts', 'reminders', 'marketing'] as const).map((k) => (
                 <div key={k} className="flex items-center justify-between border-b border-line py-2.5">
                   <span className="text-body">{t(`patron.consent_${k}`)}</span>
-                  <Toggle
-                    on={p.consent[k]}
-                    onChange={() =>
-                      void run('consent.grant', { patron_id: p.patron_id, purpose: k, source_ref: 'counter' })
-                    }
-                    label={k}
-                  />
+                  {/* PAT-2: only the customer's own reply grants consent; the owner can record a withdrawal */}
+                  {p.consent[k] ? (
+                    <Toggle
+                      on
+                      onChange={() =>
+                        void run('consent.withdraw', {
+                          patron_id: p.patron_id,
+                          purpose: k,
+                          source_ref: newId('instr'),
+                        })
+                      }
+                      label={k}
+                    />
+                  ) : (
+                    <span className="text-meta text-ink-3">{t('patron.consent_by_customer')}</span>
+                  )}
                 </div>
               ))}
               <p className="mt-2 text-meta text-ink-3">{t('patron.consent_note')}</p>
@@ -318,7 +359,12 @@ export function PatronScreen({ param }: ScreenProps) {
               <Button
                 variant="ghost"
                 className="text-red"
-                onClick={() => void run('privacy.erase_patron', { patron_id: p.patron_id })}
+                onClick={() =>
+                  void run('privacy.erase_patron', {
+                    patron_id: p.patron_id,
+                    reason_key: 'privacy.customer_request',
+                  })
+                }
               >
                 {t('patron.erase')} · <TierChip tier="R4" />
               </Button>

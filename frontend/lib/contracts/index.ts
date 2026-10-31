@@ -104,6 +104,7 @@ import type { InsightsView } from './insights_view';
 import type { KhataAccountView } from './khata_account_view';
 import type { KhataView } from './khata_view';
 import type { KotView } from './kot_view';
+import type { LatestRefView } from './latest_ref_view';
 import type { LayerPendingView } from './layer_pending_view';
 import type { LedgerAcknowledgeEntry } from './ledger_acknowledge_entry';
 import type { LedgerAddEntry } from './ledger_add_entry';
@@ -376,6 +377,7 @@ import insights_viewSchema from './schemas/insights_view.schema.json';
 import khata_account_viewSchema from './schemas/khata_account_view.schema.json';
 import khata_viewSchema from './schemas/khata_view.schema.json';
 import kot_viewSchema from './schemas/kot_view.schema.json';
+import latest_ref_viewSchema from './schemas/latest_ref_view.schema.json';
 import layer_pending_viewSchema from './schemas/layer_pending_view.schema.json';
 import ledger_acknowledge_entrySchema from './schemas/ledger_acknowledge_entry.schema.json';
 import ledger_add_entrySchema from './schemas/ledger_add_entry.schema.json';
@@ -649,6 +651,7 @@ export type { InsightsView } from './insights_view';
 export type { KhataAccountView } from './khata_account_view';
 export type { KhataView } from './khata_view';
 export type { KotView } from './kot_view';
+export type { LatestRefView } from './latest_ref_view';
 export type { LayerPendingView } from './layer_pending_view';
 export type { LedgerAcknowledgeEntry } from './ledger_acknowledge_entry';
 export type { LedgerAddEntry } from './ledger_add_entry';
@@ -925,6 +928,7 @@ export const SCHEMAS = [
   { name: 'khata_account_view', id: 'https://arth.local/contracts/khata_account_view.schema.json', schema: khata_account_viewSchema },
   { name: 'khata_view', id: 'https://arth.local/contracts/khata_view.schema.json', schema: khata_viewSchema },
   { name: 'kot_view', id: 'https://arth.local/contracts/kot_view.schema.json', schema: kot_viewSchema },
+  { name: 'latest_ref_view', id: 'https://arth.local/contracts/latest_ref_view.schema.json', schema: latest_ref_viewSchema },
   { name: 'layer_pending_view', id: 'https://arth.local/contracts/layer_pending_view.schema.json', schema: layer_pending_viewSchema },
   { name: 'ledger_acknowledge_entry', id: 'https://arth.local/contracts/commands/ledger_acknowledge_entry.schema.json', schema: ledger_acknowledge_entrySchema },
   { name: 'ledger_add_entry', id: 'https://arth.local/contracts/commands/ledger_add_entry.schema.json', schema: ledger_add_entrySchema },
@@ -1203,6 +1207,7 @@ export interface ContractTypes {
   khata_account_view: KhataAccountView;
   khata_view: KhataView;
   kot_view: KotView;
+  latest_ref_view: LatestRefView;
   layer_pending_view: LayerPendingView;
   ledger_acknowledge_entry: LedgerAcknowledgeEntry;
   ledger_add_entry: LedgerAddEntry;

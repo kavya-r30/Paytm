@@ -28,6 +28,8 @@ import {
   injectFault,
   merchantId,
   moveClock,
+  setClockRunning,
+  currentPlay,
   playBeat,
   playScenario,
   presenterSessions,
@@ -66,6 +68,20 @@ export function DirectorApp() {
     setMerchant(merchantId());
     return () => channel.current?.close();
   }, [mode]);
+
+  // A shop restored by `python dev.py demo` (or played earlier) is ready: pick it up instead of rebuilding.
+  useEffect(() => {
+    void currentPlay()
+      .then(async (p) => {
+        if (!p.scenario || !p.merchant_id) return;
+        await presenterSessions(p.merchant_id);
+        setScenarioId(p.scenario);
+        setMerchant(p.merchant_id);
+        setPlaying(p.scenario);
+        setLog((l) => [`${new Date().toLocaleTimeString()} ${t('dir.ready', { id: p.merchant_id })}`, ...l]);
+      })
+      .catch(() => {});
+  }, [t]);
 
   const say = (s: string) => setLog((l) => [`${new Date().toLocaleTimeString()} ${s}`, ...l].slice(0, 30));
   const send = (focus: StageFocus) => channel.current?.postMessage(focus);
@@ -336,6 +352,19 @@ export function DirectorApp() {
               onClick={() => void moveClock(m).then((r) => say(t('dir.clock', { time: r.clock })))}
             >
               {t(`dir.clock_${m}`)}
+            </Button>
+          ))}
+          {[false, true].map((running) => (
+            <Button
+              key={String(running)}
+              variant="ghost"
+              size="sm"
+              icon={<Clock size={14} />}
+              onClick={() =>
+                void setClockRunning(running).then((r) => say(t('dir.clock', { time: r.clock })))
+              }
+            >
+              {t(running ? 'dir.clock_run' : 'dir.clock_freeze')}
             </Button>
           ))}
           <Button

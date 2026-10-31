@@ -1,0 +1,1 @@
+{"provider": "azure", "model": "renaiscent-gpt-5.4-mini", "text": "", "data": {"tool_calls": [{"function": {"arguments": "{}", "name": "low_stock"}, "id": "call_HORpYqbaUHirSK6fXlrnEeSI", "type": "function"}, {"function": {"arguments": "{}", "name": "forecast"}, "id": "call_ndTVPOnpn3gBIxHbz7pFHr0s", "type": "function"}]}}

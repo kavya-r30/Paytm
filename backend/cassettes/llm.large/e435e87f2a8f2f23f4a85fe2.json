@@ -1,0 +1,1 @@
+{"provider": "azure", "model": "renaiscent-gpt-5.4-mini", "text": "", "data": {"tool_calls": [{"function": {"arguments": "{\"item\":\"maggi\",\"price_rupees\":15}", "name": "change_price"}, "id": "call_8tw2Wyw4mxjxmaG6Evmw6fGZ", "type": "function"}]}}

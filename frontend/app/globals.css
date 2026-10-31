@@ -10,6 +10,15 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Desktop shows the UI at 80% (UI_ZOOM in components/shell/frame.tsx). Fixed canvases measure their fit in
+   zoomed CSS pixels, so this rule leaves them filling the window and their own 0.8 factor sets the final size;
+   phone-width windows (real phones, the stage's phone iframe) stay at 100%. */
+@media (min-width: 768px) {
+  html {
+    zoom: 0.8;
+  }
+}
+
 /* Tabular figures for every number (I3). */
 .num {
   font-variant-numeric: tabular-nums;

@@ -14,6 +14,7 @@ import { SHORT_NAME } from '@/lib/i18n/core';
 import { useI18n } from '@/lib/i18n/react';
 import { useTurn } from '@/lib/store/turn';
 import { resolveIntent } from '@/lib/voice/intents';
+import { speak, startRecording, type Recording } from '@/lib/voice/sarvam';
 import { MiniOrb, Orb, Waveform } from '../arth/orb';
 import { Avatar, Button, Skeleton, cx } from '../ui/kit';
 
@@ -145,15 +146,6 @@ export function Header({ title, sub, right }: { title: string; sub?: string; rig
   );
 }
 
-type SpeechRec = {
-  lang: string;
-  interimResults: boolean;
-  onresult: (e: { results: ArrayLike<ArrayLike<{ transcript: string }>> }) => void;
-  onend: () => void;
-  start: () => void;
-  stop: () => void;
-};
-
 /** Dispatches an in-screen action (approve_all, show_qr, …) to whichever screen listens. */
 export function emitAction(action: string) {
   window.dispatchEvent(new CustomEvent('arth:action', { detail: action }));
@@ -167,9 +159,23 @@ export function useAction(handler: (action: string) => void) {
   }, [handler]);
 }
 
-/** Text or voice turn. L4 owns real turns; until then the intent table routes locally (voice parity). */
+/** Where an envelope's `nav` points: `bill/pay` + {bill_id} is the bill's sub-route `bill/<id>/pay`. */
+function navPath(screen: string, params: Record<string, unknown> | undefined): string {
+  const param = Object.values(params ?? {})[0];
+  if (!param) return screen;
+  const [base, sub] = screen.split('/');
+  return sub ? `${base}/${String(param)}/${sub}` : `${screen}/${String(param)}`;
+}
+
+/**
+ * Text or voice turn (T4.8): every question goes to the Conductor (`POST /v1/turns`), which reads the shop's
+ * data, proposes writes through the bus and answers. The local intent table only acts on what is on screen
+ * ("QR dikhao", "cash", "teeno haan") and covers the fixture shop or a lost connection. Answers show on the
+ * Ask screen and are spoken by Bulbul; a discreet answer (one customer's dues) is shown, never said aloud.
+ */
 export function useTurnSubmit() {
   const nav = useDeviceNav();
+  const pathname = usePathname() ?? '';
   const toast = useTurn((s) => s.toast);
   const setPresence = useTurn((s) => s.setPresence);
   const { locale } = useI18n();
@@ -190,84 +196,75 @@ export function useTurnSubmit() {
   );
 
   return useCallback(
-    async (text: string) => {
+    async (input: string | { audio: string }) => {
       setPresence('thinking');
-      // In-screen actions ("QR dikhao", "Teeno haan") act on what is on screen; they never need a round trip.
-      const intent = resolveIntent(text);
-      if (dataMode() === 'fixture' || (intent?.action && !intent.screen)) {
+      const text = typeof input === 'string' ? input : null;
+      const intent = text ? resolveIntent(text) : null;
+      if (text && (dataMode() === 'fixture' || (intent?.action && !intent.screen))) {
         window.setTimeout(() => local(text), 400);
         return;
       }
+      const billId = pathname.match(/\/device\/bill\/(bill_[0-9A-Z]{26})/)?.[1];
       try {
         const env = (await apiPost(
           '/v1/turns',
-          { text, surface: 'device', lang: locale === 'xx-LONG' ? 'en' : locale },
+          {
+            ...(text ? { text } : { audio_b64: (input as { audio: string }).audio }),
+            surface: 'device',
+            ...(billId ? { bill_id: billId } : {}),
+          },
           newIdempotencyKey(),
         )) as Envelope;
         useTurn.getState().applyEnvelope(env);
-        void client.invalidateQueries({ queryKey: ['view', 'ask'] });
-        if (env.nav) {
-          const param = Object.values(env.nav.params ?? {})[0];
-          nav(param ? `${env.nav.screen}/${param}` : env.nav.screen);
-        } else if (intent?.screen) nav(intent.screen);
-        if (env.speech?.text && 'speechSynthesis' in window) {
-          const u = new SpeechSynthesisUtterance(env.speech.text);
-          u.lang = env.lang.speech;
-          u.onend = () => setPresence('idle');
-          window.speechSynthesis.speak(u);
+        void client.invalidateQueries({ queryKey: ['view'] });
+        if (env.nav) nav(navPath(env.nav.screen, env.nav.params));
+        else if (!env.tier && !pathname.startsWith('/device/ask')) nav('ask'); // show the answer
+        if (env.speech?.text && env.sensitivity !== 'discreet') await speak(env.speech.text, env.lang.speech);
+        setPresence('idle');
+      } catch (err) {
+        if (text) local(text);
+        else {
+          setPresence('idle');
+          toast({ textKey: 'dock.not_heard', until: null, tone: 'info' });
         }
-      } catch {
-        local(text);
+        if (!(err instanceof Error)) throw err;
       }
     },
-    [client, local, locale, nav, setPresence],
+    [client, local, nav, pathname, setPresence, toast],
   );
 }
 
 export function AskDock({ chips = [] }: { chips?: { label: string; text: string }[] }) {
-  const { t, locale } = useI18n();
+  const { t } = useI18n();
   const live = useTurn((s) => s.live);
   const followups = useTurn((s) => s.followups);
-  const { startVoice, stopVoice, partial } = useTurn.getState();
+  const { startVoice, stopVoice } = useTurn.getState();
   const submit = useTurnSubmit();
   const [text, setText] = useState('');
-  const [rec, setRec] = useState<SpeechRec | null>(null);
+  const [rec, setRec] = useState<Recording | null>(null);
 
   const allChips = [...followups.map((f) => ({ label: t(f.label_key), text: f.turn_text })), ...chips].slice(
     0,
     3,
   );
 
-  const startMic = () => {
+  // Saaras v4 hears the owner (G0): record until the stop button, then send the audio as the turn
+  const startMic = async () => {
     startVoice();
-    const W = window as unknown as {
-      SpeechRecognition?: new () => SpeechRec;
-      webkitSpeechRecognition?: new () => SpeechRec;
-    };
-    const Ctor = W.SpeechRecognition ?? W.webkitSpeechRecognition;
-    if (!Ctor) return;
-    const r = new Ctor();
-    r.lang = locale === 'en' ? 'en-IN' : 'hi-IN';
-    r.interimResults = true;
-    let heard = '';
-    r.onresult = (e) => {
-      heard = Array.from(e.results)
-        .map((res) => res[0]?.transcript ?? '')
-        .join(' ');
-      partial(heard);
-    };
-    r.onend = () => {
+    try {
+      setRec(await startRecording());
+    } catch {
       stopVoice();
-      if (heard) submit(heard);
-    };
-    r.start();
-    setRec(r);
+      useTurn.getState().toast({ textKey: 'dock.mic_blocked', until: null, tone: 'error' });
+    }
   };
-  const stopMic = () => {
-    rec?.stop();
-    stopVoice();
-    if (!rec && live.heard) submit(live.heard);
+  const stopMic = async () => {
+    const r = rec;
     setRec(null);
+    stopVoice();
+    const audio = r ? await r.stop() : null;
+    if (audio) void submit({ audio });
+    else if (live.heard) void submit(live.heard);
   };
 
   if (live.active) {
@@ -285,7 +282,7 @@ export function AskDock({ chips = [] }: { chips?: { label: string; text: string 
         )}
         <button
           type="button"
-          onClick={stopMic}
+          onClick={() => void stopMic()}
           aria-label={t('dock.stop')}
           className="flex h-[52px] w-[52px] items-center justify-center rounded-chip bg-paytm-blue text-midnight"
         >
@@ -328,13 +325,39 @@ export function AskDock({ chips = [] }: { chips?: { label: string; text: string 
         />
         <button
           type="button"
-          onClick={startMic}
+          onClick={() => void startMic()}
           aria-label={t('dock.mic')}
           className="flex h-12 w-12 items-center justify-center rounded-chip bg-paytm-blue text-midnight"
         >
           <Mic size={22} />
         </button>
       </form>
+    </div>
+  );
+}
+
+/**
+ * Arth's last answer on the screen it opened (forecast, khata, stock...): Arth's words in the sky band with
+ * the mini orb (I3 rule 2). The Ask screen shows the whole conversation instead; the caption clears itself.
+ */
+function AnswerCaption() {
+  const envelope = useTurn((s) => s.envelope);
+  const pathname = usePathname() ?? '';
+  const [hidden, setHidden] = useState<string | null>(null);
+  const turn = envelope?.turn_id ?? null;
+  useEffect(() => {
+    if (!turn) return;
+    const id = window.setTimeout(() => setHidden(turn), 25_000);
+    return () => window.clearTimeout(id);
+  }, [turn]);
+  if (!envelope?.speech?.text || !turn || hidden === turn || pathname.startsWith('/device/ask')) return null;
+  return (
+    <div className="mx-8 mb-2 flex items-start gap-3 rounded-ground bg-sky px-4 py-3">
+      <MiniOrb state="speaking" />
+      <p className="min-w-0 flex-1 text-arth leading-snug text-ink">{envelope.speech.text}</p>
+      <button type="button" aria-label="close" onClick={() => setHidden(turn)} className="text-ink-3">
+        <X size={18} />
+      </button>
     </div>
   );
 }
@@ -360,6 +383,7 @@ export function Screen({
   return (
     <div className="flex h-full min-w-0 flex-1 flex-col">
       <Header title={title} sub={sub} right={right} />
+      <AnswerCaption />
       <main className={cx('no-scrollbar min-h-0 flex-1 overflow-y-auto px-8 pb-4 pt-2', className)}>
         {children}
       </main>

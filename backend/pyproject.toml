@@ -59,6 +59,7 @@ select = ["E", "F", "I", "B", "UP", "DTZ"]
 # Message catalogues and prompt text: one entry per line reads better than wrapped strings.
 "arth/ai/prompts.py" = ["E501"]
 "arth/ai/templates.py" = ["E501"]
+"arth/ai/agent.py" = ["E501"]  # tool descriptions and the system prompt
 
 [tool.mypy]
 python_version = "3.12"

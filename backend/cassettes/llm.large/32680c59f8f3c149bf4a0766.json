@@ -1,0 +1,1 @@
+{"provider": "azure", "model": "renaiscent-gpt-5.4-mini", "text": "", "data": {"tool_calls": [{"function": {"arguments": "{\"customer\":\"Meena\",\"items\":[{\"name\":\"surf excel\",\"qty\":1},{\"name\":\"lux soap\",\"qty\":2}]}", "name": "add_to_bill"}, "id": "call_FLEb11xP8y7nOIF76p0fHHkj", "type": "function"}]}}

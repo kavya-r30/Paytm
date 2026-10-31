@@ -188,6 +188,21 @@ export async function apiPost(path: string, body: unknown, idempotencyKey?: stri
   return parse(res);
 }
 
+/** PII-safe profile routes (PATCH /v1/patrons): identifying fields never become bus payloads. */
+export async function apiPatch(path: string, body: unknown): Promise<unknown> {
+  let res: Response;
+  try {
+    res = await fetch(`${API_BASE}${path}`, {
+      method: 'PATCH',
+      headers: headers({ 'Content-Type': 'application/json', 'Idempotency-Key': newIdempotencyKey() }),
+      body: JSON.stringify(body),
+    });
+  } catch (e) {
+    throw new NetworkError(e);
+  }
+  return parse(res);
+}
+
 export function newIdempotencyKey(): string {
   return typeof crypto !== 'undefined' && 'randomUUID' in crypto
     ? crypto.randomUUID()
