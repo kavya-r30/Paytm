@@ -17,7 +17,7 @@ import { useGateText } from '../device/today';
 export const EVIDENCE_TABS = ['trace', 'playbooks', 'tools', 'ai', 'tables', 'logs', 'health'] as const;
 export type EvidenceTab = (typeof EVIDENCE_TABS)[number];
 
-type Span = { name: string; ms: number; cost: number; mode: string };
+type Span = { name: string; kind?: string; ms: number; cost: number; mode: string };
 
 function spansFrom(items: StreamItem[], mode: string): Span[] {
   const live = items
@@ -28,8 +28,13 @@ function spansFrom(items: StreamItem[], mode: string): Span[] {
       const attrs = (i.data.attrs ?? {}) as Record<string, unknown>;
       return {
         name: String(i.data.name ?? i.type),
-        ms: Number(i.data.duration_ms ?? i.data.ms ?? 0),
-        cost: Number(attrs.cost_paise ?? 0),
+        kind: String(i.data.kind ?? ''),
+        // the span bus sends dur_ms and a top-level cost_paise (core/spans.py)
+        // LLM spans record the provider round trip in attrs.latency_ms (the span wraps only the record)
+        ms: Math.round(
+          Number(attrs.latency_ms ?? 0) || Number(i.data.dur_ms ?? i.data.duration_ms ?? i.data.ms ?? 0),
+        ),
+        cost: Number(i.data.cost_paise ?? attrs.cost_paise ?? 0),
         mode: String(i.data.mode ?? attrs.mode ?? 'live'),
       };
     });
@@ -123,7 +128,7 @@ function Tools({ spans }: { spans: Span[] }) {
 
 function AiCalls({ spans }: { spans: Span[] }) {
   const { t } = useI18n();
-  const calls = spans.filter((s) => !s.name.startsWith('tool') && s.cost > 0);
+  const calls = spans.filter((s) => s.kind === 'llm' || (!s.name.startsWith('tool') && s.cost > 0));
   return (
     <table className="w-full text-meta">
       <thead className="text-left text-ink-3">

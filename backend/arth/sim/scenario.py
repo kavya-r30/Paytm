@@ -145,6 +145,7 @@ class ScenarioRunner:
                 seed=world.get("seed", 1),
                 size=world.get("size", "micro"),
                 patrons=world.get("patrons", 8),
+                name=world.get("name"),
                 key=key,
             )
             manifest = self.call(WorldBuilder(self.state.sim, self.state.patrons, spec).build)

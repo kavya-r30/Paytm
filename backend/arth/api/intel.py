@@ -36,7 +36,8 @@ async def forecast(request: Request, session: Actor, metric: str = "sales") -> d
     state = request.app.state
     async with state.db.read() as conn:
         repo = Repository(conn, session.merchant_id)
-        result = await sales_forecast(repo, state.clock, state.calendar)
+        # 10 days ahead: far enough to show the next festival (Diwali is 9 days after the demo's 30 Oct)
+        result = await sales_forecast(repo, state.clock, state.calendar, horizon=12)
         items = await item_forecast(repo, state.clock) if metric == "items" else []
     return {
         **result,

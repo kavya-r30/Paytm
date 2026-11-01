@@ -3,7 +3,8 @@
 
 Usage: python dev.py <target> [<target> ...]
 Targets: setup, gen, gen-check, lint, typecheck, test, check, build-web, api, web, seed, scenario, demo-check, ai-smoke,
-e2e, demo (kirana stage demo: restore the saved shop in seconds, or build and save it once)
+e2e, demo
+(demo = kirana stage demo: restores the saved shop in seconds; `-- --fresh` rebuilds it)
 (check = gen-check, lint, typecheck, test; gen-check fails when generated contract code is stale)
 """
 
@@ -244,10 +245,14 @@ def demo() -> None:
             if exc.code != 404:
                 raise
     if restored is None:
-        print("demo: building the Gupta Diwali kirana shop once (about a minute)...")
-        post("/v1/director/play", {"scenario": "gupta_diwali"}, timeout=900)
-        post("/v1/director/snapshot", {"name": name})
-    print(f"demo: kirana shop ready in {time.monotonic() - started:.1f} s ({'restored' if restored else 'built and saved'})")
+        # built in a clean throw-away database (fast, one shop), 40 days of history so forecasts work,
+        # with Night Shift already run so Today opens with the owner's checklist; then restored here
+        print("demo: building the Gupta Diwali kirana shop (40 days of history) in a clean database...")
+        if _call("uv", "run", "python", "-m", "arth.tools.build_demo", "--name", name, cwd=BACKEND):
+            sys.exit("demo: building the shop failed (see above)")
+        post("/v1/director/restore", {"name": name})
+    how = "restored" if restored else "built, saved and restored"
+    print(f"demo: kirana shop ready in {time.monotonic() - started:.1f} s ({how})")
     print("  Stage (device + phones + logs): http://localhost:3000/stage")
     print("  Director (beats, clock, faults): http://localhost:3000/director  -> press Next beat")
     print("  Device alone:                    http://localhost:3000/device/home")

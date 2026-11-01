@@ -1383,5 +1383,6 @@
   "provenance.gates": "Approvals",
   "provenance.catalog": "Catalog",
   "predicate.cycle.days": "buys every (days)",
-  "memory.source_agent": "Arth's helper"
+  "memory.source_agent": "Arth's helper",
+  "dock.connecting": "Connecting to your shop…"
 }

@@ -78,6 +78,13 @@ export function DirectorApp() {
         setScenarioId(p.scenario);
         setMerchant(p.merchant_id);
         setPlaying(p.scenario);
+        // beats the saved demo already played (Night Shift): shown as passed, Next beat continues after them
+        const beats = all.find((s) => s.id === p.scenario)?.beats ?? [];
+        const done = beats.map((b, i) => (p.done?.includes(b.id) ? i : -1)).filter((i) => i >= 0);
+        if (done.length) {
+          setStatus(Object.fromEntries(done.map((i) => [i, 'pass' as Status])));
+          setBeat(Math.max(...done));
+        }
         setLog((l) => [`${new Date().toLocaleTimeString()} ${t('dir.ready', { id: p.merchant_id })}`, ...l]);
       })
       .catch(() => {});

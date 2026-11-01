@@ -357,7 +357,11 @@ async def snapshot(request: Request, body: SnapshotBody) -> dict[str, Any]:
         meta["merchant_id"] = request.app.state.default_merchant
     playing = getattr(request.app.state, "director_play", None)
     if playing:  # the Director can go on beat by beat after a restore, without rebuilding the world
-        meta["play"] = {"scenario": playing["scenario"]["scenario"], "saved": playing["runner"].saved}
+        meta["play"] = {
+            "scenario": playing["scenario"]["scenario"],
+            "saved": playing["runner"].saved,
+            "done": playing.get("done", []),  # beats already played: the Director continues after them
+        }
     path.with_suffix(".json").write_text(json.dumps(meta, default=str))
     return {"name": body.name, "clock": iso_utc(request.app.state.clock.now())}
 
@@ -374,7 +378,7 @@ def _resume_play(request: Request, play: dict[str, Any]) -> None:
     state.sessions[CONSOLE] = Session(mid, owner, "owner", channel="console", step_up=True)
     state.sessions[DEVICE] = Session(mid, owner, "owner", channel="device")
     scenario = load(SCENARIOS_DIR / play["scenario"] / "scenario.yaml")
-    state.director_play = {"scenario": scenario, "runner": runner}
+    state.director_play = {"scenario": scenario, "runner": runner, "done": list(play.get("done", []))}
 
 
 @router.post("/v1/director/restore", dependencies=director)
@@ -417,6 +421,9 @@ async def scenarios() -> dict[str, Any]:
 
 class PlayBody(BaseModel):
     scenario: str = Field(pattern=r"^[a-z0-9_]{1,60}$")
+    # demo builds only: more history (forecasts need >= 14 days of sales) and the shop's display name
+    days: int | None = Field(None, ge=1, le=120)
+    shop_name: str | None = Field(None, min_length=1, max_length=60)
 
 
 class BeatBody(BaseModel):
@@ -434,6 +441,10 @@ async def play(request: Request, body: PlayBody) -> dict[str, Any]:
     if not path.exists():
         raise refused(CommandError("director.scenario_not_found"), 404)
     scenario = load(path)
+    if body.days or body.shop_name:
+        world = dict(scenario.get("world") or {})
+        world.update({k: v for k, v in (("days", body.days), ("name", body.shop_name)) if v})
+        scenario = {**scenario, "world": world}
     request.app.state.clock.freeze()  # beats move time explicitly; the presenter may run it again
     runner = ScenarioRunner(LiveClient(request.app))
     import secrets
@@ -453,8 +464,12 @@ async def playing(request: Request) -> dict[str, Any]:
     """What the Director can continue: a scenario played or restored (`python dev.py demo`) on this server."""
     play = getattr(request.app.state, "director_play", None)
     if play is None:
-        return {"scenario": None, "merchant_id": None}
-    return {"scenario": play["scenario"]["scenario"], "merchant_id": play["runner"].saved["merchant_id"]}
+        return {"scenario": None, "merchant_id": None, "done": []}
+    return {
+        "scenario": play["scenario"]["scenario"],
+        "merchant_id": play["runner"].saved["merchant_id"],
+        "done": play.get("done", []),
+    }
 
 
 @router.post("/v1/director/play/beat", dependencies=director)
@@ -490,6 +505,7 @@ async def play_beat(request: Request, body: BeatBody) -> dict[str, Any]:
         # e.g. a beat replayed out of order (its bill is already closed): report it so the presenter restores
         error = str(exc) if isinstance(exc, AssertionError) else f"{type(exc).__name__}: {exc}"
         return {"beat_id": body.beat_id, "ok": False, "error": error[:500], "snapshot": snapshot}
+    playing.setdefault("done", []).append(body.beat_id)
     return {"beat_id": body.beat_id, "ok": True, "ms": ms, "snapshot": snapshot}
 
 

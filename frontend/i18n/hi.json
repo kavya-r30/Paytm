@@ -110,5 +110,6 @@
   "return.damaged_label": "खराब माल",
   "return.wrong_item_label": "गलत चीज़",
   "khata.amount": "कितने मिले",
-  "patron.consent_by_customer": "ग्राहक WhatsApp पर हाँ बोलेगा"
+  "patron.consent_by_customer": "ग्राहक WhatsApp पर हाँ बोलेगा",
+  "dock.connecting": "दुकान से जुड़ रहा हूँ…"
 }

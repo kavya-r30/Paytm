@@ -391,6 +391,7 @@ class CommandBus:
                 scope = json.loads(gate["scope"])
                 conditions = json.loads(gate["conditions"])
                 session = Session(**scope["session"])
+                repo.session = session  # condition providers check who asked (e.g. owner-only manual reminders)
                 if gate["scope_hash"] != scope_hash(
                     scope["type"], scope["payload"], conditions
                 ) or not await self._conditions(repo, scope, conditions):

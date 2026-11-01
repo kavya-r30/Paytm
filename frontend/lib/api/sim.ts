@@ -163,7 +163,11 @@ export function playScenario(scenario: string) {
 
 /** A scenario already played or restored on the server (`python dev.py demo`): the Director continues it. */
 export function currentPlay() {
-  return directorGet('/v1/director/play') as Promise<{ scenario: string | null; merchant_id: string | null }>;
+  return directorGet('/v1/director/play') as Promise<{
+    scenario: string | null;
+    merchant_id: string | null;
+    done?: string[];
+  }>;
 }
 
 export type BeatResult = { beat_id: string; ok: boolean; ms?: number; error?: string; snapshot: string };

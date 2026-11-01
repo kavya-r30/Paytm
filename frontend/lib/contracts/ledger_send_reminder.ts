@@ -9,4 +9,8 @@ export interface LedgerSendReminder {
    * An i18n message key: two or more dot-separated segments, e.g. chip.aaj_kitna_aaya.
    */
   template_key: string;
+  /**
+   * The owner sends this reminder now, by hand: quiet hours, weekly cap, minimum age and spacing do not apply (consent, a due balance and no dispute still do; agents cannot set it).
+   */
+  manual?: boolean;
 }

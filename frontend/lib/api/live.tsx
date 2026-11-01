@@ -1,6 +1,7 @@
 'use client';
 
 import { QueryClient, QueryClientProvider, useQueryClient } from '@tanstack/react-query';
+import { create } from 'zustand';
 import { useEffect, useState, type ReactNode } from 'react';
 import { useI18n } from '../i18n/react';
 import { useStream, useTurn } from '../store/turn';
@@ -82,38 +83,46 @@ function StreamConnector() {
  */
 let connecting = false;
 
+/** Whether the surface may take a turn yet: false while it is still connecting itself to the backend (a query
+ * typed then would be answered by the fixture shop, or lost in the reload that switches to live data). */
+export const useLink = create<{ ready: boolean }>(() => ({ ready: false }));
+const ready = () => useLink.setState({ ready: true });
+
 function LiveBootstrap() {
   const { t } = useI18n();
   const [problem, setProblem] = useState<'unreachable' | 'no_shop' | null>(null);
   useEffect(() => {
-    if (new URLSearchParams(window.location.search).get('fixtures') === '1') return;
-    if (window.self !== window.top) return; // the stage hands its iframes their sessions in the URL
+    if (new URLSearchParams(window.location.search).get('fixtures') === '1') return ready();
+    if (window.self !== window.top) return ready(); // the stage hands its iframes their sessions in the URL
     void (async () => {
       const health = (await fetch(`${API_BASE}/healthz`)
         .then((r) => r.json())
         .catch(() => null)) as { mode?: string } | null;
       if (!health) {
         setProblem('unreachable'); // API down, wrong URL, or this page's origin is not allowed (CORS)
-        return;
+        return ready();
       }
       const token = sessionToken();
       if (token) {
         const res = await fetch(`${API_BASE}/v1/views/home`, {
           headers: { Authorization: `Bearer ${token}` },
         }).catch(() => null);
-        if (!res) return setProblem('unreachable');
-        if (res.status !== 401) return;
+        if (!res) {
+          setProblem('unreachable');
+          return ready();
+        }
+        if (res.status !== 401) return ready(); // a working live session: turns go straight to Arth
         setSessionToken(null, 'arth.session');
         setSessionToken(null, 'arth.session.console');
       }
-      if (health.mode !== 'dev') return; // outside dev the PIN screen logs in
+      if (health.mode !== 'dev') return ready(); // outside dev the PIN screen logs in
       if (connecting) return; // React runs effects twice in dev: one session request per page load
       connecting = true;
       try {
         await presenterSessions();
       } catch {
         setProblem('no_shop'); // no shop yet (or several): the Director builds or picks one
-        return;
+        return ready();
       }
       window.location.reload();
     })();

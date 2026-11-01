@@ -10,6 +10,10 @@
     },
     "template_key": {
       "$ref": "../common.schema.json#/definitions/MessageKey"
+    },
+    "manual": {
+      "type": "boolean",
+      "description": "The owner sends this reminder now, by hand: quiet hours, weekly cap, minimum age and spacing do not apply (consent, a due balance and no dispute still do; agents cannot set it)."
     }
   },
   "required": [

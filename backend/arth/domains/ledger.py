@@ -342,16 +342,25 @@ def register_ledger(bus: CommandBus) -> None:
         return {"promise_id": identity}
 
     async def reminder_context(repo: Repository, payload: dict[str, Any]) -> PolicyContext:
+        # The owner may send a dues reminder by hand at any time ("manual"): quiet hours, the weekly cap, the
+        # minimum age, purchase day, an open promise and spacing guard Arth's own Collections, not the owner.
+        # Consent, a due balance and no dispute always apply; agents never send manual reminders.
+        manual = bool(payload.get("manual"))
+        if manual and (
+            repo.session is None or repo.session.role != "owner" or repo.session.actor_kind == "agent"
+        ):
+            raise CommandError("ledger.manual_owner_only")
         view = await account_view(repo, payload["account_id"], bus.clock)
         context = await outbound_context(repo, bus.clock, view["patron_id"], "reminders")
-        if (
-            not context.consent
-            or context.weekly_contacts >= bus.policy.policies.reminders.per_patron_per_week
+        if not context.consent or (
+            not manual and context.weekly_contacts >= bus.policy.policies.reminders.per_patron_per_week
         ):
             return context
         if view["balance_paise"] <= 0 or any(r["status"] == "disputed" for r in view["entries"]):
             raise CommandError("ledger.reminder_frozen")
         today = bus.clock.now_ist().date()
+        if manual:
+            return await reminder_policy(repo, view, context, flags=("owner_manual",))
         purchases = [r for r in view["entries"] if r["amount_paise"] > r["allocated_paise"]]
         if not purchases or min(
             parse_iso(r["occurred_at"]).astimezone(bus.clock.now_ist().tzinfo).date() for r in purchases
@@ -390,6 +399,13 @@ def register_ledger(bus: CommandBus) -> None:
             and (bus.clock.now() - parse_iso(recent[0]["occurred_at"])).days < cadence[len(recent)]
         ):
             raise CommandError("ledger.reminder_cadence")
+        return await reminder_policy(repo, view, context)
+
+    async def reminder_policy(
+        repo: Repository, view: dict[str, Any], context: PolicyContext, flags: tuple[str, ...] = ()
+    ) -> PolicyContext:
+        """The R3 gate's facts: the approval re-checks the balance and the customer's latest instruction."""
+        ids = await related_ids(repo, view["patron_id"])
         instructions = await repo.select(
             consents, consents.c.patron_id.in_(ids), consents.c.purpose == "reminders"
         )
@@ -407,6 +423,7 @@ def register_ledger(bus: CommandBus) -> None:
             consent=True,
             weekly_contacts=context.weekly_contacts,
             sensitive=True,
+            flags=flags,
         )
 
     async def mint_link(repo: Repository, account: dict[str, Any], template_key: str) -> dict[str, Any]:
@@ -428,7 +445,7 @@ def register_ledger(bus: CommandBus) -> None:
     async def reminder(repo: Repository, payload: dict[str, Any]) -> dict[str, Any]:
         owner_only(repo)
         account = await account_row(repo, payload["account_id"])
-        row = await mint_link(repo, account, payload["template_key"])
+        row = await mint_link(repo, account, payload["template_key"])  # `manual` only shaped the policy
         identity, link = row["id"], row["link_id"]
         report = {"balance_paise": row["balance_paise"]}
         await reserve(repo, account["patron_id"], "reminders")

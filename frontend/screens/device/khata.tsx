@@ -71,9 +71,11 @@ function ReminderDraft({ account }: { account: KhataAccountView }) {
           className="flex-1"
           icon={<MessageCircle size={18} />}
           onClick={() =>
+            // the owner sends it by hand: any hour, beyond Arth's spacing rules (consent still required)
             void run('ledger.send_reminder', {
               account_id: account.account_id,
               template_key: `reminder.${tone}`,
+              manual: true,
             })
           }
         >

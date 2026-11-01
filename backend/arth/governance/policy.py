@@ -65,7 +65,12 @@ class PolicyEngine:
         if context.purpose:
             if not context.consent:
                 return Decision("policy.consent")
-            if in_window(quiet.start, quiet.end):
+            # the owner's own reminder, sent by hand, may go at any hour and beyond the weekly cap; consent
+            # (above) and the R3 "ask twice" still apply. Arth's automatic outreach never carries this flag.
+            by_owner = (
+                "owner_manual" in context.flags and session.role == "owner" and session.actor_kind != "agent"
+            )
+            if in_window(quiet.start, quiet.end) and not by_owner:
                 return Decision("policy.quiet_hours")
             cap = (
                 self.policies.contact_caps.marketing_per_patron_per_week
@@ -74,7 +79,7 @@ class PolicyEngine:
                 if context.purpose == "reminders"
                 else None
             )
-            if cap is not None and context.weekly_contacts >= cap:
+            if cap is not None and context.weekly_contacts >= cap and not by_owner:
                 return Decision("policy.contact_cap")
             if tier == "R1":
                 valid = (

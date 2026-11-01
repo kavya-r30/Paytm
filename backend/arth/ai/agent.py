@@ -14,6 +14,8 @@ from __future__ import annotations
 
 import json
 import re
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 from datetime import date, timedelta
 from typing import TYPE_CHECKING, Any
 
@@ -166,7 +168,7 @@ TOOLS = [
     ),
     _fn(
         "forecast_week",
-        "Sales forecast for each of the next 7 days with festival days marked. Use to plan stock and staff "
+        "Sales forecast for each of the next 12 days with festival days marked (covers Diwali week). Use to plan stock and staff "
         "for a festival or a busy week.",
     ),
     _fn(
@@ -544,14 +546,14 @@ class ShopAgent:
                 ],
             }
         if name == "forecast_week":
-            result = await self.read(sales_forecast, self.clock, self.c.calendar, await self.city())
+            result = await self.read(sales_forecast, self.clock, self.c.calendar, await self.city(), 12)
             if result["status"] != "ready":
                 return {"ready": False, "reason": "not enough history yet"}
             return {
                 "ready": True,
                 "days": [
                     {"date": d["date"], "p50_paise": round(d["p50_paise"], -3), "festive": d["festive"]}
-                    for d in result["days"][:7]
+                    for d in result["days"][:12]
                 ],
             }
         if name == "growth_options":
@@ -709,9 +711,10 @@ class ShopAgent:
                 if account is None:
                     return {"done": False, "reason": f"no khata found for {args.get('customer')}"}
                 if name == "send_khata_reminder":
-                    payload = {
+                    payload = {  # the owner asked: a manual reminder (any hour; consent still required)
                         "account_id": account,
                         "template_key": f"reminder.{args.get('tone') or 'gentle'}",
+                        "manual": True,
                     }
                     return await self.gate(
                         await self.c.submit(session, "ledger.send_reminder", payload, step)
@@ -866,11 +869,16 @@ class ShopAgent:
                     }
                 )
                 self.facts.append(given)
-                output = (
-                    await self.action(name, args, text, bill_id, key)
-                    if name not in READS
-                    else await self.tool(name, args)
-                )
+                spans = getattr(self.c.router, "spans", None)
+                async with spans.span("tool", "tool." + name) if spans else _null() as trace:
+                    output = (
+                        await self.action(name, args, text, bill_id, key)
+                        if name not in READS
+                        else await self.tool(name, args)
+                    )
+                    if trace is not None:  # the Tools tab: typed input and the outcome (names masked)
+                        trace["input"] = vault.mask(json.dumps(args, ensure_ascii=False, default=str))[:300]
+                        trace["ok"] = bool(output.get("done", True)) if isinstance(output, dict) else True
                 output = self.money(output)
                 self.facts.append(output)
                 messages.append(
@@ -906,3 +914,8 @@ class ShopAgent:
             **({"presence": {"state": "needs_you"}} if self.tier in {"R2", "R3"} else {}),
         )
         return env, "agent:" + (",".join(dict.fromkeys(self.used)) or "chat")
+
+
+@asynccontextmanager
+async def _null() -> AsyncIterator[None]:
+    yield None

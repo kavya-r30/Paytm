@@ -6,8 +6,9 @@ import asyncio
 import contextlib
 import json
 import logging
-from collections.abc import AsyncIterator
-from contextlib import asynccontextmanager
+from collections.abc import AsyncIterator, Iterator
+from contextlib import asynccontextmanager, contextmanager
+from contextvars import ContextVar
 from dataclasses import dataclass, field
 from time import perf_counter
 from typing import Any, Literal
@@ -22,6 +23,21 @@ from arth.core.tables import spans as spans_table
 log = logging.getLogger(__name__)
 Mode = Literal["live", "replay", "none"]
 Status = Literal["ok", "error", "cancelled"]
+
+# The turn or run a span belongs to: its shop (the SSE stream only sends a shop its own spans) and one trace
+# id, so every step of a turn (LLM calls, tools, policy) lands in the same Trace waterfall.
+SPAN_CONTEXT: ContextVar[dict[str, str] | None] = ContextVar("arth_span_context", default=None)
+
+
+@contextmanager
+def span_context(merchant_id: str, trace_id: str | None = None) -> Iterator[str]:
+    trace = trace_id or new_id("trace")
+    token = SPAN_CONTEXT.set({"merchant_id": merchant_id, "trace_id": trace})
+    try:
+        yield trace
+    finally:
+        SPAN_CONTEXT.reset(token)
+
 
 BATCH_SIZE = 50
 BATCH_WINDOW_S = 0.1
@@ -238,7 +254,8 @@ class SpanBus:
         mode: Mode = "none",
     ) -> AsyncIterator[SpanAttrs]:
         span_id = new_id("span")
-        handle = SpanAttrs(span_id, trace_id or new_id("trace"))
+        context = SPAN_CONTEXT.get() or {}
+        handle = SpanAttrs(span_id, trace_id or context.get("trace_id") or new_id("trace"))
         start_at = iso_utc(self.clock.now())
         started = perf_counter()
         status: Status = "ok"
@@ -253,6 +270,8 @@ class SpanBus:
             handle.attrs["error"] = _error_text(exc)
             raise
         finally:
+            if "merchant_id" not in handle.attrs and context.get("merchant_id"):
+                handle.attrs["merchant_id"] = context["merchant_id"]
             try:
                 await self.emit(
                     Span(

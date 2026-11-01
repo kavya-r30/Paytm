@@ -19,6 +19,7 @@ from arth.ai.tables import turns
 from arth.ai.templates import render
 from arth.core.clock import iso_utc
 from arth.core.ids import new_id
+from arth.core.spans import span_context
 from arth.domains.catalog import public_item
 from arth.domains.commerce_tables import bills
 from arth.domains.counter import bill_state
@@ -98,6 +99,12 @@ class Conductor:
         }
 
     async def handle(
+        self, session: Session, text: str, surface: str, *, bill_id: str | None = None, key: str | None = None
+    ) -> dict[str, Any]:
+        with span_context(session.merchant_id):  # every LLM, tool and policy span of this turn
+            return await self._handle(session, text, surface, bill_id=bill_id, key=key)
+
+    async def _handle(
         self, session: Session, text: str, surface: str, *, bill_id: str | None = None, key: str | None = None
     ) -> dict[str, Any]:
         settings = await self.read(session.merchant_id, settings_view)

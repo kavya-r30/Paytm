@@ -1,0 +1,1 @@
+{"provider": "azure", "model": "renaiscent-gpt-5.4-mini", "text": "", "data": {"tool_calls": [{"function": {"arguments": "{\"customer\":\"meena\",\"items\":[{\"name\":\"maggi\",\"qty\":2},{\"name\":\"tata namak\",\"qty\":1}]}", "name": "add_to_bill"}, "id": "call_VC9497FGStWUy4YkYUcbVJoN", "type": "function"}]}}

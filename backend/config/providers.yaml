@@ -3,17 +3,17 @@ roles:
   # large model is outside the key's tier (403), so it stays only as the OCR provider.
   llm.fast:
     chain:
-      - { provider: azure, model: renaiscent-gpt-5.4-mini, timeout_ms: 4000, json: true }
+      - { provider: azure, model: renaiscent-gpt-5.4-mini, timeout_ms: 12000, json: true }
       - { provider: groq, model: openai/gpt-oss-20b, timeout_ms: 2500, json: true }
       - { provider: cassette }
   llm.large:
     chain:
-      - { provider: azure, model: renaiscent-gpt-5.4-mini, timeout_ms: 4000, json: true }
+      - { provider: azure, model: renaiscent-gpt-5.4-mini, timeout_ms: 12000, json: true }
       - { provider: groq, model: openai/gpt-oss-120b, timeout_ms: 4000, json: true }
       - { provider: cassette }
   vision:
     chain:
-      - { provider: azure, model: renaiscent-gpt-5.4-mini, timeout_ms: 4000 }
+      - { provider: azure, model: renaiscent-gpt-5.4-mini, timeout_ms: 12000 }
       - { provider: azure, model: renaiscent-gpt-4o, timeout_ms: 4000 }
       - { provider: cassette }
   ocr:

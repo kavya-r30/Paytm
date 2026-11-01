@@ -1,5 +1,51 @@
 # Arth: next-session handoff (31 Oct 2026)
 
+## Status checklist
+
+Done and verified by running the real app (fresh browser and/or live API) on 31 Oct 2026:
+
+- [x] L0–L8 built (earlier sessions); full gate last run: 1352 passed, 2 failed → both fixed (contract list +
+      openapi routes for `/v1/views/latest/{kind}`, `GET /v1/director/play`); full gate not re-run since the AI changes
+- [x] Frontend talks to the backend in normal mode: auto live session (dev), no silent fixture fallback
+      (red banner when the API is unreachable), CORS for any local origin, Next `allowedDevOrigins` 127.0.0.1
+- [x] Stale/foreign session token replaced automatically; one session request per page load
+- [x] Sim clock runs in dev, resumes after restart; Director freeze/run buttons
+- [x] Detail screens without an id open the newest real record (`/v1/views/latest/{kind}`) or a designed empty state
+- [x] UI at 80% zoom on desktop (fixed canvases scaled; stage iframes keep their slots)
+- [x] Billing: new bill once, tap items, voice add/remove, hold/resume, cash, return, void, UPI QR → pay page → paid
+- [x] Khata: credit sale from the bill (`checkout_khata`, R2), money received with amount (R2), voice payment,
+      promises, reminders (consent enforced), consent withdraw only, language via PII-safe route, "New credit" → bill
+- [x] Orders: full state machine on the order screen (place → accept → pack → deliver → settle), substitute picker
+- [x] Learn (new item) is a real form; demand/bundle "add to catalog" build valid payloads
+- [x] Approval (gate) screen works for every gate type (summary sentence), not only purchase orders
+- [x] Every UI command payload and literal value checked against its contract (fixed `tapped`, return, KOT, undo…)
+- [x] No raw i18n keys on screen: 212+ labels added, readable refusal messages, humanised fallback for gaps
+- [x] Collections agent only for consented, undisputed, overdue accounts (E7.2); demo worlds seed reminder consent
+- [x] Reorder playbook end to end (draft PO → owner haan → supplier short delivery → 3-way match → claim)
+- [x] AI: Azure `renaiscent-gpt-5.4-mini` (Groq backup); pooled HTTP client; Sarvam Bulbul v4 Flash
+      `priya_hi_recovery` TTS + Saaras v4 STT wired into the device dock
+- [x] AI agent with tools for every module (`arth/ai/agent.py`): reads + actions via the Command Bus, chained
+      actions, open-bill context, Grounding Guard with one repair round, answers open the matching screen with a caption
+- [x] Verified prompts: billing with customer/items/cash/QR/khata, khata balance/payment/promise/reminder,
+      stock info/receive/price, reorder with "did you mean", sales/compare/top/slow/busy hours, Diwali plan, greetings
+- [x] `python dev.py demo`: saved kirana demo restores in ~2.5 s; Director picks it up ("Ready") and plays beats
+- [x] Gen-check fixed (CRLF from git checkout; `.gitattributes` keeps LF); Prettier ignores `e2e-output/`
+
+Still open (this session's tasks):
+
+- [~] 1. Queries sometimes don't reach the AI — fixed in code, needs the 20-question fresh-browser check:
+      on-screen phrases ("cash", "qr", "khate mein") stay local only on a screen that handles them (`handlesHere`
+      in components/shell/device.tsx); dock waits for the live session ("Connecting…", `useLink` in lib/api/live.tsx);
+      Azure timeouts 12 s (providers.yaml)
+- [x] 2. Stage Trace / AI calls / Tools / Logs fill live (verified): per-turn `span_context` (core/spans.py) tags
+      LLM/tool/policy spans with the shop + one trace; agent emits `tool.*` spans; evidence.tsx reads dur_ms/latency/cost
+- [x] 3. Forecast works in the demo (verified): `python dev.py demo -- --fresh` builds in a clean DB in ~90 s
+      (`arth/tools/build_demo.py`): 40 days of history, shop "Gupta General Store", Night Shift run, 3 reorder
+      approvals waiting (beat 1.2 "Haan, teeno"); forecast 12 days ahead incl. Diwali 8 Nov; Director continues at 1.2
+- [x] Collections no longer fail at night: quiet hours → wait till morning; other refusals end quietly
+- [ ] 4. Full gate `python dev.py check` after the AI changes; fix regressions; update docs
+- [ ] Known, lower priority: world build is slow and grows with shops in the DB (~7.5 min with 3 shops)
+
 Paste the block below into a fresh Claude Code / Codex session opened at `C:\Users\kavya\Desktop\Hackathon\Paytm`.
 
 ```

@@ -23,6 +23,7 @@ from arth.domains.patron_identity import has_consent
 from arth.domains.stock import expiry_view, stock_view
 from arth.domains.summaries import item_name, patron_name
 from arth.domains.tables import items
+from arth.governance.commands import CommandError
 from arth.governance.repository import Repository
 from arth.intel.analytics import daily_sales, khata_aging, purchase_cycles, today
 from arth.intel.insight import next_best_actions
@@ -222,15 +223,31 @@ async def collect_start(rt: Runtime, run: Run) -> Next | Done | Wait:
     return Next("remind")
 
 
-async def collect_remind(rt: Runtime, run: Run) -> Wait:
+async def collect_remind(rt: Runtime, run: Run) -> Wait | Done:
     attempt = run.context.get("attempt", 0) + 1
     run.context["attempt"] = attempt
-    gate = await rt.command(
-        run,
-        "ledger.send_reminder",
-        {"account_id": run.subject, "template_key": "reminder.gentle"},
-        f"remind-{attempt}",
-    )
+    tries = run.context["tries"] = run.context.get("tries", 0) + 1  # each try its own idempotency key
+    try:
+        gate = await rt.command(
+            run,
+            "ledger.send_reminder",
+            {"account_id": run.subject, "template_key": "reminder.gentle"},
+            f"remind-{attempt}-{tries}",
+        )
+    except CommandError as exc:
+        run.context["attempt"] = attempt - 1  # a refused try is not a reminder sent
+        if str(exc) == "policy.quiet_hours":  # Night Shift runs at night: ask again after the customer wakes
+            return Wait(
+                "credit.changed",
+                {"account_id": run.subject},
+                "remind",
+                until_minutes=10 * 60,
+                timeout_next="remind",
+            )
+        await rt.unlock(run, run.context["patron_id"])
+        return Done(
+            {"skipped": str(exc)}
+        )  # consent, cadence, dispute...: nothing to chase now, not a failure
     run.context["gate"] = gate.get("gate_id")
     return Wait(
         "credit.changed",

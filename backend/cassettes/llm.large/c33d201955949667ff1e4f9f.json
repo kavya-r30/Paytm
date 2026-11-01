@@ -1,0 +1,1 @@
+{"provider": "azure", "model": "renaiscent-gpt-5.4-mini", "text": "", "data": {"tool_calls": [{"function": {"arguments": "{\"customer\":\"Meena\",\"tone\":\"gentle\"}", "name": "send_khata_reminder"}, "id": "call_o6vrIZlOlMVyKcmVpE5Qy9oq", "type": "function"}]}}

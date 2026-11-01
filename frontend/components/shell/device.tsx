@@ -7,6 +7,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import { apiPost, dataMode, newIdempotencyKey } from '@/lib/api/client';
+import { useLink } from '@/lib/api/live';
 import { useCommand } from '@/lib/api/commands';
 import { useDataMode } from '@/lib/api/hooks';
 import type { Envelope, LayerPendingView } from '@/lib/contracts';
@@ -159,6 +160,15 @@ export function useAction(handler: (action: string) => void) {
   }, [handler]);
 }
 
+/** Which screens listen for which in-screen action (useAction): the payment actions on an open bill and the
+ * batch "haan" on Today/Notifications. Everything else (undo, pause...) is Arth's job via the backend. */
+function handlesHere(pathname: string, action: string): boolean {
+  const onBill = /\/device\/bill\/bill_/.test(pathname) && !/\/(pay|paid)$/.test(pathname);
+  if (['show_qr', 'pay_cash', 'pay_khata'].includes(action)) return onBill;
+  if (action === 'approve_all') return /\/device\/(home|notifications)/.test(pathname);
+  return false;
+}
+
 /** Where an envelope's `nav` points: `bill/pay` + {bill_id} is the bill's sub-route `bill/<id>/pay`. */
 function navPath(screen: string, params: Record<string, unknown> | undefined): string {
   const param = Object.values(params ?? {})[0];
@@ -200,7 +210,14 @@ export function useTurnSubmit() {
       setPresence('thinking');
       const text = typeof input === 'string' ? input : null;
       const intent = text ? resolveIntent(text) : null;
-      if (text && (dataMode() === 'fixture' || (intent?.action && !intent.screen))) {
+      // Only a short command for an action THIS screen handles stays local ("QR dikhao" on a bill, "teeno haan"
+      // on Today); anything else, e.g. "aaj cash kitna aaya", goes to Arth, or it would silently do nothing.
+      const onScreen =
+        !!intent?.action &&
+        !intent.screen &&
+        text!.trim().split(/\s+/).length <= 4 &&
+        handlesHere(pathname, intent.action);
+      if (text && (dataMode() === 'fixture' || onScreen)) {
         window.setTimeout(() => local(text), 400);
         return;
       }
@@ -240,6 +257,7 @@ export function AskDock({ chips = [] }: { chips?: { label: string; text: string 
   const followups = useTurn((s) => s.followups);
   const { startVoice, stopVoice } = useTurn.getState();
   const submit = useTurnSubmit();
+  const linked = useLink((s) => s.ready);
   const [text, setText] = useState('');
   const [rec, setRec] = useState<Recording | null>(null);
 
@@ -311,7 +329,8 @@ export function AskDock({ chips = [] }: { chips?: { label: string; text: string 
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          if (text.trim()) submit(text.trim());
+          if (!linked || !text.trim()) return; // still connecting: keep the text, nothing is lost
+          void submit(text.trim());
           setText('');
         }}
         className="flex h-[60px] items-center gap-3 rounded-dock bg-white pl-5 pr-1.5 shadow-1"
@@ -320,7 +339,7 @@ export function AskDock({ chips = [] }: { chips?: { label: string; text: string 
         <input
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder={t('dock.placeholder')}
+          placeholder={t(linked ? 'dock.placeholder' : 'dock.connecting')}
           className="min-w-0 flex-1 bg-transparent text-arth text-ink outline-none placeholder:text-ink-3"
         />
         <button

@@ -793,5 +793,6 @@
   "provenance.gates": "Haan wale kaam",
   "provenance.catalog": "Catalog",
   "predicate.cycle.days": "har itne din mein khareedte",
-  "memory.source_agent": "Arth ka helper"
+  "memory.source_agent": "Arth ka helper",
+  "dock.connecting": "Dukaan se jud raha hoon…"
 }
